@@ -12,13 +12,14 @@ namespace Application
         , LaunchMode = Android.Content.PM.LaunchMode.SingleInstance
         , ScreenOrientation = ScreenOrientation.SensorLandscape
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
-    public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
+    
+    public class Activity : Microsoft.Xna.Framework.AndroidGameActivity
     {
         protected override void OnCreate (Bundle bundle)
         {
             base.OnCreate (bundle);
-            Game1.Activity = this;
-            var g = new Game1 ();
+            Escape.Activity = this;
+            var g = new Escape ();
             SetContentView (g.Window);
             g.Run ();
         }

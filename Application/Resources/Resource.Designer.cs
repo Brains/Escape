@@ -26,6 +26,8 @@ namespace Application
 		
 		public static void UpdateIdValues()
 		{
+			global::Traffic.Resource.String.ApplicationName = global::Application.Resource.String.ApplicationName;
+			global::Traffic.Resource.String.Hello = global::Application.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
