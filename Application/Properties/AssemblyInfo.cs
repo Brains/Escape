@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Android.App;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -21,7 +20,7 @@ using Android.App;
 [assembly: ComVisible (false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid ("54c77a6d-9421-4c25-90c3-2b67c5faff03")]
+[assembly: Guid ("50b6cb69-514d-457b-bf79-7c47efc666fd")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -35,7 +34,3 @@ using Android.App;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion ("1.0.0.0")]
 [assembly: AssemblyFileVersion ("1.0.0.0")]
-
-// Add some common permissions, these can be removed if not needed
-[assembly: UsesPermission (Android.Manifest.Permission.Internet)]
-[assembly: UsesPermission (Android.Manifest.Permission.WriteExternalStorage)]
