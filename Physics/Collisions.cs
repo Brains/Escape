@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace Tools
+namespace Physics
 {
     public class Collisions
     {
@@ -49,6 +49,14 @@ namespace Tools
         //------------------------------------------------------------------
         #region Methods
 
+        //------------------------------------------------------------------
+        public void Move (Vector2 shift)
+        {
+            Minimum += shift;
+            Maximum += shift;
+        }
+
+        //------------------------------------------------------------------
         public Vector2 GetSize ()
         {
             return Maximum - Minimum;
