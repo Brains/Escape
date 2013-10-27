@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
+using Physics;
 
 #endregion
 
@@ -28,13 +29,12 @@ namespace Application
             Content.RootDirectory = "Content";
 
             Components.Add (new Traffic.Manager (this));
+            Components.Add (new KeyboardInput (this));
         }
 
         //------------------------------------------------------------------
         protected override void Initialize ( )
         {
-            Services.AddService (typeof (ContentManager), Content);
-
             Tools.Markers.Manager.Game = this;
 
             base.Initialize ();

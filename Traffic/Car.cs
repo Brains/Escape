@@ -13,52 +13,69 @@ using Android.Widget;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
+using Physics;
 using Tools;
 
 namespace Traffic
 {
-    class Car
+    class Car 
     {
         private Game game;
-        private Texture2D car;
-        private Lane lane;
-        private Collisions boundingBox;
+        protected Texture2D texture;
+        public Lane Lane { get; set; }
+        private Rectangle bounds;
+        private Vector2 position;
+        private Vector2 origin;
 
-        public float VerticalPosition { get; set; }
+        //------------------------------------------------------------------
+        public Vector2 Position
+        {
+            get { return position; }
+            set
+            {
+                bounds.X = (int) (value.X - origin.X); 
+                bounds.Y = (int) (value.Y - origin.Y); 
+                position = value;
+            }
+        }
+
         public float Velocity { get; set; }
+        public Color Color { get; set; }
 
         //------------------------------------------------------------------
         public Car (Game game, Lane lane)
         {
             this.game = game;
-            this.lane = lane;
+            this.Lane = lane;
+            this.Color = Color.White;
 
             Velocity = lane.Velocity;
 
+            bounds = new Rectangle ();
         }
 
         //------------------------------------------------------------------
         private void CreateBoundingBox ()
         {
-            var position = new Vector2 (lane.Position, VerticalPosition);
-            Vector2 leftBottom = position - new Vector2 (car.Width / 2, car.Height / 2);
-            Vector2 size = position + new Vector2 (car.Width / 2, car.Height / 2);
+            Vector2 leftBottom = Position - new Vector2 (texture.Width / 2, texture.Height / 2);
 
-            boundingBox = new Collisions (leftBottom, size);
+            bounds = new Rectangle ((int) leftBottom.X, (int) leftBottom.Y, texture.Width, texture.Height);
         }
 
         //------------------------------------------------------------------
-        public void Initialize ()
+        public virtual void Initialize ()
         {
+
+        }
+
+        //------------------------------------------------------------------
+        public virtual void LoadContent ( )
+        {
+            texture = game.Content.Load <Texture2D> ("Images/Cars/Car");
             
-        }
-
-        //------------------------------------------------------------------
-        public void LoadContent ( )
-        {
-//            ContentManager content = (ContentManager) game.Services.GetService (typeof (ContentManager));
-            car = game.Content.Load<Texture2D> ("Images/Cars/Car");
-
+            // ToDo: It working only if Player has the same sizes as a Car
+            origin = new Vector2 (texture.Width / 2, texture.Height / 2);
             CreateBoundingBox ();
         }
 
@@ -69,24 +86,49 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public void Update ()
+        public virtual void Update ()
         {
-//            VerticalPosition -= Velocity * 0.1f; 
-//            VerticalPosition -= 0.5f;
-
-            new Tools.Markers.Rectangle (boundingBox.Minimum, boundingBox.Maximum);
-            new Tools.Markers.Text (boundingBox.Minimum.ToString (), boundingBox.Minimum);
-            new Tools.Markers.Text (boundingBox.Maximum.ToString (), boundingBox.Maximum);
+            // Collisions
+            var @from = new Vector2 (bounds.X, bounds.Y);
+            var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
+            new Tools.Markers.Rectangle (@from, to);
+            
+            new Tools.Markers.Text (Lane.ToString (), Position + new Vector2 (15, 0));
         }
 
+        //------------------------------------------------------------------
+        public bool Intersect (Car car)
+        {
+            if (car == this) return false;
+                
+            return bounds.Intersects (car.bounds);
+        }
+        
+
+        //------------------------------------------------------------------
+        public void ChangeOnLeftLane ()
+        {
+            if (Lane.Left != null)
+            {
+                Lane.Left.Add (this);
+                Lane.Remove (this);
+            }
+        }
+
+        //------------------------------------------------------------------
+        public void ChangeOnRightLane ()
+        {
+            if (Lane.Right != null)
+            {
+                Lane.Right.Add (this);
+                Lane.Remove (this);
+            }
+        }
 
         //------------------------------------------------------------------
         public void Draw (SpriteBatch spriteBatch)
         {
-            var position = new Vector2 (lane.Position, VerticalPosition);
-            var origin = new Vector2 (car.Width / 2, car.Height / 2);
-
-            spriteBatch.Draw (car, position, null, Color.White, 0.0f, origin, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw (texture, Position, null, Color, 0.0f, origin, 1.0f, SpriteEffects.None, 1.0f);
         }
     }
 }
