@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collisions.cs" />
     <Compile Include="Markers\Line.cs" />
     <Compile Include="Markers\Manager.cs" />
     <Compile Include="Markers\Marker.cs" />

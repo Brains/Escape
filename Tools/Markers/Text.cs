@@ -18,8 +18,9 @@ namespace Tools.Markers
         //------------------------------------------------------------------
         public Text (string text, Vector2 position)
         {
-            this.Position = position;
-            this.String = text;
+            Position = position;
+            String = text;
+            Color = Color.DarkCyan;
 
             Manager.Markers.Add (this);
         }
