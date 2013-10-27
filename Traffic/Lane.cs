@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 using Android.App;
@@ -16,82 +17,156 @@ namespace Traffic
 {
     class Lane
     {
-        List <Car> cars;
+        private int ID;
+        private List <Car> carsToAdd;
+        private List <Car> carsToRemove;
+
+        //------------------------------------------------------------------
+        public List <Car> Cars { get; set; }
+        public Vector2 Position { get; set; }
+        public float Velocity { get; set; }
+        public Lane Left { get; set; }
+        public Lane Right { get; set; }
 
         static public Random Random { get; set; }
-        public float Position { get; set; }
-        public float Velocity { get; set; }
+
+        #region Creation
 
         //------------------------------------------------------------------
         static Lane ()
         {
-            Random = new Random();
+            Random = new Random ();
         }
 
         //------------------------------------------------------------------
-        public Lane (Game game)
+        public Lane (int id, Game game, float position, float velocity)
         {
-            CreateCars (game);
+            ID = id;
+            Position = new Vector2 (position, 0);
+            carsToAdd = new List <Car> ();
+            carsToRemove = new List <Car> ();
+
+            Cars = new List<Car> ();
+            CreateCars (game, velocity);
         }
 
         //------------------------------------------------------------------
-        private void CreateCars (Game game)
+        private void CreateCars (Game game, float velocity)
         {
-            int carsAmount = 1/*Random.Next (5)*/;
-            cars = new List <Car> ();
+            int carsAmount = Random.Next (5);
 
             foreach (var number in Enumerable.Range (0, carsAmount))
             {
                 Car car = new Car (game, this);
-                car.VerticalPosition = 300/*(float) Random.NextDouble () * 800*/;
-                cars.Add (car);
+                car.Position = new Vector2 (Position.X, (float) Random.NextDouble ()*800);
+                Cars.Add (car);
             }
         }
 
         //------------------------------------------------------------------
+        public void CreatePlayer (Game game)
+        {
+            var player = new Player (game, this);
+            player.Position = new Vector2 (Position.X, (float) 600);
+            Cars.Add (player);
+        }
+
+
+        //------------------------------------------------------------------
         public void Initialize ()
         {
-            foreach (var car in cars)
+            foreach (var car in Cars)
             {
                 car.Initialize ();
             }
         }
 
         //------------------------------------------------------------------
-        public void LoadContent ( )
+        public void LoadContent ()
         {
-            foreach (var car in cars)
+            foreach (var car in Cars)
             {
                 car.LoadContent ();
             }
         }
 
+        #endregion
+
+
         //------------------------------------------------------------------
         public void UnloadContent ( )
         {
-            foreach (var car in cars)
+            foreach (var car in Cars)
             {
                 car.UnloadContent ();
             }
         }
 
+        #region Update
+
         //------------------------------------------------------------------
-        public void Update ( )
+        public void Update ()
         {
-            foreach (var car in cars)
-            {
-                car.Update ();
-            }
+            Cars.ForEach (car => car.Update ());
+
+            AddCars ();
+            RemoveCars ();
         }
+
+        //------------------------------------------------------------------
+        public void Add (Car car)
+        {
+            carsToAdd.Add (car);
+        }
+
+        //------------------------------------------------------------------
+        private void AddCars ()
+        {
+            Cars.AddRange (carsToAdd);
+            carsToAdd.ForEach (OwnCar);
+            carsToAdd.Clear ();
+        }
+
+        //------------------------------------------------------------------
+        private void OwnCar (Car car)
+        {
+            car.Lane = this;
+            car.Position = new Vector2 (Position.X, car.Position.Y);
+        }
+
+        //------------------------------------------------------------------
+        public void Remove (Car car)
+        {
+            carsToRemove.Add (car);
+        }
+
+        //------------------------------------------------------------------
+        private void RemoveCars ()
+        {
+            carsToRemove.ForEach (car => car.Lane = null);
+            Cars.RemoveAll (carsToRemove.Contains);
+            carsToRemove.Clear ();
+        }
+
+        #endregion
 
         //------------------------------------------------------------------
         public void Draw (SpriteBatch spriteBatch)
         {
-            foreach (var car in cars)
+            foreach (var car in Cars)
             {
                 car.Draw (spriteBatch);
             }
+
+            var shift = new Vector2 (20, 0);
+            new Tools.Markers.Line (Position + shift, Position + shift + new Vector2 (0, 800), Color.LightSteelBlue);
         }
 
+
+        //------------------------------------------------------------------
+        public override string ToString ()
+        {
+            return string.Format ("Lane: {0}", ID);
+        }
     }
 }

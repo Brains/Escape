@@ -24,6 +24,7 @@ namespace Traffic
         public Road (Game game)
         {
             CreateLanes (game);
+            lanes.First ().CreatePlayer (game);
 
             spriteBatch = new SpriteBatch (game.GraphicsDevice);
         }
@@ -36,12 +37,16 @@ namespace Traffic
             float position = 20;
             float velocity = 300;
 
-            foreach (var index in Enumerable.Range (0, 1))
+            foreach (var index in Enumerable.Range (0, 12))
             {
-                var lane = new Lane (game);
-                lane.Position = position;
-                lane.Velocity = velocity;
-
+                var lane = new Lane (index, game, position, velocity);
+                
+                if (index != 0)
+                {
+                    lane.Left = lanes[index - 1];
+                    lane.Left.Right = lane;
+                }
+                
                 lanes.Add (lane);
                 
                 position += 40;
