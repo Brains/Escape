@@ -66,7 +66,7 @@ namespace Traffic
             if (lane == null) return;
 
             if (lane.Cars.Any (Intersect))
-                Color = Color.Maroon;
+                Color = Color.OrangeRed;
         }
     }
 }
