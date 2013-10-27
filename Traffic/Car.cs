@@ -16,6 +16,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Physics;
 using Tools;
+using Tools.Markers;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Traffic
 {
@@ -23,7 +25,6 @@ namespace Traffic
     {
         private Game game;
         protected Texture2D texture;
-        public Lane Lane { get; set; }
         private Rectangle bounds;
         private Vector2 position;
         private Vector2 origin;
@@ -42,6 +43,10 @@ namespace Traffic
 
         public float Velocity { get; set; }
         public Color Color { get; set; }
+        public Lane Lane { get; set; }
+
+
+        #region Creation
 
         //------------------------------------------------------------------
         public Car (Game game, Lane lane)
@@ -58,7 +63,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void CreateBoundingBox ()
         {
-            Vector2 leftBottom = Position - new Vector2 (texture.Width / 2, texture.Height / 2);
+            Vector2 leftBottom = Position - new Vector2 (texture.Width/2, texture.Height/2);
 
             bounds = new Rectangle ((int) leftBottom.X, (int) leftBottom.Y, texture.Width, texture.Height);
         }
@@ -70,20 +75,26 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public virtual void LoadContent ( )
+        public virtual void LoadContent ()
         {
             texture = game.Content.Load <Texture2D> ("Images/Cars/Car");
-            
+
             // ToDo: It working only if Player has the same sizes as a Car
-            origin = new Vector2 (texture.Width / 2, texture.Height / 2);
+            origin = new Vector2 (texture.Width/2, texture.Height/2);
             CreateBoundingBox ();
         }
 
         //------------------------------------------------------------------
-        public void UnloadContent ( )
+        public void UnloadContent ()
         {
 
         }
+
+        #endregion
+
+
+
+        #region Update
 
         //------------------------------------------------------------------
         public virtual void Update ()
@@ -92,18 +103,18 @@ namespace Traffic
             var @from = new Vector2 (bounds.X, bounds.Y);
             var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
             new Tools.Markers.Rectangle (@from, to);
-            
-            new Tools.Markers.Text (Lane.ToString (), Position + new Vector2 (15, 0));
+
+            new Text (Lane.ToString (), Position + new Vector2 (15, 0));
         }
 
         //------------------------------------------------------------------
         public bool Intersect (Car car)
         {
             if (car == this) return false;
-                
+
             return bounds.Intersects (car.bounds);
         }
-        
+
 
         //------------------------------------------------------------------
         public void ChangeOnLeftLane ()
@@ -124,6 +135,9 @@ namespace Traffic
                 Lane.Remove (this);
             }
         }
+
+        #endregion
+
 
         //------------------------------------------------------------------
         public void Draw (SpriteBatch spriteBatch)

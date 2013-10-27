@@ -30,6 +30,7 @@ namespace Traffic
 
         static public Random Random { get; set; }
 
+
         #region Creation
 
         //------------------------------------------------------------------
@@ -102,6 +103,7 @@ namespace Traffic
             }
         }
 
+
         #region Update
 
         //------------------------------------------------------------------
@@ -149,6 +151,7 @@ namespace Traffic
         }
 
         #endregion
+
 
         //------------------------------------------------------------------
         public void Draw (SpriteBatch spriteBatch)
