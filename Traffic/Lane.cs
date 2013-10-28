@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,6 +13,8 @@ using Android.Views;
 using Android.Widget;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Tools;
+using Tools.Markers;
 
 namespace Traffic
 {
@@ -44,6 +47,7 @@ namespace Traffic
         {
             ID = id;
             Position = new Vector2 (position, 0);
+            Velocity = velocity;
             carsToAdd = new List <Car> ();
             carsToRemove = new List <Car> ();
 
@@ -59,7 +63,7 @@ namespace Traffic
             foreach (var number in Enumerable.Range (0, carsAmount))
             {
                 Car car = new Car (game, this);
-                car.Position = new Vector2 (Position.X, (float) Random.NextDouble ()*800);
+                car.Position = new Vector2 (Position.X, (float) Random.NextDouble ()*400);
                 Cars.Add (car);
             }
         }
@@ -170,6 +174,26 @@ namespace Traffic
         public override string ToString ()
         {
             return string.Format ("Lane: {0}", ID);
+        }
+
+        //------------------------------------------------------------------
+        public bool IsFreeSpace (float horizontal, float height)
+        {
+            foreach (var car in Cars)
+            {
+                float lowerBorder = horizontal - height / 2 - car.Height / 2;
+                float upperBorder = horizontal + height / 2 + car.Height / 2;
+
+                new Tools.Markers.Rectangle (
+                    new Vector2 (Position.X - 20, lowerBorder + height / 2),
+                    new Vector2 (Position.X + 20, upperBorder - height / 2), Color.Red);
+
+
+                if (car.Position.Y > lowerBorder && car.Position.Y < upperBorder)
+                    return false;
+            }
+
+            return true;
         }
     }
 }

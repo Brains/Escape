@@ -44,6 +44,7 @@ namespace Traffic
         public float Velocity { get; set; }
         public Color Color { get; set; }
         public Lane Lane { get; set; }
+        public int Height { get; set; }
 
 
         #region Creation
@@ -53,7 +54,7 @@ namespace Traffic
         {
             this.game = game;
             this.Lane = lane;
-            this.Color = Color.White;
+            this.Color = Color.NavajoWhite;
 
             Velocity = lane.Velocity;
 
@@ -81,6 +82,7 @@ namespace Traffic
 
             // ToDo: It working only if Player has the same sizes as a Car
             origin = new Vector2 (texture.Width/2, texture.Height/2);
+            Height = texture.Height;
             CreateBoundingBox ();
         }
 
@@ -99,17 +101,22 @@ namespace Traffic
         //------------------------------------------------------------------
         public virtual void Update ()
         {
-            // Collisions
-            var @from = new Vector2 (bounds.X, bounds.Y);
-            var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
-            new Tools.Markers.Rectangle (@from, to);
+//            new Text (Lane.ToString (), Position + new Vector2 (15, 0));
 
-            new Text (Lane.ToString (), Position + new Vector2 (15, 0));
+            Position += new Vector2 (0, -Velocity / 100);
+
+            // Camera movement simulation
+//            Position -= new Vector2 (0, -Velocity / 100);
         }
 
         //------------------------------------------------------------------
         public bool Intersect (Car car)
         {
+            var @from = new Vector2 (bounds.X, bounds.Y);
+            var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
+            new Tools.Markers.Rectangle (@from, to); 
+            
+
             if (car == this) return false;
 
             return bounds.Intersects (car.bounds);
@@ -117,23 +124,36 @@ namespace Traffic
 
 
         //------------------------------------------------------------------
-        public void ChangeOnLeftLane ()
+        public bool ChangeOnLeftLane ()
         {
-            if (Lane.Left != null)
+            if (Lane.Left == null) return false;
+            if (!Lane.Left.IsFreeSpace (Position.Y, Height))
             {
-                Lane.Left.Add (this);
-                Lane.Remove (this);
+//                Tools.Markers.Manager.Clear = false;
+                new Text ("No Space", Position, Color.Red);
+                return false;
             }
+            
+            Lane.Left.Add (this);
+            Lane.Remove (this);
+
+            return true;
         }
 
         //------------------------------------------------------------------
-        public void ChangeOnRightLane ()
+        public bool ChangeOnRightLane ()
         {
-            if (Lane.Right != null)
+            if (Lane.Right == null) return false;
+            if (!Lane.Right.IsFreeSpace (Position.Y, Height))
             {
-                Lane.Right.Add (this);
-                Lane.Remove (this);
+//                Tools.Markers.Manager.Clear = false;
+                new Text ("No Space", Position, Color.Red);
+                return false;
             }
+            Lane.Right.Add (this);
+            Lane.Remove (this);
+
+            return true;
         }
 
         #endregion

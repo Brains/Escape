@@ -12,7 +12,7 @@ namespace Tools.Markers
         //------------------------------------------------------------------
         static Text ()
         {
-            font = Manager.Game.Content.Load <SpriteFont> ("Fonts/Segoe UI Light");
+            font = Manager.Instance.Game.Content.Load<SpriteFont> ("Fonts/Segoe UI Light");
         }
 
         //------------------------------------------------------------------
@@ -26,9 +26,12 @@ namespace Tools.Markers
         }
 
         //------------------------------------------------------------------
-        public Text (string text, Vector2 position, Color color) : this (text, position)
+        public Text (string text, Vector2 position, Color color, bool shift = false) : this (text, position)
         {
             this.Color = color;
+
+            if (shift) 
+                Position += new Vector2 (20, 0);
         }
 
         //------------------------------------------------------------------

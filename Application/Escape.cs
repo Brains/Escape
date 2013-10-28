@@ -1,6 +1,7 @@
 ﻿#region Using Statements
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 using Physics;
+using Tools;
 
 #endregion
 
@@ -29,14 +31,13 @@ namespace Application
             Content.RootDirectory = "Content";
 
             Components.Add (new Traffic.Manager (this));
-            Components.Add (new KeyboardInput (this));
+            Components.Add (new Physics.KeyboardInput (this));
+            Components.Add (new Tools.Markers.Manager (this));
         }
 
         //------------------------------------------------------------------
         protected override void Initialize ( )
         {
-            Tools.Markers.Manager.Game = this;
-
             base.Initialize ();
         }
 
@@ -45,7 +46,7 @@ namespace Application
         {
             if (GamePad.GetState (PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState ().IsKeyDown (Keys.Escape))
                 Exit ();
-
+            
             base.Update (gameTime);
         }
 
@@ -55,8 +56,6 @@ namespace Application
             GraphicsDevice.Clear (Color.White);
 
             base.Draw (gameTime);
-
-            Tools.Markers.Manager.DrawAllMarkers (this);
         }
     }
 }

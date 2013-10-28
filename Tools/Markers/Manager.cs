@@ -1,24 +1,35 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Tools.Markers
 {
-    public class Manager
+    public class Manager : DrawableGameComponent
     {
-        static public List<Marker> Markers { get; set; }
-        static public Game Game { get; set; }
-
+        public static List<Marker> Markers { get; set; }
+        public static Manager Instance { get; set; }
+        public static bool Clear { get; set; }
+        
         //------------------------------------------------------------------
-        static Manager ()
+        public Manager (Game game) : base (game)
         {
+            Instance = this;
             Markers = new List<Marker> ();
+            Clear = true;
         }
 
         //------------------------------------------------------------------
-        public static void DrawAllMarkers (Game game)
+        public override void Update (GameTime gameTime)
         {
-            var spriteBatch = new SpriteBatch (game.GraphicsDevice);
+            if (Keyboard.GetState ().IsKeyDown (Keys.Space))
+                Clear = true;
+        }
+
+        //------------------------------------------------------------------
+        public override void Draw (GameTime gameTime)
+        {
+            var spriteBatch = new SpriteBatch (Game.GraphicsDevice);
 
             spriteBatch.Begin ();
 
@@ -29,7 +40,8 @@ namespace Tools.Markers
 
             spriteBatch.End ();
 
-            Markers.Clear ();
+            if (Clear)
+                Markers.Clear ();
         }
     }
 }

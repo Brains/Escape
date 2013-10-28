@@ -24,7 +24,7 @@ namespace Traffic
         public Road (Game game)
         {
             CreateLanes (game);
-            lanes.First ().CreatePlayer (game);
+            lanes[6].CreatePlayer (game);
 
             spriteBatch = new SpriteBatch (game.GraphicsDevice);
         }
