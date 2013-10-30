@@ -22,25 +22,9 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Initialize ()
         {
-            road.Initialize ();
+            road.Create ();
 
             base.Initialize ();
-        }
-
-        //------------------------------------------------------------------
-        protected override void LoadContent ( )
-        {
-            road.LoadContent ();
-
-            base.LoadContent ();
-        }
-
-        //------------------------------------------------------------------
-        protected override void UnloadContent ()
-        {
-            road.UnloadContent ();
-
-            base.UnloadContent ();
         }
 
         //------------------------------------------------------------------

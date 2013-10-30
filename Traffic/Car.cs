@@ -1,42 +1,44 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
 using Physics;
 using Tools;
 using Tools.Markers;
+using Point = Tools.Markers.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Traffic
 {
-    class Car 
+    internal class Car
     {
-        private Game game;
-        protected Texture2D texture;
-        private Rectangle bounds;
+        //------------------------------------------------------------------
         private Vector2 position;
         private Vector2 origin;
+        private Rectangle bounds;
+        public static int VelocityFactor = 100;
+
+        protected Texture2D Texture;
+        protected Color InitialColor;
+        protected string TextureName;
 
         //------------------------------------------------------------------
+        // ToDo: remove Car.Position (use only Move)
         public Vector2 Position
         {
             get { return position; }
             set
             {
-                bounds.X = (int) (value.X - origin.X); 
-                bounds.Y = (int) (value.Y - origin.Y); 
+                bounds.X = (int) (value.X - origin.X);
+                bounds.Y = (int) (value.Y - origin.Y);
                 position = value;
             }
         }
@@ -46,67 +48,55 @@ namespace Traffic
         public Lane Lane { get; set; }
         public int Height { get; set; }
 
-
         #region Creation
 
         //------------------------------------------------------------------
-        public Car (Game game, Lane lane)
+        public Car (Lane lane, int getInsertPosition)
         {
-            this.game = game;
-            this.Lane = lane;
-            this.Color = Color.NavajoWhite;
-
+            Lane = lane;
+            InitialColor = Color.NavajoWhite;
+            TextureName = "Car";
+            Position = new Vector2 (lane.Position.X, getInsertPosition);
             Velocity = lane.Velocity;
+        }
 
-            bounds = new Rectangle ();
+        //------------------------------------------------------------------
+        public void Create ()
+        {
+            Texture = Lane.Road.Images[TextureName];
+            origin = new Vector2 (Texture.Width / 2, Texture.Height / 2);
+            Height = Texture.Height;
+
+            CreateBoundingBox ();
         }
 
         //------------------------------------------------------------------
         private void CreateBoundingBox ()
         {
-            Vector2 leftBottom = Position - new Vector2 (texture.Width/2, texture.Height/2);
+            Vector2 leftBottom = Position - origin;
 
-            bounds = new Rectangle ((int) leftBottom.X, (int) leftBottom.Y, texture.Width, texture.Height);
-        }
-
-        //------------------------------------------------------------------
-        public virtual void Initialize ()
-        {
-
-        }
-
-        //------------------------------------------------------------------
-        public virtual void LoadContent ()
-        {
-            texture = game.Content.Load <Texture2D> ("Images/Cars/Car");
-
-            // ToDo: It working only if Player has the same sizes as a Car
-            origin = new Vector2 (texture.Width/2, texture.Height/2);
-            Height = texture.Height;
-            CreateBoundingBox ();
-        }
-
-        //------------------------------------------------------------------
-        public void UnloadContent ()
-        {
-
+            bounds = new Rectangle ((int) leftBottom.X, (int) leftBottom.Y, Texture.Width, Texture.Height);
         }
 
         #endregion
-
-
 
         #region Update
 
         //------------------------------------------------------------------
         public virtual void Update ()
         {
-//            new Text (Lane.ToString (), Position + new Vector2 (15, 0));
+            Color = InitialColor;
 
-            Position += new Vector2 (0, -Velocity / 100);
+            Move (-Velocity);
 
-            // Camera movement simulation
-//            Position -= new Vector2 (0, -Velocity / 100);
+            new Text (Velocity.ToString ("F0"), Position, Color.Maroon, true);
+            
+        }
+
+        //------------------------------------------------------------------
+        public void Move (float shift)
+        {
+            Position += new Vector2 (0, shift / VelocityFactor);
         }
 
         //------------------------------------------------------------------
@@ -114,8 +104,8 @@ namespace Traffic
         {
             var @from = new Vector2 (bounds.X, bounds.Y);
             var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
-            new Tools.Markers.Rectangle (@from, to); 
-            
+            new Tools.Markers.Rectangle (@from, to);
+
 
             if (car == this) return false;
 
@@ -130,10 +120,10 @@ namespace Traffic
             if (!Lane.Left.IsFreeSpace (Position.Y, Height))
             {
 //                Tools.Markers.Manager.Clear = false;
-                new Text ("No Space", Position, Color.Red);
+//                new Text ("No Space", Position, Color.Red);
                 return false;
             }
-            
+
             Lane.Left.Add (this);
             Lane.Remove (this);
 
@@ -147,7 +137,7 @@ namespace Traffic
             if (!Lane.Right.IsFreeSpace (Position.Y, Height))
             {
 //                Tools.Markers.Manager.Clear = false;
-                new Text ("No Space", Position, Color.Red);
+//                new Text ("No Space", Position, Color.Red);
                 return false;
             }
             Lane.Right.Add (this);
@@ -158,11 +148,10 @@ namespace Traffic
 
         #endregion
 
-
         //------------------------------------------------------------------
         public void Draw (SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw (texture, Position, null, Color, 0.0f, origin, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw (Texture, Position, null, Color, 0.0f, origin, 1.0f, SpriteEffects.None, 1.0f);
         }
     }
 }

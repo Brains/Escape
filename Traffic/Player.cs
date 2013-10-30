@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework;
@@ -6,69 +7,50 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Physics;
 using Tools.Markers;
+using Tools;
 
 namespace Traffic
 {
     class Player : Car
     {
-        private Game game;
+        private int maximumSpeed = 500;
+        private int minimumSpeed = 50;
+        private float acceleration = 0.02f;
 
         //------------------------------------------------------------------
-        public Player (Game game, Lane lane) : base (game, lane)
+        public Player (Lane lane, int insertPoint) : base (lane, insertPoint)
         {
-            this.game = game;
-            Color = Color.SkyBlue;
+            InitialColor = Color.SkyBlue;
+            TextureName = "Player";
         }
 
-        //------------------------------------------------------------------
-        public override void LoadContent ()
-        {
-            base.LoadContent ();
-
-            texture = game.Content.Load <Texture2D> ("Images/Cars/Player");
-        }
+        #region Update
 
         //------------------------------------------------------------------
         public override void Update ()
         {
+            base.Update ();
+
             UpdateInput ();
 
-//            DetectCollisions ();
-
-//            Position += new Vector2 (0, -Velocity / 100);
-
             UpdateSensor ();
+            
+            DetectCollisions ();
 
-
-            base.Update ();
+            new Text (Velocity.ToString ("F0"), Position, Color.Maroon, true);
         }
 
         //------------------------------------------------------------------
-        private void UpdateSensor ()
+        private void UpdateInput ()
         {
-            Color = Color.SkyBlue;
-
-            foreach (var car in Lane.Cars)
-            {
-                if (car == this) continue;
-
-                var distance = Position - car.Position;
-
-                // ToDo I need to find Minimal distance and compare it with treshold
-
-                bool collisionDanger = distance.Y < (Height + car.Height) / 1.5f;
-                bool isBehind = distance.Y > 0;
-
-                if (collisionDanger && isBehind)
-                {
-                    new Text (distance.Y.ToString (), car.Position, Color.Maroon, true);
-                    Color = Color.Red;
-                    
-                    AvoidCollisions ();
-                    break;
-                }
-            }
+            if (KeyboardInput.IsKeyPressed (Keys.Right)) ChangeOnRightLane ();
+            if (KeyboardInput.IsKeyPressed (Keys.Left)) ChangeOnLeftLane ();
+            if (KeyboardInput.IsKeyDown (Keys.Down)) Brake ();
+            if (KeyboardInput.IsKeyDown (Keys.Up)) Accelerate (); //Velocity += Velocity * 0.02f;
         }
+
+        #endregion
+
 
         //------------------------------------------------------------------
         private void AvoidCollisions ()
@@ -79,31 +61,57 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private void Brake ()
+        private void UpdateSensor ()
         {
-            Velocity -= Velocity * 0.3f;
-            new Text ("Brake", Position, Color.Maroon, true);
+            float distance;
+            var closestCar = GetClosestCarAhead (out distance);
 
+            if (closestCar == null) return;
+
+            float dangerousZone = (Height + closestCar.Height) / 1.0f;
+
+            if (distance < dangerousZone)
+            {
+                Color = Color.Maroon;
+
+                AvoidCollisions ();
+            }
         }
 
+        // ToDo: Refactor all this ugly method (MinBy(int instead float and then int==int)
         //------------------------------------------------------------------
-        private void UpdateInput ()
+        private Car GetClosestCarAhead (out float minimumDistance)
         {
-            var shift = Vector2.Zero;
+            Car closestCar = Lane.Cars.MinBy (car =>
+            {
+                // Don't react with myself
+                if (car == this) return float.MaxValue;
 
-            if (KeyboardInput.IsKeyPressed (Keys.Right)) ChangeOnRightLane ();
-            if (KeyboardInput.IsKeyPressed (Keys.Left)) ChangeOnLeftLane ();
-            if (KeyboardInput.IsKeyDown (Keys.Down)) shift.Y++;
-            if (KeyboardInput.IsKeyDown (Keys.Up)) shift.Y--;
+                var distance = Position - car.Position;
 
-            Position += shift;
+                // If the car is behind
+                if (distance.Y < 0) return float.MaxValue;
+
+                return distance.Y;
+            });
+
+            minimumDistance = Position.Y - closestCar.Position.Y;
+
+            if (closestCar == this) return null;
+
+            // If closest car is behind
+            if (minimumDistance < 0) return null;
+
+            closestCar.Color = Color.DarkOrange;
+
+            return closestCar;
         }
+
+        #region Collisions Detection
 
         //------------------------------------------------------------------
         private void DetectCollisions ()
         {
-            Color = Color.White;
-
             DetectCollisionsOnLane (Lane.Left);
             DetectCollisionsOnLane (Lane);
             DetectCollisionsOnLane (Lane.Right);
@@ -117,5 +125,27 @@ namespace Traffic
             if (lane.Cars.Any (Intersect))
                 Color = Color.OrangeRed;
         }
+
+        #endregion
+
+
+        #region Controls
+
+        //------------------------------------------------------------------
+        private void Accelerate ()
+        {
+            if (Velocity < maximumSpeed)
+                Velocity += (Velocity * acceleration);
+
+        }
+
+        //------------------------------------------------------------------
+        private void Brake ()
+        {
+            if (Velocity > minimumSpeed)
+                Velocity -= (Velocity * acceleration);
+        }
+
+        #endregion
     }
 }
