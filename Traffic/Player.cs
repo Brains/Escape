@@ -29,24 +29,24 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Update ()
         {
-            base.Update ();
-
             UpdateInput ();
 
             UpdateSensor ();
             
             DetectCollisions ();
 
-            new Text (Velocity.ToString ("F0"), Position, Color.Maroon, true);
+            base.Update ();
+            
+            new Text (Lane.ToString (), Position, Color.Red, true);
         }
 
         //------------------------------------------------------------------
-        private void UpdateInput ()
+        public void UpdateInput ()
         {
             if (KeyboardInput.IsKeyPressed (Keys.Right)) ChangeOnRightLane ();
             if (KeyboardInput.IsKeyPressed (Keys.Left)) ChangeOnLeftLane ();
             if (KeyboardInput.IsKeyDown (Keys.Down)) Brake ();
-            if (KeyboardInput.IsKeyDown (Keys.Up)) Accelerate (); //Velocity += Velocity * 0.02f;
+            if (KeyboardInput.IsKeyDown (Keys.Up)) Accelerate (); 
         }
 
         #endregion
@@ -63,10 +63,13 @@ namespace Traffic
         //------------------------------------------------------------------
         private void UpdateSensor ()
         {
-            float distance;
-            var closestCar = GetClosestCarAhead (out distance);
+            var closestCar = GetClosestCarAhead ();
 
             if (closestCar == null) return;
+            
+            float distance = Distance (closestCar);
+
+            closestCar.Color = Color.DarkOrange;
 
             float dangerousZone = (Height + closestCar.Height) / 1.0f;
 
@@ -74,37 +77,29 @@ namespace Traffic
             {
                 Color = Color.Maroon;
 
-                AvoidCollisions ();
+//                AvoidCollisions ();
             }
         }
 
-        // ToDo: Refactor all this ugly method (MinBy(int instead float and then int==int)
         //------------------------------------------------------------------
-        private Car GetClosestCarAhead (out float minimumDistance)
+        private Car GetClosestCarAhead ()
         {
-            Car closestCar = Lane.Cars.MinBy (car =>
-            {
-                // Don't react with myself
-                if (car == this) return float.MaxValue;
-
-                var distance = Position - car.Position;
-
-                // If the car is behind
-                if (distance.Y < 0) return float.MaxValue;
-
-                return distance.Y;
-            });
-
-            minimumDistance = Position.Y - closestCar.Position.Y;
-
-            if (closestCar == this) return null;
-
-            // If closest car is behind
-            if (minimumDistance < 0) return null;
-
-            closestCar.Color = Color.DarkOrange;
+            var aheadCars = Lane.Cars.Where (car => car.Position.Y < Position.Y);
+            
+            Car closestCar = aheadCars.MinBy (Distance);
 
             return closestCar;
+        }
+
+        //------------------------------------------------------------------
+        private float Distance (Car car)
+        {
+            // Don't react with myself
+            if (car == this) return float.MaxValue;
+
+            var distance = Position - car.Position;
+
+            return distance.Y;
         }
 
         #region Collisions Detection
@@ -122,6 +117,8 @@ namespace Traffic
         {
             if (lane == null) return;
 
+            // ToDo: Use GetClosestCar
+
             if (lane.Cars.Any (Intersect))
                 Color = Color.OrangeRed;
         }
@@ -137,6 +134,7 @@ namespace Traffic
             if (Velocity < maximumSpeed)
                 Velocity += (Velocity * acceleration);
 
+//            Position -= new Vector2 (0, 0.5f);
         }
 
         //------------------------------------------------------------------
@@ -144,6 +142,8 @@ namespace Traffic
         {
             if (Velocity > minimumSpeed)
                 Velocity -= (Velocity * acceleration);
+
+//            Position += new Vector2 (0, 0.5f);
         }
 
         #endregion

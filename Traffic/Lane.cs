@@ -1,38 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Tools;
 using Tools.Markers;
 
 namespace Traffic
 {
     internal class Lane
     {
-        private int ID;
-        private List <Car> carsToAdd;
-        private List <Car> carsToRemove;
-        private int maximumCars = 4;
-        private int height;
-
-        // ToDo: Nested Properties (Try, Test, Implement everywhre, StackOverflow)
-        private class Properties
+        private class Attributes
         {
+            public int ID;
+            public int MaximumCars = 4;
+            public int Height;
+            public List<Car> CarsToAdd;
+            public List<Car> CarsToRemove;
         }
 
-        private class Helpers
-        {
-        }
+        Attributes Properties = new Attributes ();
 
         //------------------------------------------------------------------
         public List <Car> Cars { get; set; }
@@ -55,15 +41,15 @@ namespace Traffic
         //------------------------------------------------------------------
         public Lane (Road road, int id)
         {
-            ID = id;
-            CalculatePosition (ID);
-            CalculateVelocity (ID);
+            Properties.ID = id;
+            CalculatePosition (Properties.ID);
+            CalculateVelocity (Properties.ID);
             Road = road;
-            height = Road.Game.GraphicsDevice.Viewport.Height;
+            Properties.Height = Road.Game.GraphicsDevice.Viewport.Height;
 
             Cars = new List <Car> ();
-            carsToAdd = new List <Car> ();
-            carsToRemove = new List <Car> ();
+            Properties.CarsToAdd = new List<Car> ();
+            Properties.CarsToRemove = new List<Car> ();
         }
 
         //------------------------------------------------------------------
@@ -81,14 +67,12 @@ namespace Traffic
             int position = id * laneWidth + laneWidth / 2;
             
             Position = new Vector2 (position, 0);
-           
-
         }
 
         //------------------------------------------------------------------
         public void Create ()
         {
-            int carsAmount = Random.Next (maximumCars);
+            int carsAmount = Random.Next (Properties.MaximumCars);
 
             foreach (var number in Enumerable.Range (0, carsAmount))
             {
@@ -99,7 +83,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void CreateCar ()
         {
-            var car = new Car (this, GetInsertPosition ());
+            var car = new Car (this, GetInsertionPosition ());
             car.Create ();
             Cars.Add (car);
         }
@@ -115,15 +99,17 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private int GetInsertPosition ()
+        // Return point outside the screen
+        private int GetInsertionPosition ()
         {
             float playerVelocity = (Road.Player != null ) ? Road.Player.Velocity : 0;
-            int shift = (Velocity > playerVelocity) ? height : -height;
+            int shift = (Velocity > playerVelocity) ? Properties.Height : -Properties.Height;
 
-            return (int) (Random.NextDouble () * height + shift);
+            return (int) (Random.NextDouble () * Properties.Height + shift);
         }
 
         #endregion
+
 
         #region Update
 
@@ -132,14 +118,13 @@ namespace Traffic
         {
             Cars.ForEach (car => car.Update ());
 
-            // ToDo: ѕотому что вначале добавл€ем а затем Lane = null указатель на Lane == null?
             AddQueuedCars ();
             RemoveQueuedCars ();
 
             CleanUpCars ();
             AppendCars ();
 
-            new Text (Cars.Count.ToString (), Position);
+            new Text (ToString () + ":" + Cars.Count, Position);
         }
 
 
@@ -148,7 +133,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AppendCars ()
         {
-            if (Cars.Count < maximumCars)
+            if (Cars.Count < Properties.MaximumCars)
             {
                 CreateCar ();
             }
@@ -158,7 +143,7 @@ namespace Traffic
         private void CleanUpCars ()
         {
             // Remove Cars outside the screen
-            var border = height * 3;
+            var border = Properties.Height * 3;
             Cars.RemoveAll (car =>
             {
                 int position = (int) car.Position.Y;
@@ -169,29 +154,29 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AddQueuedCars ()
         {
-            Cars.AddRange (carsToAdd);
-            carsToAdd.ForEach (OwnCar);
-            carsToAdd.Clear ();
+            Cars.AddRange (Properties.CarsToAdd);
+            Properties.CarsToAdd.ForEach (OwnCar);
+            Properties.CarsToAdd.Clear ();
         }
 
         //------------------------------------------------------------------
         private void RemoveQueuedCars ()
         {
-            carsToRemove.ForEach (FreeCar);
-            Cars.RemoveAll (carsToRemove.Contains);
-            carsToRemove.Clear ();
+            Properties.CarsToRemove.ForEach (FreeCar);
+            Cars.RemoveAll (Properties.CarsToRemove.Contains);
+            Properties.CarsToRemove.Clear ();
         }
 
         //------------------------------------------------------------------
         public void Add (Car car)
         {
-            carsToAdd.Add (car);
+            Properties.CarsToAdd.Add (car);
         }
 
         //------------------------------------------------------------------
         public void Remove (Car car)
         {
-            carsToRemove.Add (car);
+            Properties.CarsToRemove.Add (car);
         }
 
         //------------------------------------------------------------------
@@ -204,7 +189,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void FreeCar (Car car)
         {
-            car.Lane = null;
+//            car.Lane = null;
         }
 
         #endregion
@@ -230,7 +215,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public override string ToString ()
         {
-            return string.Format ("Lane: {0}", ID);
+            return string.Format ("{0}", Properties.ID);
         }
 
         //------------------------------------------------------------------
@@ -255,14 +240,11 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public void MoveCars ()
+        public void MoveCars (float shift)
         {
-            // Move all Cars except Player
             foreach (var car in Cars)
             {
-                if (car == Road.Player) continue;
-
-                car.Move (car.Velocity);
+                car.Move (shift);
             }
         }
     }

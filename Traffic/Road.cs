@@ -1,13 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools;
@@ -31,7 +23,6 @@ namespace Traffic
         public Road (Game game)
         {
             Game = game;
-
 
             spriteBatch = new SpriteBatch (Game.GraphicsDevice);
         }
@@ -90,7 +81,7 @@ namespace Traffic
 
             foreach (var lane in lanes)
             {
-                lane.MoveCars ();
+                lane.MoveCars (shift);
             }
         }
 

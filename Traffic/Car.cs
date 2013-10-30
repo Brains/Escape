@@ -1,19 +1,5 @@
-using System;
-using System.Linq;
-using System.Text;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Physics;
-using Tools;
-using Tools.Markers;
-using Point = Tools.Markers.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Traffic
@@ -24,14 +10,14 @@ namespace Traffic
         private Vector2 position;
         private Vector2 origin;
         private Rectangle bounds;
-        public static int VelocityFactor = 100;
 
         protected Texture2D Texture;
         protected Color InitialColor;
         protected string TextureName;
 
+        public static float VelocityFactor = 100;
+
         //------------------------------------------------------------------
-        // ToDo: remove Car.Position (use only Move)
         public Vector2 Position
         {
             get { return position; }
@@ -48,15 +34,16 @@ namespace Traffic
         public Lane Lane { get; set; }
         public int Height { get; set; }
 
+
         #region Creation
 
         //------------------------------------------------------------------
-        public Car (Lane lane, int getInsertPosition)
+        public Car (Lane lane, int horizont)
         {
             Lane = lane;
             InitialColor = Color.NavajoWhite;
             TextureName = "Car";
-            Position = new Vector2 (lane.Position.X, getInsertPosition);
+            Position = new Vector2 (lane.Position.X, horizont);
             Velocity = lane.Velocity;
         }
 
@@ -88,9 +75,6 @@ namespace Traffic
             Color = InitialColor;
 
             Move (-Velocity);
-
-            new Text (Velocity.ToString ("F0"), Position, Color.Maroon, true);
-            
         }
 
         //------------------------------------------------------------------
@@ -105,7 +89,6 @@ namespace Traffic
             var @from = new Vector2 (bounds.X, bounds.Y);
             var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
             new Tools.Markers.Rectangle (@from, to);
-
 
             if (car == this) return false;
 
