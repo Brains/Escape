@@ -1,12 +1,16 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Traffic.Drivers;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Tools;
 
 namespace Traffic
 {
     internal class Car
     {
-        //------------------------------------------------------------------
+        //-----------------------------------------------------------------
+        private Driver driver;
         private Vector2 position;
         private Vector2 origin;
         private Rectangle bounds;
@@ -14,6 +18,10 @@ namespace Traffic
         protected Texture2D Texture;
         protected Color InitialColor;
         protected string TextureName;
+
+        protected float MaximumSpeed;
+        protected float MinimumSpeed = 0;
+        protected float Acceleration = 0.01f;
 
         public static float VelocityFactor = 100;
 
@@ -34,17 +42,18 @@ namespace Traffic
         public Lane Lane { get; set; }
         public int Height { get; set; }
 
-
         #region Creation
 
         //------------------------------------------------------------------
         public Car (Lane lane, int horizont)
         {
+            driver = new Driver (this);
             Lane = lane;
             InitialColor = Color.NavajoWhite;
             TextureName = "Car";
             Position = new Vector2 (lane.Position.X, horizont);
-            Velocity = lane.Velocity;
+            MaximumSpeed = lane.Velocity;
+            Velocity = MaximumSpeed - Lane.Random.Next ((int) (MaximumSpeed * 0.2));
         }
 
         //------------------------------------------------------------------
@@ -74,7 +83,35 @@ namespace Traffic
         {
             Color = InitialColor;
 
+            Accelerate ();
+
             Move (-Velocity);
+
+            driver.Update ();
+
+            DetectCollisions ();
+        }
+
+        #endregion
+
+        #region Controls
+
+        //------------------------------------------------------------------
+        protected void Accelerate ()
+        {
+            if (Velocity < MaximumSpeed)
+                Velocity += (Velocity * Acceleration);
+
+//          Position -= new Vector2 (0, 0.5f);
+        }
+
+        //------------------------------------------------------------------
+        public void Brake ()
+        {
+            if (Velocity > MinimumSpeed)
+                Velocity -= (Velocity * Acceleration * 3);
+
+//          Position += new Vector2 (0, 0.5f);
         }
 
         //------------------------------------------------------------------
@@ -84,49 +121,64 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
+        public bool CheckLane (Lane lane)
+        {
+            if (lane == null) return false;
+
+            // Debug
+            if (!lane.IsFreeSpace (Position.Y, Height))
+            {
+//                new Tools.Markers.Text ("Danger", new Vector2 (lane.Position.X, Position.Y), Color.IndianRed);
+            }
+
+            return lane.IsFreeSpace (Position.Y, Height);
+        }
+
+        //------------------------------------------------------------------
+        public void ChangeLane (Lane lane)
+        {
+            if (lane == null) return;
+
+            lane.Add (this);
+            Lane.Remove (this);
+        }
+
+        #endregion
+
+        #region Collisions Detection
+
+        //------------------------------------------------------------------
+        protected void DetectCollisions ()
+        {
+            DetectCollisionsOnLane (Lane.Left);
+            DetectCollisionsOnLane (Lane);
+            DetectCollisionsOnLane (Lane.Right);
+        }
+
+        //------------------------------------------------------------------
+        private void DetectCollisionsOnLane (Lane lane)
+        {
+            if (lane == null) return;
+
+            // ToDo: Use GetClosestCar
+
+            foreach (var car in lane.Cars)
+            {
+                if (Intersect (car))
+                    lane.Remove (car);
+            }
+        }
+
+        //------------------------------------------------------------------
         public bool Intersect (Car car)
         {
             var @from = new Vector2 (bounds.X, bounds.Y);
             var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
-            new Tools.Markers.Rectangle (@from, to);
+//            new Tools.Markers.Rectangle (@from, to);
 
             if (car == this) return false;
 
             return bounds.Intersects (car.bounds);
-        }
-
-
-        //------------------------------------------------------------------
-        public bool ChangeOnLeftLane ()
-        {
-            if (Lane.Left == null) return false;
-            if (!Lane.Left.IsFreeSpace (Position.Y, Height))
-            {
-//                Tools.Markers.Manager.Clear = false;
-//                new Text ("No Space", Position, Color.Red);
-                return false;
-            }
-
-            Lane.Left.Add (this);
-            Lane.Remove (this);
-
-            return true;
-        }
-
-        //------------------------------------------------------------------
-        public bool ChangeOnRightLane ()
-        {
-            if (Lane.Right == null) return false;
-            if (!Lane.Right.IsFreeSpace (Position.Y, Height))
-            {
-//                Tools.Markers.Manager.Clear = false;
-//                new Text ("No Space", Position, Color.Red);
-                return false;
-            }
-            Lane.Right.Add (this);
-            Lane.Remove (this);
-
-            return true;
         }
 
         #endregion

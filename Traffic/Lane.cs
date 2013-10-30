@@ -12,7 +12,7 @@ namespace Traffic
         private class Attributes
         {
             public int ID;
-            public int MaximumCars = 4;
+            public int MaximumCars = 6;
             public int Height;
             public List<Car> CarsToAdd;
             public List<Car> CarsToRemove;
@@ -21,7 +21,7 @@ namespace Traffic
         Attributes Properties = new Attributes ();
 
         //------------------------------------------------------------------
-        public List <Car> Cars { get; set; }
+        public List <Car> Cars { get; private set; }
         public Vector2 Position { get; set; }
         public int Velocity { get; set; }
         public Lane Left { get; set; }
@@ -194,11 +194,6 @@ namespace Traffic
 
         #endregion
 
-        //------------------------------------------------------------------
-
-        //------------------------------------------------------------------
-
-        //------------------------------------------------------------------
 
         #endregion
 
@@ -222,17 +217,18 @@ namespace Traffic
         public bool IsFreeSpace (float horizontal, float height)
         {
             // ToDo: Use GetClosestCar
+            // ToDo: I can use Rectangle.Intersection here
 
             foreach (var car in Cars)
             {
-                float lowerBorder = horizontal - (height + car.Height) / 2;
-                float upperBorder = horizontal + (height + car.Height) / 2;
+                float upperBorder = horizontal - (height + car.Height) / 1;
+                float lowerBorder = horizontal + (height + car.Height) / 1;
 
-//                new Tools.Markers.Rectangle (
-//                    new Vector2 (Position.X - 20, lowerBorder + height / 2),
-//                    new Vector2 (Position.X + 20, upperBorder - height / 2), Color.Red);
+                new Tools.Markers.Rectangle (
+                    new Vector2 (Position.X - 20, upperBorder + height / 2),
+                    new Vector2 (Position.X + 20, lowerBorder - height / 2), Color.LightGray);
 
-                if (car.Position.Y > lowerBorder && car.Position.Y < upperBorder)
+                if (car.Position.Y > upperBorder && car.Position.Y < lowerBorder)
                     return false;
             }
 
