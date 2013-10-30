@@ -31,13 +31,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\Cars\Car.png">
+    <Compile Include="Images\Road\Car.png">
       <Name>Car</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Images\Cars\Player.png">
-      <Name>Player</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

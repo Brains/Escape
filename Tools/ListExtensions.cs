@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Tools
 {
-    static public class Extensions
+    static public class ListExtensions
     {
         //------------------------------------------------------------------
         public static T MinBy <T, C> (this IEnumerable<T> sequence, Func<T, C> keySelector)
