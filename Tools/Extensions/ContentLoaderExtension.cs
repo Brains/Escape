@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
-
-namespace Tools
+namespace Tools.Extensions
 {
     public static class ContentLoaderExtension
     {
-        public static Dictionary<String, T> LoadContentFolder<T> (this ContentManager contentManager, String contentFolder)
+        public static Dictionary<string, T> LoadContentFolder<T> (this ContentManager contentManager, String contentFolder)
         {
             // Load directory info, abort if none
             DirectoryInfo dir = new DirectoryInfo (contentManager.RootDirectory + "\\" + contentFolder);

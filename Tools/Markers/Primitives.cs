@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Tools
+namespace Tools.Markers
 {
     public static class Primitives
     {
         #region Fields
 
-        private static readonly Dictionary<String, List<Vector2>> circleCache = new Dictionary<string, List<Vector2>> ();
+        private static readonly Dictionary<string, List <Vector2>> circleCache = new Dictionary<string, List<Vector2>> ();
 
         //private static readonly Dictionary<String, List<Vector2>> arcCache = new Dictionary<string, List<Vector2>>();
         private static Texture2D pixel;
@@ -216,7 +214,7 @@ namespace Tools
         /// <param name="spriteBatch">The destination drawing surface</param>
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void DrawRectangle(this SpriteBatch spriteBatch, Rectangle rect, Color color)
+        public static void DrawRectangle(this SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle rect, Color color)
         {
             DrawRectangle (spriteBatch, rect, color, 1.0f);
         }
@@ -228,7 +226,7 @@ namespace Tools
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the lines</param>
-        public static void DrawRectangle(this SpriteBatch spriteBatch, Rectangle rect, Color color, float thickness)
+        public static void DrawRectangle(this SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle rect, Color color, float thickness)
         {
             // TODO: Handle rotations
             DrawLine (spriteBatch, new Vector2 (rect.X, rect.Y), new Vector2 (rect.Right, rect.Y), color, thickness); // top
@@ -246,7 +244,7 @@ namespace Tools
         /// <param name="color">The color to draw the rectangle in</param>
         public static void DrawRectangle(this SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color)
         {
-            DrawRectangle (spriteBatch, new Rectangle ((int) location.X, (int) location.Y, (int) size.X, (int) size.Y), color, 1.0f);
+            DrawRectangle (spriteBatch, new Microsoft.Xna.Framework.Rectangle ((int) location.X, (int) location.Y, (int) size.X, (int) size.Y), color, 1.0f);
         }
 
         /// <summary>
@@ -259,7 +257,7 @@ namespace Tools
         /// <param name="thickness">The thickness of the line</param>
         public static void DrawRectangle(this SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color, float thickness)
         {
-            DrawRectangle (spriteBatch, new Rectangle ((int) location.X, (int) location.Y, (int) size.X, (int) size.Y), color, thickness);
+            DrawRectangle (spriteBatch, new Microsoft.Xna.Framework.Rectangle ((int) location.X, (int) location.Y, (int) size.X, (int) size.Y), color, thickness);
         }
 
         /// <summary>
@@ -268,7 +266,7 @@ namespace Tools
         /// <param name="spriteBatch">The destination drawing surface</param>
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void FillRectangle(this SpriteBatch spriteBatch, Rectangle rect, Color color)
+        public static void FillRectangle(this SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle rect, Color color)
         {
             if (pixel == null)
             {
@@ -286,7 +284,7 @@ namespace Tools
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="angle">The angle in radians to draw the rectangle at</param>
-        public static void FillRectangle(this SpriteBatch spriteBatch, Rectangle rect, Color color, float angle)
+        public static void FillRectangle(this SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle rect, Color color, float angle)
         {
             if (pixel == null)
             {

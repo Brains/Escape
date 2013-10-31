@@ -46,15 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContentLoaderExtension.cs" />
-    <Compile Include="ListExtensions.cs" />
+    <Compile Include="Extensions\ContentLoaderExtension.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Markers\Line.cs" />
     <Compile Include="Markers\Manager.cs" />
     <Compile Include="Markers\Marker.cs" />
     <Compile Include="Markers\Point.cs" />
+    <Compile Include="Markers\Primitives.cs" />
     <Compile Include="Markers\Rectangle.cs" />
     <Compile Include="Markers\Text.cs" />
-    <Compile Include="Primitives.cs" />
     <Compile Include="Processes\Controller.cs" />
     <Compile Include="Processes\Generic.cs" />
     <Compile Include="Processes\Process.cs" />
