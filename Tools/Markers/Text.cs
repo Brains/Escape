@@ -21,8 +21,6 @@ namespace Tools.Markers
             Position = position;
             String = text;
             Color = Color.DarkCyan;
-
-            Manager.Markers.Add (this);
         }
 
         //------------------------------------------------------------------

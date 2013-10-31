@@ -8,8 +8,6 @@ namespace Tools.Markers
         public Point (Vector2 position)
         {
             this.Position = position;
-
-            Manager.Markers.Add (this);
         }
 
         //------------------------------------------------------------------

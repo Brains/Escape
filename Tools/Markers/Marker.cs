@@ -11,6 +11,12 @@ namespace Tools.Markers
         protected Color Color = Color.DarkGray; // Default color
 
         //------------------------------------------------------------------
+        protected Marker ()
+        {
+            Manager.Instance.Markers.Add (this);
+        }
+
+        //------------------------------------------------------------------
         public abstract void Draw (SpriteBatch spriteBatch);
     }
 }

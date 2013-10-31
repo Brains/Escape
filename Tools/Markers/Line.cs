@@ -13,8 +13,6 @@ namespace Tools.Markers
         {
             From = @from;
             To = to;
-
-            Manager.Markers.Add (this);
         }
 
         //------------------------------------------------------------------

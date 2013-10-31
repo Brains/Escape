@@ -7,16 +7,23 @@ namespace Tools.Markers
 {
     public class Manager : DrawableGameComponent
     {
-        public static List<Marker> Markers { get; set; }
+        private SpriteBatch spriteBatch;
         public static Manager Instance { get; set; }
-        public static bool Clear { get; set; }
+        public List<Marker> Markers { get; set; }
+        public bool Clear { get; set; }
         
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
         {
             Instance = this;
-            Markers = new List<Marker> ();
             Clear = true;
+
+            // Draw Markers after all Draw calls
+            DrawOrder = int.MaxValue;
+
+            Markers = new List<Marker> ();
+
+            spriteBatch = new SpriteBatch (Game.GraphicsDevice);
         }
 
         //------------------------------------------------------------------
@@ -29,8 +36,6 @@ namespace Tools.Markers
         //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
-            var spriteBatch = new SpriteBatch (Game.GraphicsDevice);
-
             spriteBatch.Begin ();
 
             foreach (var marker in Markers)
