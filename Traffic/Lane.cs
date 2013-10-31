@@ -12,7 +12,7 @@ namespace Traffic
         private class Attributes
         {
             public int ID;
-            public int MaximumCars = 6;
+            public int MaximumCars = 3;
             public int Height;
             public List<Car> CarsToAdd;
             public List<Car> CarsToRemove;
@@ -124,7 +124,7 @@ namespace Traffic
             CleanUpCars ();
             AppendCars ();
 
-            new Text (ToString () + ":" + Cars.Count, Position);
+//            new Text (ToString () + ":" + Cars.Count, Position);
         }
 
 
@@ -184,6 +184,7 @@ namespace Traffic
         {
             car.Lane = this;
             car.Position = new Vector2 (Position.X, car.Position.Y);
+            car.CalculateMaximumVelocity ();
         }
 
         //------------------------------------------------------------------
@@ -224,9 +225,9 @@ namespace Traffic
                 float upperBorder = horizontal - (height + car.Height) / 1;
                 float lowerBorder = horizontal + (height + car.Height) / 1;
 
-                new Tools.Markers.Rectangle (
-                    new Vector2 (Position.X - 20, upperBorder + height / 2),
-                    new Vector2 (Position.X + 20, lowerBorder - height / 2), Color.LightGray);
+//                new Tools.Markers.Rectangle (
+//                    new Vector2 (Position.X - 20, upperBorder + height / 2),
+//                    new Vector2 (Position.X + 20, lowerBorder - height / 2), Color.DeepSkyBlue);
 
                 if (car.Position.Y > upperBorder && car.Position.Y < lowerBorder)
                     return false;

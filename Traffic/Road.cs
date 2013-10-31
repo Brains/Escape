@@ -73,7 +73,7 @@ namespace Traffic
         private void MoveCamera (float shift)
         {
             // Simulate of Camera movement by moving Road
-            position.Y += shift / Car.VelocityFactor;
+            position.Y += shift * 1.5f / Car.VelocityFactor;
 
             // Infinite loop for Road Texture
             if (position.Y > 800)

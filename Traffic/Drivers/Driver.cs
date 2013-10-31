@@ -28,7 +28,7 @@ namespace Traffic.Drivers
             float dangerousZone = (car.Height + closestCar.Height) / 1.0f;
             if (distance < dangerousZone)
             {
-                car.Color = Color.Maroon;
+                car.Color = Color.Orange;
 
                 AvoidCollisions ();
             }

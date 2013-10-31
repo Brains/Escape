@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Traffic.Drivers;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Tools;
+using Tools.Markers;
+using Point = Tools.Markers.Point;
 
 namespace Traffic
 {
@@ -19,8 +21,8 @@ namespace Traffic
         protected Color InitialColor;
         protected string TextureName;
 
-        protected float MaximumSpeed;
-        protected float MinimumSpeed = 0;
+        protected float MaximumVelocity;
+        protected float MinimumVelocity = 0;
         protected float Acceleration = 0.01f;
 
         public static float VelocityFactor = 100;
@@ -52,8 +54,8 @@ namespace Traffic
             InitialColor = Color.NavajoWhite;
             TextureName = "Car";
             Position = new Vector2 (lane.Position.X, horizont);
-            MaximumSpeed = lane.Velocity;
-            Velocity = MaximumSpeed - Lane.Random.Next ((int) (MaximumSpeed * 0.2));
+            
+            CalculateMaximumVelocity ();
         }
 
         //------------------------------------------------------------------
@@ -64,6 +66,13 @@ namespace Traffic
             Height = Texture.Height;
 
             CreateBoundingBox ();
+        }
+
+        //------------------------------------------------------------------
+        public virtual void CalculateMaximumVelocity ()
+        {
+            MaximumVelocity = Lane.Velocity - Lane.Random.Next ((int) (Lane.Velocity * 0.4));
+            Velocity = MaximumVelocity;
         }
 
         //------------------------------------------------------------------
@@ -99,25 +108,29 @@ namespace Traffic
         //------------------------------------------------------------------
         protected void Accelerate ()
         {
-            if (Velocity < MaximumSpeed)
+            if (Velocity < MaximumVelocity)
                 Velocity += (Velocity * Acceleration);
 
-//          Position -= new Vector2 (0, 0.5f);
+            new Text (Velocity.ToString ("F1"), Position, Color.RoyalBlue, true);
         }
 
         //------------------------------------------------------------------
         public void Brake ()
         {
-            if (Velocity > MinimumSpeed)
+            if (Velocity > MinimumVelocity)
                 Velocity -= (Velocity * Acceleration * 3);
-
-//          Position += new Vector2 (0, 0.5f);
         }
 
         //------------------------------------------------------------------
         public void Move (float shift)
         {
             Position += new Vector2 (0, shift / VelocityFactor);
+        }
+
+        //------------------------------------------------------------------
+        public void Move (Vector2 shift)
+        {
+            Position += shift / VelocityFactor;
         }
 
         //------------------------------------------------------------------
