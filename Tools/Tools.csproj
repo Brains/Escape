@@ -56,9 +56,12 @@
     <Compile Include="Markers\Text.cs" />
     <Compile Include="Primitives.cs" />
     <Compile Include="Processes\Controller.cs" />
+    <Compile Include="Processes\Generic.cs" />
     <Compile Include="Processes\Process.cs" />
     <Compile Include="Processes\Manager.cs" />
+    <Compile Include="Processes\Repeated.cs" />
     <Compile Include="Processes\Sequence.cs" />
+    <Compile Include="Processes\Sleep.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timers\Timer.cs" />
