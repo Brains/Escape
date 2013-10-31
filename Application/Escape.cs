@@ -17,12 +17,10 @@ namespace Application
 {
     public class Escape : Game
     {
-        GraphicsDeviceManager graphics;
-
         //------------------------------------------------------------------
         public Escape ( )
         {
-            graphics = new GraphicsDeviceManager (this);
+            GraphicsDeviceManager graphics = new GraphicsDeviceManager (this);
 //            graphics.IsFullScreen = true;
             graphics.PreferredBackBufferWidth = 480;
             graphics.PreferredBackBufferHeight = 800;
@@ -30,6 +28,8 @@ namespace Application
             
             Content.RootDirectory = "Content";
 
+            Components.Add (new Tools.Processes.Manager (this));
+            Components.Add (new Tools.Timers.Manager (this));
             Components.Add (new Traffic.Manager (this));
             Components.Add (new Physics.KeyboardInput (this));
             Components.Add (new Tools.Markers.Manager (this));
