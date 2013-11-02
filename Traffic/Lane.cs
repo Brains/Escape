@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
+using Tools.Processes;
 
 namespace Traffic
 {
@@ -84,16 +85,22 @@ namespace Traffic
         private void CreateCar ()
         {
             var car = new Car (this, GetInsertionPosition ());
+
+            // ToDo: Below
+            car.ID = Properties.ID * Cars.Count;
+
             car.Create ();
             Cars.Add (car);
+            OwnCar (car);
         }
 
         //------------------------------------------------------------------
         public Player CreatePlayer (Game game)
         {
-            var player = new Player (this, 600);
+            var player = new Player (this, 500);
             player.Create ();
             Cars.Add (player);
+            OwnCar (player);
 
             return player;
         }
@@ -121,7 +128,7 @@ namespace Traffic
             AddQueuedCars ();
             RemoveQueuedCars ();
 
-            CleanUpCars ();
+            CleanUp ();
             AppendCars ();
 
 //            new Text (ToString () + ":" + Cars.Count, Position);
@@ -140,7 +147,7 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private void CleanUpCars ()
+        private void CleanUp ()
         {
             // Remove Cars outside the screen
             var border = Properties.Height * 3;
@@ -149,6 +156,9 @@ namespace Traffic
                 int position = (int) car.Position.Y;
                 return position < -border || position > border;
             });
+
+            // Remove all dead Cars
+            Cars.RemoveAll (car => car.Lives <= 0);
         }
 
         //------------------------------------------------------------------
@@ -183,8 +193,10 @@ namespace Traffic
         private void OwnCar (Car car)
         {
             car.Lane = this;
-            car.Position = new Vector2 (Position.X, car.Position.Y);
-            car.CalculateMaximumVelocity ();
+            
+//            car.Position = new Vector2 (Position.X, car.Position.Y);
+
+            car.Driver.Velocity = Velocity - Random.Next ((int) (Velocity * 0.4));
         }
 
         //------------------------------------------------------------------
@@ -212,28 +224,6 @@ namespace Traffic
         public override string ToString ()
         {
             return string.Format ("{0}", Properties.ID);
-        }
-
-        //------------------------------------------------------------------
-        public bool IsFreeSpace (float horizontal, float height)
-        {
-            // ToDo: Use GetClosestCar
-            // ToDo: I can use Rectangle.Intersection here
-
-            foreach (var car in Cars)
-            {
-                float upperBorder = horizontal - (height + car.Height) / 1;
-                float lowerBorder = horizontal + (height + car.Height) / 1;
-
-//                new Tools.Markers.Rectangle (
-//                    new Vector2 (Position.X - 20, upperBorder + height / 2),
-//                    new Vector2 (Position.X + 20, lowerBorder - height / 2), Color.DeepSkyBlue);
-
-                if (car.Position.Y > upperBorder && car.Position.Y < lowerBorder)
-                    return false;
-            }
-
-            return true;
         }
 
         //------------------------------------------------------------------

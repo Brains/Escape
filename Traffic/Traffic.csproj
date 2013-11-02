@@ -46,7 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Car.cs" />
+    <Compile Include="Drivers\Common.cs" />
     <Compile Include="Drivers\Driver.cs" />
+    <Compile Include="Drivers\Player.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Player.cs" />

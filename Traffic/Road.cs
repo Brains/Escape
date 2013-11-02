@@ -62,9 +62,7 @@ namespace Traffic
         public void Update ()
         {
             foreach (var lane in lanes)
-            {
                 lane.Update ();
-            }
 
             // Camera movement simulation
             MoveCamera (Player.Velocity);
@@ -74,16 +72,14 @@ namespace Traffic
         private void MoveCamera (float shift)
         {
             // Simulate of Camera movement by moving Road
-            position.Y += shift * 1.5f / Car.VelocityFactor;
+            position.Y += shift * 2.0f / Car.VelocityFactor;
 
             // Infinite loop for Road Texture
             if (position.Y > 800)
                 position.Y = 0;
 
             foreach (var lane in lanes)
-            {
                 lane.MoveCars (shift);
-            }
         }
 
         //------------------------------------------------------------------
@@ -94,9 +90,7 @@ namespace Traffic
             spriteBatch.Draw (texture, position - new Vector2 (0, texture.Height), Color.White);
 
             foreach (var lane in lanes)
-            {
                 lane.Draw (spriteBatch);
-            }
 
             spriteBatch.End ();
         }

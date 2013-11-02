@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Tools.Processes;
 using Traffic.Drivers;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Tools;
@@ -12,7 +14,7 @@ namespace Traffic
     internal class Car
     {
         //-----------------------------------------------------------------
-        private Driver driver;
+        public int ID;
         private Vector2 position;
         private Vector2 origin;
         private Rectangle bounds;
@@ -20,12 +22,10 @@ namespace Traffic
         protected Texture2D Texture;
         protected Color InitialColor;
         protected string TextureName;
-
-        protected float MaximumVelocity;
-        protected float MinimumVelocity = 0;
-        protected float Acceleration = 0.01f;
+        protected float Acceleration = 5;
 
         public static float VelocityFactor = 100;
+        private float angle;
 
         //------------------------------------------------------------------
         public Vector2 Position
@@ -33,8 +33,8 @@ namespace Traffic
             get { return position; }
             set
             {
-                bounds.X = (int) (value.X - origin.X);
-                bounds.Y = (int) (value.Y - origin.Y);
+                bounds.X = (int) (value.X - bounds.Width / 2);
+                bounds.Y = (int) (value.Y - bounds.Height / 2);
                 position = value;
             }
         }
@@ -42,20 +42,21 @@ namespace Traffic
         public float Velocity { get; set; }
         public Color Color { get; set; }
         public Lane Lane { get; set; }
-        public int Height { get; set; }
+        public int Lenght { get; set; }
+        public Driver Driver { get; set; }
+        public int Lives { get; set; }
 
         #region Creation
 
         //------------------------------------------------------------------
         public Car (Lane lane, int horizont)
         {
-            driver = new Driver (this);
             Lane = lane;
-            InitialColor = Color.NavajoWhite;
+            Driver = new Common (this);
+            InitialColor = Color.White;
             TextureName = "Car";
             Position = new Vector2 (lane.Position.X, horizont);
-            
-            CalculateMaximumVelocity ();
+            Lives = 1;
         }
 
         //------------------------------------------------------------------
@@ -63,16 +64,11 @@ namespace Traffic
         {
             Texture = Lane.Road.Images[TextureName];
             origin = new Vector2 (Texture.Width / 2, Texture.Height / 2);
-            Height = Texture.Height;
+            Lenght = Texture.Height;
+
+            Driver.Create ();
 
             CreateBoundingBox ();
-        }
-
-        //------------------------------------------------------------------
-        public virtual void CalculateMaximumVelocity ()
-        {
-            MaximumVelocity = Lane.Velocity - Lane.Random.Next ((int) (Lane.Velocity * 0.4));
-            Velocity = MaximumVelocity;
         }
 
         //------------------------------------------------------------------
@@ -81,6 +77,7 @@ namespace Traffic
             Vector2 leftBottom = Position - origin;
 
             bounds = new Rectangle ((int) leftBottom.X, (int) leftBottom.Y, Texture.Width, Texture.Height);
+            bounds.Inflate (-5, -5);
         }
 
         #endregion
@@ -96,9 +93,11 @@ namespace Traffic
 
             Move (-Velocity);
 
-            driver.Update ();
+            Driver.Update ();
 
             DetectCollisions ();
+
+            new Text (Velocity.ToString (), Position, Color.CadetBlue, true);
         }
 
         #endregion
@@ -108,43 +107,23 @@ namespace Traffic
         //------------------------------------------------------------------
         protected void Accelerate ()
         {
-            if (Velocity < MaximumVelocity)
-                Velocity += (Velocity * Acceleration);
+            if (Velocity < Driver.Velocity)
+                Velocity += Acceleration;
 
-            new Text (Velocity.ToString ("F1"), Position, Color.RoyalBlue, true);
+//            new Text (Velocity.ToString ("F1"), Position, Color.RoyalBlue, true);
         }
 
         //------------------------------------------------------------------
         public void Brake ()
         {
-            if (Velocity > MinimumVelocity)
-                Velocity -= (Velocity * Acceleration * 3);
+            if (Velocity > 0)
+                Velocity -= Acceleration * 3;
         }
 
         //------------------------------------------------------------------
-        public void Move (float shift)
+        public void Move (float velocity)
         {
-            Position += new Vector2 (0, shift / VelocityFactor);
-        }
-
-        //------------------------------------------------------------------
-        public void Move (Vector2 shift)
-        {
-            Position += shift / VelocityFactor;
-        }
-
-        //------------------------------------------------------------------
-        public bool CheckLane (Lane lane)
-        {
-            if (lane == null) return false;
-
-            // Debug
-            if (!lane.IsFreeSpace (Position.Y, Height))
-            {
-//                new Tools.Markers.Text ("Danger", new Vector2 (lane.Position.X, Position.Y), Color.IndianRed);
-            }
-
-            return lane.IsFreeSpace (Position.Y, Height);
+            Position += new Vector2 (0, velocity / VelocityFactor);
         }
 
         //------------------------------------------------------------------
@@ -154,6 +133,38 @@ namespace Traffic
 
             lane.Add (this);
             Lane.Remove (this);
+
+            AnimateGhangingLane (lane);
+        }
+
+        //------------------------------------------------------------------
+        private void AnimateGhangingLane (Lane lane)
+        {
+            // ToDo: Below
+            // Turn Off ChangeLane while animation
+            // When perform Add and Remove from Lane?
+            // After animation set precise Position
+
+            var sequence = new Sequence ();
+
+            // Rotate
+            Action <float> rotate = share => angle += share;
+            float finalAngle = (lane.Position.X < Position.X) ? MathHelper.ToRadians (-10) : MathHelper.ToRadians (10);
+            sequence.Add (new Controller (rotate, finalAngle, 0.1f));
+
+            // Moving
+            Action <Vector2> move = shift => Position += shift;
+            var diapason = new Vector2 (lane.Position.X - Position.X, 0);
+            sequence.Add (new Controller (move, diapason, 0.2f));
+
+            // Inverse rotate
+            sequence.Add (new Controller (rotate, -finalAngle, 0.1f));
+
+            // Level float rounding error
+            var finalPoint = new Vector2 (lane.Position.X, Position.Y);
+            sequence.Add (new Generic (() => Position = finalPoint));
+
+            sequence.AddToManager ();
         }
 
         #endregion
@@ -171,15 +182,28 @@ namespace Traffic
         //------------------------------------------------------------------
         private void DetectCollisionsOnLane (Lane lane)
         {
+//            if (Lives <= 0) return;
             if (lane == null) return;
 
-            // ToDo: Use GetClosestCar
+            var closestCar = Driver.FindClosestCar (lane.Cars);
+            if (closestCar == null) return;
 
-            foreach (var car in lane.Cars)
+            if (Intersect (closestCar))
             {
-                if (Intersect (car))
-                    lane.Remove (car);
+                Lives--;
+//                closestCar.Lives--;
+                if (this is Player)
+                {
+//                    Console.WriteLine (ToString () + " : " + closestCar.ID + " : " + closestCar.Lives);                        
+                }
             }
+
+//            if (Lives <= 0)
+//                lane.Remove (this);
+
+//            new Text (Lives.ToString (), Position, Color.RoyalBlue, true);
+
+//            foreach (var car in lane.Cars.Where (Intersect))
         }
 
         //------------------------------------------------------------------
@@ -187,7 +211,7 @@ namespace Traffic
         {
             var @from = new Vector2 (bounds.X, bounds.Y);
             var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
-//            new Tools.Markers.Rectangle (@from, to);
+            new Tools.Markers.Rectangle (@from, to);
 
             if (car == this) return false;
 
@@ -199,7 +223,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void Draw (SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw (Texture, Position, null, Color, 0.0f, origin, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw (Texture, Position, null, Color, angle, origin, 1.0f, SpriteEffects.None, 1.0f);
         }
     }
 }

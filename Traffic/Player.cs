@@ -6,8 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Physics;
-using Tools.Markers;
 using Tools;
+using Tools.Markers;
 using Tools.Processes;
 using Tools.Timers;
 
@@ -18,12 +18,10 @@ namespace Traffic
         //------------------------------------------------------------------
         public Player (Lane lane, int insertPoint) : base (lane, insertPoint)
         {
-            InitialColor = Color.SkyBlue;
+            Driver = new Drivers.Player (this);
+            InitialColor = Color.White;
             TextureName = "Player";
-
-            MaximumVelocity = 300;
-            MinimumVelocity = 50;
-            Acceleration = 0.02f;
+            Lives = 99;
         }
 
         #region Update
@@ -42,14 +40,13 @@ namespace Traffic
             if (KeyboardInput.IsKeyPressed (Keys.Right)) ChangeLane (Lane.Right);
             if (KeyboardInput.IsKeyPressed (Keys.Left)) ChangeLane (Lane.Left);
             if (KeyboardInput.IsKeyDown (Keys.Down)) Brake ();
-            if (KeyboardInput.IsKeyDown (Keys.Up)) Accelerate ();
+            if (KeyboardInput.IsKeyDown (Keys.Up)) ForceAccelerate ();
         }
 
         //------------------------------------------------------------------
-        public override void CalculateMaximumVelocity ()
+        protected void ForceAccelerate ()
         {
-            MaximumVelocity = 300;
-            Velocity = MaximumVelocity;
+            Velocity += Acceleration;
         }
 
         #endregion
