@@ -1,78 +1,93 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Tools;
 using Tools.Extensions;
 using Tools.Markers;
 
 namespace Traffic.Drivers
 {
-    internal class Driver
+    abstract class Driver
     {
-        private Car car;
+        //------------------------------------------------------------------
+        protected Car Car;
+        protected float DangerousZone;
+        public float Velocity { get; set; }
 
         //------------------------------------------------------------------
-        public Driver (Car car)
+        public abstract void Update ();
+
+        //------------------------------------------------------------------
+        public virtual void Create ()
         {
-            this.car = car;
+            DangerousZone = Car.Lenght * 2.0f;
         }
 
         //------------------------------------------------------------------
-        public void Update ()
+        protected void AvoidCollisions ()
         {
-            var closestCar = GetClosestCarAhead ();
+            Car.Brake ();
 
-            if (closestCar == null) return;
-
-            float distance = Distance (closestCar);
-//            closestCar.Color = Color.YellowGreen;
-
-            float dangerousZone = (car.Height + closestCar.Height) / 1.0f;
-            if (distance < dangerousZone)
+            if (CheckLane (Car.Lane.Left))
             {
-                car.Color = Color.Orange;
-
-                AvoidCollisions ();
-            }
-        }
-
-        //------------------------------------------------------------------
-        private Car GetClosestCarAhead ()
-        {
-            var aheadCars = car.Lane.Cars.Where (enemy => enemy.Position.Y < car.Position.Y);
-            
-            Car closestCar = aheadCars.MinBy <Car, float> (Distance);
-
-            return closestCar;
-        }
-
-        //------------------------------------------------------------------
-        private float Distance (Car enemy)
-        {
-            // Don't react with myself
-            if (enemy == car) return float.MaxValue;
-
-            var distance = car.Position - enemy.Position;
-
-            return distance.Y;
-        }
-
-        //------------------------------------------------------------------
-        private void AvoidCollisions ()
-        {
-
-            if (car.CheckLane (car.Lane.Left))
-            {
-                car.ChangeLane (car.Lane.Left);
+                Car.ChangeLane (Car.Lane.Left);
                 return;
             }
 
-            if (car.CheckLane (car.Lane.Right))
+            if (CheckLane (Car.Lane.Right))
             {
-                car.ChangeLane (car.Lane.Right);
+                Car.ChangeLane (Car.Lane.Right);
                 return;
             }
 
-            car.Brake ();
+            Car.Brake ();
         }
+
+
+        #region Sensor Analysis
+
+        //------------------------------------------------------------------
+        private float Distance (Car car)
+        {
+            // Don't react with own Car
+            if (car == Car) return float.MaxValue;
+
+            var distance = Car.Position - car.Position;
+
+            return Math.Abs (distance.Y);
+        }
+
+        //------------------------------------------------------------------
+        protected float GetMinimumDistance (IEnumerable<Car> cars)
+        {
+            if (!cars.Any ()) return float.MaxValue;
+
+            return cars.Min <Car, float> (Distance);
+        }
+
+        //------------------------------------------------------------------
+        protected bool IsAhead (Car car)
+        {
+            return car.Position.Y < Car.Position.Y;
+        }
+
+        //------------------------------------------------------------------
+        public bool CheckLane (Lane lane)
+        {
+            if (lane == null) return false;
+
+            if (GetMinimumDistance (lane.Cars) < DangerousZone)
+                return false;
+
+            return true;
+        }
+
+        //------------------------------------------------------------------
+        public Car FindClosestCar (IEnumerable<Car> cars)
+        {
+            return cars.MinBy <Car, float> (Distance);
+        }
+
+        #endregion
     }
 }
