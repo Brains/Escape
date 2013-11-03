@@ -30,12 +30,21 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public override void Update ()
         {
-            float distance = GetMinimumDistance (Car.Lane.Cars.Where (IsAhead));
+            Car.Accelerate ();
 
-            if (distance < DangerousZone)
+            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
+            if (closestCar == null) return;
+
+            if (Velocity > closestCar.Velocity && Distance (closestCar) < DangerousZone)
             {
                 AvoidCollisions ();
             }
+        }
+
+        //-----------------------------------------------------------------
+        private void ChangeLane ()
+        {
+            ChangeLane (Lane.Random.Next (2) == 0 ? Car.Lane.Left : Car.Lane.Right);
         }
     }
 }

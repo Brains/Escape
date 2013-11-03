@@ -89,8 +89,6 @@ namespace Traffic
         {
             Color = InitialColor;
 
-            Accelerate ();
-
             Move (-Velocity);
 
             Driver.Update ();
@@ -105,7 +103,7 @@ namespace Traffic
         #region Controls
 
         //------------------------------------------------------------------
-        protected void Accelerate ()
+        public void Accelerate ()
         {
             if (Velocity < Driver.Velocity)
                 Velocity += Acceleration;
@@ -117,13 +115,20 @@ namespace Traffic
         public void Brake ()
         {
             if (Velocity > 0)
-                Velocity -= Acceleration * 3;
+                Velocity -= Acceleration;
         }
 
         //------------------------------------------------------------------
         public void Move (float velocity)
         {
             Position += new Vector2 (0, velocity / VelocityFactor);
+        }
+
+        //------------------------------------------------------------------
+        void CorrectPositionOnLane ()
+        {
+            var finalPoint = new Vector2 (Lane.Position.X, Position.Y);
+            Position = finalPoint;
         }
 
         //------------------------------------------------------------------
@@ -149,7 +154,7 @@ namespace Traffic
 
             // Rotate
             Action <float> rotate = share => angle += share;
-            float finalAngle = (lane.Position.X < Position.X) ? MathHelper.ToRadians (-10) : MathHelper.ToRadians (10);
+            float finalAngle = (lane.Position.X < Position.X) ? MathHelper.ToRadians (-5) : MathHelper.ToRadians (5);
             sequence.Add (new Controller (rotate, finalAngle, 0.1f));
 
             // Moving
@@ -157,12 +162,12 @@ namespace Traffic
             var diapason = new Vector2 (lane.Position.X - Position.X, 0);
             sequence.Add (new Controller (move, diapason, 0.2f));
 
-            // Inverse rotate
-            sequence.Add (new Controller (rotate, -finalAngle, 0.1f));
+            // Inverse rotating
+            var inverseRotating = new Controller (rotate, -finalAngle, 0.1f);
+            sequence.Add (inverseRotating);
 
             // Level float rounding error
-            var finalPoint = new Vector2 (lane.Position.X, Position.Y);
-            sequence.Add (new Generic (() => Position = finalPoint));
+            sequence.Add (new Generic (CorrectPositionOnLane));
 
             sequence.AddToManager ();
         }
@@ -211,7 +216,7 @@ namespace Traffic
         {
             var @from = new Vector2 (bounds.X, bounds.Y);
             var to = new Vector2 (bounds.X + bounds.Width, bounds.Y + bounds.Height);
-            new Tools.Markers.Rectangle (@from, to);
+//            new Tools.Markers.Rectangle (@from, to);
 
             if (car == this) return false;
 

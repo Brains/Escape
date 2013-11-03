@@ -11,6 +11,8 @@ namespace Tools.Processes
 
         public bool Finished { get; set; }
 
+//        public event Action Finish = delegate { };
+
         //------------------------------------------------------------------
         protected Process (float duration)
         {
@@ -22,17 +24,17 @@ namespace Tools.Processes
         {
             Elapsed += elapsed;
 
-
             if (Elapsed >= Duration)
+            {
+//                Finish ();
                 Finished = true;
+            }
         }
 
         //-----------------------------------------------------------------
-        public void AddToManager ( )
+        public void AddToManager ()
         {
             Manager.Add (this);
         }
-
-
     }
 }

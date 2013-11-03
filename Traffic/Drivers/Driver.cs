@@ -20,34 +20,33 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public virtual void Create ()
         {
-            DangerousZone = Car.Lenght * 2.0f;
+            DangerousZone = Car.Lenght * 1.5f;
         }
 
         //------------------------------------------------------------------
         protected void AvoidCollisions ()
         {
-            Car.Brake ();
-
-            if (CheckLane (Car.Lane.Left))
-            {
-                Car.ChangeLane (Car.Lane.Left);
-                return;
-            }
-
-            if (CheckLane (Car.Lane.Right))
-            {
-                Car.ChangeLane (Car.Lane.Right);
-                return;
-            }
-
+            if (ChangeLane (Car.Lane.Left)) return;
+            if (ChangeLane (Car.Lane.Right)) return;
             Car.Brake ();
         }
 
+        //------------------------------------------------------------------
+        protected bool ChangeLane (Lane lane)
+        {
+            if (CheckLane (lane))
+            {
+                Car.ChangeLane (lane);
+                return true;
+            }
+
+            return false;
+        }
 
         #region Sensor Analysis
 
         //------------------------------------------------------------------
-        private float Distance (Car car)
+        protected float Distance (Car car)
         {
             // Don't react with own Car
             if (car == Car) return float.MaxValue;

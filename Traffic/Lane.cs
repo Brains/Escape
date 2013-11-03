@@ -97,7 +97,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public Player CreatePlayer (Game game)
         {
-            var player = new Player (this, 500);
+            var player = new Player (this, 400);
             player.Create ();
             Cars.Add (player);
             OwnCar (player);
