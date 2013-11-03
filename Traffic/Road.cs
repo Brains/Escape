@@ -7,10 +7,10 @@ using Tools.Extensions;
 
 namespace Traffic
 {
-    internal class Road
+    internal class Road : Object
     {
         //------------------------------------------------------------------
-        private List <Lane> lanes;
+//        private List <Lane> Components;
         private SpriteBatch spriteBatch;
         private Texture2D texture;
         private Vector2 position;
@@ -29,19 +29,19 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public void Create ()
+        public override void Setup ()
         {
             Images = Game.Content.LoadContentFolder <Texture2D> ("Images/Road");
             texture = Images["Road"];
 
             CreateLanes ();
-            Player = lanes.First ().CreatePlayer (Game);
+            Player = Components.First ().CreatePlayer (Game);
         }
 
         //------------------------------------------------------------------
         private void CreateLanes ()
         {
-            lanes = new List <Lane> ();
+//            Components = new List <Lane> ();
 
             foreach (var index in Enumerable.Range (0, 12))
             {
@@ -49,19 +49,19 @@ namespace Traffic
 
                 if (index != 0)
                 {
-                    lane.Left = lanes[index - 1];
+                    lane.Left = Components[index - 1];
                     lane.Left.Right = lane;
                 }
 
                 lane.Create ();
-                lanes.Add (lane);
+                Components.Add (lane);
             }
         }
 
         //------------------------------------------------------------------
-        public void Update ()
+        public override void Update ()
         {
-            foreach (var lane in lanes)
+            foreach (var lane in Components)
                 lane.Update ();
 
             // Camera movement simulation
@@ -78,18 +78,18 @@ namespace Traffic
             if (position.Y > 800)
                 position.Y = 0;
 
-            foreach (var lane in lanes)
+            foreach (var lane in Components)
                 lane.MoveCars (shift);
         }
 
         //------------------------------------------------------------------
-        public void Draw ()
+        public override void Draw ()
         {
             spriteBatch.Begin ();
             spriteBatch.Draw (texture, position, Color.White);
             spriteBatch.Draw (texture, position - new Vector2 (0, texture.Height), Color.White);
 
-            foreach (var lane in lanes)
+            foreach (var lane in Components)
                 lane.Draw (spriteBatch);
 
             spriteBatch.End ();

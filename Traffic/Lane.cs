@@ -4,11 +4,10 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
-using Tools.Processes;
 
 namespace Traffic
 {
-    internal class Lane
+    internal class Lane : Object
     {
         private class Attributes
         {

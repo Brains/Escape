@@ -22,7 +22,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Initialize ()
         {
-            road.Create ();
+            road.Setup ();
 
             base.Initialize ();
         }
