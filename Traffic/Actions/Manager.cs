@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Tools.Processes
+namespace Traffic.Actions
 {
     public class Manager : GameComponent
     {
-        private readonly List<Process> processes = new List <Process> ();
+        private readonly List<Action> processes = new List <Action> ();
 
         public static Manager Instance;
 
@@ -16,9 +16,9 @@ namespace Tools.Processes
         }
 
         //------------------------------------------------------------------
-        public static void Add (Process process)
+        public static void Add (Action action)
         {
-            Instance.processes.Add (process);
+            Instance.processes.Add (action);
         }
 
         //------------------------------------------------------------------

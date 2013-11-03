@@ -1,15 +1,13 @@
-﻿using System;
-
-namespace Tools.Processes
+﻿namespace Traffic.Actions
 {
-    public class Repeated : Process
+    public class Repeated : Action
     {
-        private readonly Action action;
+        private readonly System.Action action;
         private int counter;
-        private int times;
+        private readonly int times;
 
         //------------------------------------------------------------------
-        public Repeated (Action action, int times) : base (0)
+        public Repeated (System.Action action, int times)
         {
             this.action = action;
             this.times = times;

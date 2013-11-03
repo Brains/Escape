@@ -1,10 +1,6 @@
-﻿using System;
-using Android.Graphics.Drawables;
-using Microsoft.Xna.Framework;
-
-namespace Tools.Processes
+﻿namespace Traffic.Actions
 {
-    public abstract class Process
+    public abstract class Action
     {
         protected float Elapsed;
         protected readonly float Duration;
@@ -14,9 +10,15 @@ namespace Tools.Processes
 //        public event Action Finish = delegate { };
 
         //------------------------------------------------------------------
-        protected Process (float duration)
+        protected Action (float duration)
         {
             Duration = duration;
+        }
+
+        //------------------------------------------------------------------
+        protected Action ()
+        {
+            Duration = 0;
         }
 
         //------------------------------------------------------------------

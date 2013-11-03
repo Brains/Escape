@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 using Physics;
 using Tools;
+using Traffic.Actions;
 
 #endregion
 
@@ -28,7 +29,7 @@ namespace Application
             
             Content.RootDirectory = "Content";
 
-            Components.Add (new Tools.Processes.Manager (this));
+            Components.Add (new Traffic.Actions.Manager (this));
             Components.Add (new Tools.Timers.Manager (this));
             Components.Add (new Traffic.Manager (this));
             Components.Add (new Physics.KeyboardInput (this));

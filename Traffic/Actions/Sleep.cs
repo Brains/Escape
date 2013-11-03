@@ -1,6 +1,6 @@
-﻿namespace Tools.Processes
+﻿namespace Traffic.Actions
 {
-    public class Sleep : Process
+    public class Sleep : Action
     {
         //------------------------------------------------------------------
         public Sleep (float duration) : base (duration) {}

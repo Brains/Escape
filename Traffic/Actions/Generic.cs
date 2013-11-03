@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace Tools.Processes
+﻿namespace Traffic.Actions
 {
-    public class Generic : Process
+    public class Generic : Action
     {
-        private readonly Action action;
+        private readonly System.Action action;
 
         //------------------------------------------------------------------
-        public Generic (Action action) : base (0)
+        public Generic (System.Action action)
         {
             this.action = action;
         }

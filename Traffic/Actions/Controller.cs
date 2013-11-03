@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-
-namespace Tools.Processes
+﻿namespace Traffic.Actions
 {
-    public class Controller : Process
+    public class Controller : Action
     {
         private readonly dynamic action;
         private readonly dynamic diapason;
