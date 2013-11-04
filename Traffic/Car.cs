@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Tools.Processes;
+using Traffic.Actions;
 using Traffic.Drivers;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Tools;
@@ -15,7 +15,7 @@ namespace Traffic
     {
         //-----------------------------------------------------------------
         public int ID;
-//        private Vector2 position;
+        private Vector2 position;
         private Vector2 origin;
         private Rectangle bounds;
 
@@ -35,16 +35,16 @@ namespace Traffic
         public int Lives { get; set; }
 
         //------------------------------------------------------------------
-//        public Vector2 Position
-//        {
-//            get { return position; }
-//            set
-//            {
-//                bounds.X = (int) (value.X - bounds.Width / 2);
-//                bounds.Y = (int) (value.Y - bounds.Height / 2);
-//                position = value;
-//            }
-//        }
+        public Vector2 Position
+        {
+            get { return position; }
+            set
+            {
+                bounds.X = (int) (value.X - bounds.Width / 2);
+                bounds.Y = (int) (value.Y - bounds.Height / 2);
+                position = value;
+            }
+        }
 
 
         #region Creation
@@ -56,7 +56,7 @@ namespace Traffic
             Driver = new Common (this);
             InitialColor = Color.White;
             TextureName = "Car";
-            Position = new Vector2 (0, horizont);
+            Position = new Vector2 (lane.Position.X, horizont);
             Lives = 1;
         }
 
@@ -86,13 +86,8 @@ namespace Traffic
         #region Update
 
         //------------------------------------------------------------------
-        public override void Update (float elapsed)
+        public virtual void Update ()
         {
-            base.Update (elapsed);
-
-            if (ID == 0)
-                Console.WriteLine (Position);
-
             Color = InitialColor;
 
             Move (-Velocity);
@@ -127,14 +122,14 @@ namespace Traffic
         //------------------------------------------------------------------
         public void Move (float velocity)
         {
-            position += new Vector2 (0, velocity / VelocityFactor);
+            Position += new Vector2 (0, velocity / VelocityFactor);
         }
 
         //------------------------------------------------------------------
         void CorrectPositionOnLane ()
         {
             var finalPoint = new Vector2 (Lane.Position.X, Position.Y);
-//            Position = finalPoint;
+            Position = finalPoint;
         }
 
         //------------------------------------------------------------------
@@ -232,11 +227,9 @@ namespace Traffic
         #endregion
 
         //------------------------------------------------------------------
-        public override void Draw (SpriteBatch spriteBatch)
+        public void Draw (SpriteBatch spriteBatch)
         {
             spriteBatch.Draw (Texture, Position, null, Color, angle, origin, 1.0f, SpriteEffects.None, 1.0f);
-
-            base.Draw (spriteBatch);
         }
     }
 }
