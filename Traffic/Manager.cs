@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Traffic
 {
     public class Manager : DrawableGameComponent
     {
-        private Road road;
+        private readonly Road road;
+        private SpriteBatch spriteBatch;
 
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
@@ -22,25 +17,28 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Initialize ()
         {
+            spriteBatch = new SpriteBatch (Game.GraphicsDevice);
+            
             road.Setup ();
-
-            base.Initialize ();
         }
 
         //------------------------------------------------------------------
         public override void Update (GameTime gameTime)
         {
-            road.Update ();
+            float elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-            base.Update (gameTime);
+            road.Update (elapsed);
         }
 
         //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
-            road.Draw ();
+            spriteBatch.Begin ();
 
-            base.Draw (gameTime);
+            road.Draw (spriteBatch);
+
+            spriteBatch.End ();
+
         }
     }
 }

@@ -30,6 +30,8 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public override void Update ()
         {
+            base.Update ();
+
             Car.Accelerate ();
 
             Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
@@ -38,6 +40,12 @@ namespace Traffic.Drivers
             if (Velocity > closestCar.Velocity && Distance (closestCar) < DangerousZone)
             {
                 AvoidCollisions ();
+            }
+
+            if (Lane.Random.Next (30) == Car.ID)
+            {
+                Actions.Add (new Actions.Generic (ChangeLane));
+                Car.Color = Color.Green;
             }
         }
 

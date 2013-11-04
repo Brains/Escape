@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Tools.Extensions;
 using Tools.Markers;
+using Traffic.Actions;
 
 namespace Traffic.Drivers
 {
@@ -11,11 +12,19 @@ namespace Traffic.Drivers
     {
         //------------------------------------------------------------------
         protected Car Car;
+        protected List<Actions.Action> Actions = new List<Actions.Action> ();
         protected float DangerousZone;
         public float Velocity { get; set; }
 
         //------------------------------------------------------------------
-        public abstract void Update ();
+        public virtual void Update ()
+        {
+//            float elapsed = /*1 / 60*/; //(float) gameTime.ElapsedGameTime.TotalSeconds;
+
+//            Actions.ForEach (action => action.Update (elapsed));
+
+            Actions.RemoveAll (actions => actions.Finished);
+        }
 
         //------------------------------------------------------------------
         public virtual void Create ()

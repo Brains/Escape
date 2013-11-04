@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\Composite.cs" />
+    <Compile Include="Actions\Loop.cs" />
     <Compile Include="Actions\Manager.cs" />
     <Compile Include="Actions\Controller.cs" />
     <Compile Include="Actions\Generic.cs" />

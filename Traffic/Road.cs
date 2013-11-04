@@ -10,10 +10,7 @@ namespace Traffic
     internal class Road : Object
     {
         //------------------------------------------------------------------
-//        private List <Lane> Components;
-        private SpriteBatch spriteBatch;
         private Texture2D texture;
-        private Vector2 position;
 
         //------------------------------------------------------------------
         public Game Game { get; set; }
@@ -21,11 +18,9 @@ namespace Traffic
         public Dictionary <string, Texture2D> Images { get; set; }
 
         //------------------------------------------------------------------
-        public Road (Game game)
+        public Road (Game game) : base (null)
         {
             Game = game;
-
-            spriteBatch = new SpriteBatch (Game.GraphicsDevice);
         }
 
         //------------------------------------------------------------------
@@ -35,13 +30,13 @@ namespace Traffic
             texture = Images["Road"];
 
             CreateLanes ();
-            Player = Components.First ().CreatePlayer (Game);
+            Player = (Components.First () as Lane).CreatePlayer (Game);
         }
 
         //------------------------------------------------------------------
         private void CreateLanes ()
         {
-//            Components = new List <Lane> ();
+            Lane left = null;
 
             foreach (var index in Enumerable.Range (0, 12))
             {
@@ -49,9 +44,11 @@ namespace Traffic
 
                 if (index != 0)
                 {
-                    lane.Left = Components[index - 1];
+                    lane.Left = left;
                     lane.Left.Right = lane;
                 }
+
+                left = lane;
 
                 lane.Create ();
                 Components.Add (lane);
@@ -59,10 +56,9 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public override void Update ()
+        public override void Update (float elapsed)
         {
-            foreach (var lane in Components)
-                lane.Update ();
+            base.Update (elapsed);
 
             // Camera movement simulation
             MoveCamera (Player.Velocity);
@@ -72,27 +68,20 @@ namespace Traffic
         private void MoveCamera (float shift)
         {
             // Simulate of Camera movement by moving Road
-            position.Y += shift * 2.0f / Car.VelocityFactor;
+            Position += new Vector2 (0, shift * 2.0f / Car.VelocityFactor);
 
             // Infinite loop for Road Texture
-            if (position.Y > 800)
-                position.Y = 0;
-
-            foreach (var lane in Components)
-                lane.MoveCars (shift);
+            if (Position.Y > 800)
+                Position = new Vector2 (Position.X, 0);
         }
 
         //------------------------------------------------------------------
-        public override void Draw ()
+        public override void Draw (SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin ();
-            spriteBatch.Draw (texture, position, Color.White);
-            spriteBatch.Draw (texture, position - new Vector2 (0, texture.Height), Color.White);
+            base.Draw (spriteBatch);
 
-            foreach (var lane in Components)
-                lane.Draw (spriteBatch);
-
-            spriteBatch.End ();
+            spriteBatch.Draw (texture, Position, Color.White);
+            spriteBatch.Draw (texture, Position - new Vector2 (0, texture.Height), Color.White);
         }
     }
 }

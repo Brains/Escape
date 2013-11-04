@@ -5,7 +5,7 @@ namespace Traffic.Actions
 {
     public class Manager : GameComponent
     {
-        private readonly List<Action> processes = new List <Action> ();
+        private readonly List<Action> actions = new List <Action> ();
 
         public static Manager Instance;
 
@@ -18,7 +18,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public static void Add (Action action)
         {
-            Instance.processes.Add (action);
+            Instance.actions.Add (action);
         }
 
         //------------------------------------------------------------------
@@ -26,12 +26,12 @@ namespace Traffic.Actions
         {
             float elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-            foreach (var process in processes)
+            foreach (var process in actions)
             {
                 process.Update (elapsed);
             }
 
-            processes.RemoveAll (process => process.Finished);
+            actions.RemoveAll (process => process.Finished);
         }
 
     }

@@ -20,15 +20,14 @@ namespace Traffic
 
         Attributes Properties = new Attributes ();
 
+
         //------------------------------------------------------------------
-        public List <Car> Cars { get; private set; }
-        public Vector2 Position { get; set; }
+        public List <Car> Cars { get; private set; } 
         public int Velocity { get; set; }
         public Lane Left { get; set; }
         public Lane Right { get; set; }
-        public Road Road { get; set; }
         public static Random Random { get; set; }
-
+        public Road Road { get; private set; }
 
         #region Creation
 
@@ -39,12 +38,12 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public Lane (Road road, int id)
+        public Lane (Road road, int id) : base (road)
         {
             Properties.ID = id;
+            Road = road;
             CalculatePosition (Properties.ID);
             CalculateVelocity (Properties.ID);
-            Road = road;
             Properties.Height = Road.Game.GraphicsDevice.Viewport.Height;
 
             Cars = new List <Car> ();
@@ -86,7 +85,7 @@ namespace Traffic
             var car = new Car (this, GetInsertionPosition ());
 
             // ToDo: Below
-            car.ID = Properties.ID * Cars.Count;
+            car.ID = Properties.ID * Properties.MaximumCars + Cars.Count;
 
             car.Create ();
             Cars.Add (car);
@@ -108,7 +107,7 @@ namespace Traffic
         // Return point outside the screen
         private int GetInsertionPosition ()
         {
-            float playerVelocity = (Road.Player != null ) ? Road.Player.Velocity : 0;
+            float playerVelocity = (Road.Player != null) ? Road.Player.Velocity : 0;
             int shift = (Velocity > playerVelocity) ? Properties.Height : -Properties.Height;
 
             return (int) (Random.NextDouble () * Properties.Height + shift);
@@ -120,9 +119,9 @@ namespace Traffic
         #region Update
 
         //------------------------------------------------------------------
-        public void Update ()
+        public override void Update (float elapsed)
         {
-            Cars.ForEach (car => car.Update ());
+            base.Update (elapsed);
 
             AddQueuedCars ();
             RemoveQueuedCars ();
@@ -130,9 +129,11 @@ namespace Traffic
             CleanUp ();
             AppendCars ();
 
+            // ToDo: It's a Hack. Think againg about it.
+            Components.AddRange (Cars);
+
 //            new Text (ToString () + ":" + Cars.Count, Position);
         }
-
 
         #region Cars Management
 
@@ -157,7 +158,7 @@ namespace Traffic
             });
 
             // Remove all dead Cars
-            Cars.RemoveAll (car => car.Lives <= 0);
+            Cars.RemoveAll (car => car.Deleted);
         }
 
         //------------------------------------------------------------------
@@ -210,28 +211,9 @@ namespace Traffic
         #endregion
 
         //------------------------------------------------------------------
-        public void Draw (SpriteBatch spriteBatch)
-        {
-            foreach (var car in Cars)
-            {
-                car.Draw (spriteBatch);
-            }
-        }
-
-
-        //------------------------------------------------------------------
         public override string ToString ()
         {
             return string.Format ("{0}", Properties.ID);
-        }
-
-        //------------------------------------------------------------------
-        public void MoveCars (float shift)
-        {
-            foreach (var car in Cars)
-            {
-                car.Move (shift);
-            }
         }
     }
 }

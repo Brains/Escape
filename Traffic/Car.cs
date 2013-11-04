@@ -11,7 +11,7 @@ using Point = Tools.Markers.Point;
 
 namespace Traffic
 {
-    internal class Car
+    internal class Car : Object
     {
         //-----------------------------------------------------------------
         public int ID;
@@ -27,6 +27,13 @@ namespace Traffic
         public static float VelocityFactor = 100;
         private float angle;
 
+        public float Velocity { get; set; }
+        public Color Color { get; set; }
+        public Lane Lane { get; set; }
+        public int Lenght { get; set; }
+        public Driver Driver { get; set; }
+        public int Lives { get; set; }
+
         //------------------------------------------------------------------
         public Vector2 Position
         {
@@ -39,17 +46,11 @@ namespace Traffic
             }
         }
 
-        public float Velocity { get; set; }
-        public Color Color { get; set; }
-        public Lane Lane { get; set; }
-        public int Lenght { get; set; }
-        public Driver Driver { get; set; }
-        public int Lives { get; set; }
 
         #region Creation
 
         //------------------------------------------------------------------
-        public Car (Lane lane, int horizont)
+        public Car (Lane lane, int horizont) : base (lane)
         {
             Lane = lane;
             Driver = new Common (this);
@@ -95,7 +96,7 @@ namespace Traffic
 
             DetectCollisions ();
 
-            new Text (Velocity.ToString (), Position, Color.CadetBlue, true);
+            new Text (ID.ToString (), Position, Color.CadetBlue, true);
         }
 
         #endregion
@@ -203,8 +204,8 @@ namespace Traffic
                 }
             }
 
-//            if (Lives <= 0)
-//                lane.Remove (this);
+            if (Lives <= 0)
+                Deleted = true;
 
 //            new Text (Lives.ToString (), Position, Color.RoyalBlue, true);
 
