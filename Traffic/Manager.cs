@@ -17,9 +17,15 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Initialize ()
         {
+<<<<<<< HEAD
             spriteBatch = new SpriteBatch (Game.GraphicsDevice);
             
             road.Setup ();
+=======
+            road.Create ();
+
+            base.Initialize ();
+>>>>>>> parent of 62fdd8c... Object (Composite): Start
         }
 
         //------------------------------------------------------------------

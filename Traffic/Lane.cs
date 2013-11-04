@@ -4,25 +4,26 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
+using Tools.Processes;
 
 namespace Traffic
 {
-    internal class Lane : Object
+    internal class Lane
     {
         private class Attributes
         {
             public int ID;
             public int MaximumCars = 3;
             public int Height;
-            public List<Car> CarsToAdd;
-            public List<Car> CarsToRemove;
+            public List <Car> CarsToAdd;
+            public List <Car> CarsToRemove;
         }
 
-        Attributes Properties = new Attributes ();
+        private Attributes Properties = new Attributes ();
 
 
         //------------------------------------------------------------------
-        public List <Car> Cars { get; private set; } 
+        public List <Car> Cars { get; private set; }
         public int Velocity { get; set; }
         public Lane Left { get; set; }
         public Lane Right { get; set; }
@@ -42,13 +43,14 @@ namespace Traffic
         {
             Properties.ID = id;
             Road = road;
+            Anchored = true;
             CalculatePosition (Properties.ID);
             CalculateVelocity (Properties.ID);
             Properties.Height = Road.Game.GraphicsDevice.Viewport.Height;
 
             Cars = new List <Car> ();
-            Properties.CarsToAdd = new List<Car> ();
-            Properties.CarsToRemove = new List<Car> ();
+            Properties.CarsToAdd = new List <Car> ();
+            Properties.CarsToRemove = new List <Car> ();
         }
 
         //------------------------------------------------------------------
@@ -64,7 +66,7 @@ namespace Traffic
         {
             const int laneWidth = 40;
             int position = id * laneWidth + laneWidth / 2;
-            
+
             Position = new Vector2 (position, 0);
         }
 
@@ -115,12 +117,15 @@ namespace Traffic
 
         #endregion
 
-
         #region Update
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
+            // ToDo: It's a Hack. Think againg about it.
+            Components.Clear ();
+            Components.AddRange (Cars);
+
             base.Update (elapsed);
 
             AddQueuedCars ();
@@ -129,8 +134,6 @@ namespace Traffic
             CleanUp ();
             AppendCars ();
 
-            // ToDo: It's a Hack. Think againg about it.
-            Components.AddRange (Cars);
 
 //            new Text (ToString () + ":" + Cars.Count, Position);
         }
@@ -193,7 +196,7 @@ namespace Traffic
         private void OwnCar (Car car)
         {
             car.Lane = this;
-            
+
 //            car.Position = new Vector2 (Position.X, car.Position.Y);
 
             car.Driver.Velocity = Velocity - Random.Next ((int) (Velocity * 0.4));
@@ -206,7 +209,6 @@ namespace Traffic
         }
 
         #endregion
-
 
         #endregion
 

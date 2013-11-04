@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Physics;
 using Tools;
 using Tools.Markers;
+using Tools.Processes;
 using Tools.Timers;
 
 namespace Traffic
@@ -26,11 +27,11 @@ namespace Traffic
         #region Update
 
         //------------------------------------------------------------------
-        public override void Update ()
+        public override void Update (float elapsed)
         {
             UpdateInput ();
 
-            base.Update ();
+            base.Update (elapsed);
         }
 
         //------------------------------------------------------------------

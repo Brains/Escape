@@ -6,21 +6,22 @@ namespace Traffic
 {
     internal class Object
     {
-        private Vector2 position;
+        protected Vector2 position;
         
         protected readonly Object Root;
 
         public List <Object> Components { get; private set; }
+        
         public bool Deleted { get; set; }
+        public bool Anchored { get; set; }
 
         //------------------------------------------------------------------
         public Vector2 Position
         {
             get
             {
-                if (Root != null)
+                if (!Anchored && Root != null)
                     return position + Root.Position;
-                
                 return position;
             }
             set { position = value; }
@@ -53,13 +54,13 @@ namespace Traffic
         }
 
         //-----------------------------------------------------------------
-        private void Add (Object item)
+        protected void Add (Object item)
         {
             Components.Add (item);
         }
 
         //-----------------------------------------------------------------
-        private void Remove (Object item)
+        protected void Remove (Object item)
         {
             Components.Remove (item);
         }
