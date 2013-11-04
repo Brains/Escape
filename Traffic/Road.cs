@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -51,7 +52,7 @@ namespace Traffic
                 left = lane;
 
                 lane.Create ();
-                Components.Add (lane);
+                Add (lane);
             }
         }
 
@@ -59,6 +60,7 @@ namespace Traffic
         public override void Update (float elapsed)
         {
             base.Update (elapsed);
+
 
             // Camera movement simulation
             MoveCamera (Player.Velocity);
@@ -68,7 +70,7 @@ namespace Traffic
         private void MoveCamera (float shift)
         {
             // Simulate of Camera movement by moving Road
-            Position += new Vector2 (0, shift * 2.0f / Car.VelocityFactor);
+            Position += new Vector2 (0, shift / Car.VelocityFactor);
 
             // Infinite loop for Road Texture
             if (Position.Y > 800)
@@ -78,10 +80,10 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Draw (SpriteBatch spriteBatch)
         {
-            base.Draw (spriteBatch);
-
             spriteBatch.Draw (texture, Position, Color.White);
             spriteBatch.Draw (texture, Position - new Vector2 (0, texture.Height), Color.White);
+            
+            base.Draw (spriteBatch);
         }
     }
 }
