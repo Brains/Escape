@@ -26,11 +26,11 @@ namespace Traffic
         #region Update
 
         //------------------------------------------------------------------
-        public override void Update ()
+        public override void Update (float elapsed)
         {
             UpdateInput ();
 
-            base.Update ();
+            base.Update (elapsed);
         }
 
         //------------------------------------------------------------------
