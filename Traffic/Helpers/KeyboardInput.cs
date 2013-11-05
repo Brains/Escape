@@ -1,9 +1,7 @@
-﻿using System;
-using System.Reflection;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Physics
+namespace Traffic.Helpers
 {
 	public class KeyboardInput : GameComponent
     {

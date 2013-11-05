@@ -1,16 +1,8 @@
 ﻿#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
-using Microsoft.Xna.Framework.GamerServices;
-using Physics;
-using Tools;
-using Traffic.Actions;
+using Traffic.Helpers;
 
 #endregion
 
@@ -32,7 +24,7 @@ namespace Application
             Components.Add (new Traffic.Actions.Manager (this));
             Components.Add (new Tools.Timers.Manager (this));
             Components.Add (new Traffic.Manager (this));
-            Components.Add (new Physics.KeyboardInput (this));
+            Components.Add (new KeyboardInput (this));
             Components.Add (new Tools.Markers.Manager (this));
         }
 
