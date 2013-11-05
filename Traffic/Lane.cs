@@ -172,12 +172,6 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-//        public void Remove (Car car)
-//        {
-//            Properties.CarsToRemove.Add (car);
-//        }
-
-        //------------------------------------------------------------------
         private void OwnCar (Car car)
         {
             if (car.Lane != this) 

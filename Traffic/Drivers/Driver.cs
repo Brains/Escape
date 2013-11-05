@@ -10,6 +10,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         protected Car Car;
         protected List <Actions.Action> Actions = new List <Actions.Action> ();
+        protected List <Actions.Action> ActionsToAdd = new List <Actions.Action> ();
         protected float DangerousZone;
         protected bool Locked;
 
@@ -27,7 +28,17 @@ namespace Traffic.Drivers
                 if (action.Lock) Locked = true;
             }
 
+            AddDeferredActions ();
             Actions.RemoveAll (actions => actions.Finished);
+        }
+
+        //------------------------------------------------------------------
+        private void AddDeferredActions ()
+        {
+            // Insert in first position to detect Lock property as early as possible
+            ActionsToAdd.ForEach (action => Actions.Insert (0, action));
+
+            ActionsToAdd.Clear ();
         }
 
         //------------------------------------------------------------------
@@ -39,6 +50,13 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         protected void AvoidCollisions ()
         {
+            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
+            if (closestCar == null) return;
+
+            if (Velocity <= closestCar.Velocity) return;
+            if (Distance (closestCar) > DangerousZone) return;
+
+            // Avoid Danger situation
             if (ChangeLane (Car.Lane.Left)) return;
             if (ChangeLane (Car.Lane.Right)) return;
             Car.Brake ();
@@ -108,14 +126,14 @@ namespace Traffic.Drivers
         public void Add (Actions.Action action)
         {
             if (!Locked)
-                Actions.Add (action);
+                ActionsToAdd.Add (action);
         }
 
         //-----------------------------------------------------------------
-        public void Remove (Actions.Action action)
-        {
-            Actions.Remove (action);
-        }
+//        public void Remove (Actions.Action action)
+//        {
+//            Actions.Remove (action);
+//        }
 
         #endregion
     }

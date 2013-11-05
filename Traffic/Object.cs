@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -41,6 +42,9 @@ namespace Traffic
         public virtual void Update (float elapsed)
         {
             Components.ForEach (item => item.Update (elapsed));
+
+            if (Components.Count > 30) 
+                Debugger.Break ();
         }
 
         //------------------------------------------------------------------

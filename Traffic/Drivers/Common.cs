@@ -1,4 +1,5 @@
 using System.Linq;
+using Traffic.Actions;
 
 namespace Traffic.Drivers
 {
@@ -18,28 +19,9 @@ namespace Traffic.Drivers
             base.Create ();
 
             cruiseZone = Car.Lenght * 4.0f;
-        }
 
-        //------------------------------------------------------------------
-        public override void Update (float elapsed)
-        {
-            base.Update (elapsed);
-
-            Car.Accelerate ();
-
-            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
-            if (closestCar == null) return;
-
-            if (Velocity > closestCar.Velocity && Distance (closestCar) < DangerousZone)
-            {
-                AvoidCollisions ();
-            }
-
-            if (Lane.Random.Next (30) == Car.ID)
-            {
-//                Actions.Add (new Actions.Generic (ChangeLane));
-//                Car.Color = Color.Green;
-            }
+            Add (new Loop (Car.Accelerate));
+            Add (new Loop (AvoidCollisions));
         }
 
         //-----------------------------------------------------------------
