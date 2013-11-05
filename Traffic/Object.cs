@@ -4,17 +4,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Traffic
 {
-    internal class Object
+    public class Object
     {
-        public Object Root;
-
         public List <Object> Components { get; private set; }
-        
+        public Vector2 Position { get; set; }
+        public Object Root { get; set; }
         public bool Deleted { get; set; }
         public bool Anchored { get; set; }
-
-        //------------------------------------------------------------------
-        public Vector2 Position { get; set; }
 
         //------------------------------------------------------------------
         public Vector2 GlobalPosition
@@ -22,7 +18,7 @@ namespace Traffic
             get
             {
                 if (!Anchored && Root != null)
-                    return Position + Root.Position;
+                    return Position + Root.GlobalPosition;
                 return Position;
             }
         }
@@ -30,7 +26,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public Object (Object root)
         {
-            this.Root = root;
+            Root = root;
 
             Components = new List <Object> ();
         }
@@ -63,6 +59,14 @@ namespace Traffic
         protected void Remove (Object item)
         {
             Components.Remove (item);
+        }
+
+        //------------------------------------------------------------------
+        public void Move (float shift)
+        {
+            const float factor = 100; // Just for comfortable values
+
+            Position += new Vector2 (0, shift / factor);
         }
     }
 }

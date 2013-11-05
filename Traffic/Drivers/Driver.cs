@@ -1,27 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Tools.Extensions;
-using Tools.Markers;
-using Traffic.Actions;
 
 namespace Traffic.Drivers
 {
-    abstract class Driver
+    internal abstract class Driver
     {
         //------------------------------------------------------------------
         protected Car Car;
-        protected List<Actions.Action> Actions = new List<Actions.Action> ();
+        protected List <Actions.Action> Actions = new List <Actions.Action> ();
         protected float DangerousZone;
+        protected bool Locked;
+
         public float Velocity { get; set; }
 
         //------------------------------------------------------------------
-        public virtual void Update ()
+        public virtual void Update (float elapsed)
         {
-//            float elapsed = /*1 / 60*/; //(float) gameTime.ElapsedGameTime.TotalSeconds;
+            Locked = false;
 
-//            Actions.ForEach (action => action.Update (elapsed));
+            foreach (var action in Actions)
+            {
+                action.Update (elapsed);
+
+                if (action.Lock) Locked = true;
+            }
 
             Actions.RemoveAll (actions => actions.Finished);
         }
@@ -60,13 +64,13 @@ namespace Traffic.Drivers
             // Don't react with own Car
             if (car == Car) return float.MaxValue;
 
-            var distance = Car.Position - car.Position;
+            var distance = Car.GlobalPosition - car.GlobalPosition;
 
             return Math.Abs (distance.Y);
         }
 
         //------------------------------------------------------------------
-        protected float GetMinimumDistance (IEnumerable<Car> cars)
+        protected float GetMinimumDistance (IEnumerable <Car> cars)
         {
             if (!cars.Any ()) return float.MaxValue;
 
@@ -76,7 +80,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         protected bool IsAhead (Car car)
         {
-            return car.Position.Y < Car.Position.Y;
+            return car.GlobalPosition.Y < Car.GlobalPosition.Y;
         }
 
         //------------------------------------------------------------------
@@ -91,9 +95,26 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public Car FindClosestCar (IEnumerable<Car> cars)
+        public Car FindClosestCar (IEnumerable <Car> cars)
         {
-            return cars.MinBy <Car, float> (Distance);
+            return cars.MinBy (Distance);
+        }
+
+        #endregion
+
+        #region Actions
+
+        //-----------------------------------------------------------------
+        public void Add (Actions.Action action)
+        {
+            if (!Locked)
+                Actions.Add (action);
+        }
+
+        //-----------------------------------------------------------------
+        public void Remove (Actions.Action action)
+        {
+            Actions.Remove (action);
         }
 
         #endregion

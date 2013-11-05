@@ -6,6 +6,7 @@
         protected readonly float Duration;
 
         public bool Finished { get; set; }
+        public bool Lock { get; set; }
 
 //        public event Action Finish = delegate { };
 

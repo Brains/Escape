@@ -1,11 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Tools;
-using Tools.Extensions;
-using Tools.Markers;
 
 namespace Traffic.Drivers
 {
@@ -28,9 +21,9 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public override void Update ()
+        public override void Update (float elapsed)
         {
-            base.Update ();
+            base.Update (elapsed);
 
             Car.Accelerate ();
 

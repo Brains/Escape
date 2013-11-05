@@ -31,7 +31,7 @@ namespace Traffic
             texture = Images["Road"];
 
             CreateLanes ();
-            Player = (Components.First () as Lane).CreatePlayer (Game);
+            Player = ((Lane) Components.First ()).CreatePlayer (Game);
         }
 
         //------------------------------------------------------------------
@@ -43,16 +43,16 @@ namespace Traffic
             {
                 var lane = new Lane (this, index);
 
-                if (index != 0)
+                if (index != 0 && left != null)
                 {
                     lane.Left = left;
                     lane.Left.Right = lane;
                 }
 
-                left = lane;
-
                 lane.Create ();
                 Add (lane);
+
+                left = lane;
             }
         }
 
@@ -60,7 +60,6 @@ namespace Traffic
         public override void Update (float elapsed)
         {
             base.Update (elapsed);
-
 
             // Camera movement simulation
             MoveCamera (Player.Velocity);
@@ -70,7 +69,7 @@ namespace Traffic
         private void MoveCamera (float shift)
         {
             // Simulate of Camera movement by moving Road
-            Position += new Vector2 (0, shift / Car.VelocityFactor);
+            Move (shift);
 
             // Infinite loop for Road Texture
             if (Position.Y > 800)
@@ -82,7 +81,7 @@ namespace Traffic
         {
             spriteBatch.Draw (texture, GlobalPosition, Color.White);
             spriteBatch.Draw (texture, GlobalPosition - new Vector2 (0, texture.Height), Color.White);
-            
+
             base.Draw (spriteBatch);
         }
     }

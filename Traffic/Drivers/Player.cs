@@ -18,8 +18,10 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public override void Update ()
+        public override void Update (float elapsed)
         {
+            base.Update (elapsed);
+
             var closestCar = FindClosestCar (Car.Lane.Cars);
             closestCar.Color = Color.GreenYellow;
         }

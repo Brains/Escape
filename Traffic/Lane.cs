@@ -15,11 +15,10 @@ namespace Traffic
             public int MaximumCars = 3;
             public int Height;
             public List <Car> CarsToAdd;
-            public List <Car> CarsToRemove;
         }
 
         private Attributes Properties = new Attributes ();
-
+        private static int carsCounter ;
 
         //------------------------------------------------------------------
         public List <Car> Cars { get; private set; }
@@ -43,13 +42,13 @@ namespace Traffic
             Properties.ID = id;
             Road = road;
             Anchored = true;
+            Properties.Height = Road.Game.GraphicsDevice.Viewport.Height;
             CalculatePosition (Properties.ID);
             CalculateVelocity (Properties.ID);
-            Properties.Height = Road.Game.GraphicsDevice.Viewport.Height;
 
             Cars = new List <Car> ();
             Properties.CarsToAdd = new List <Car> ();
-            Properties.CarsToRemove = new List <Car> ();
+            new List <Car> ();
         }
 
         //------------------------------------------------------------------
@@ -84,10 +83,8 @@ namespace Traffic
         private void CreateCar ()
         {
             var car = new Car (this, GetInsertionPosition ());
-
-            // ToDo: Below
-            car.ID = Properties.ID * Properties.MaximumCars + Cars.Count;
-
+            car.ID = carsCounter;
+            carsCounter++;
             car.Create ();
             Cars.Add (car);
             OwnCar (car);
@@ -97,6 +94,8 @@ namespace Traffic
         public Player CreatePlayer (Game game)
         {
             var player = new Player (this, 400);
+            player.ID = carsCounter;
+            carsCounter++; 
             player.Create ();
             Cars.Add (player);
             OwnCar (player);
@@ -116,24 +115,20 @@ namespace Traffic
 
         #endregion
 
-        #region Update
-
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            // ToDo: It's a Hack. Think againg about it.
-            Components.Clear ();
-            Components.AddRange (Cars);
-
             base.Update (elapsed);
 
             AddQueuedCars ();
-            RemoveQueuedCars ();
 
             CleanUp ();
             AppendCars ();
 
-//            new Text (ToString () + ":" + Cars.Count, Position);
+            Components.Clear ();
+            Components.AddRange (Cars);
+
+            Debug ();
         }
 
         #region Cars Management
@@ -154,7 +149,7 @@ namespace Traffic
             var border = Properties.Height * 3;
             Cars.RemoveAll (car =>
             {
-                int position = (int) car.Position.Y;
+                int position = (int) car.GlobalPosition.Y;
                 return position < -border || position > border;
             });
 
@@ -171,30 +166,25 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private void RemoveQueuedCars ()
-        {
-            Properties.CarsToRemove.ForEach (FreeCar);
-            Cars.RemoveAll (Properties.CarsToRemove.Contains);
-            Properties.CarsToRemove.Clear ();
-        }
-
-        //------------------------------------------------------------------
         public void Add (Car car)
         {
             Properties.CarsToAdd.Add (car);
         }
 
         //------------------------------------------------------------------
-        public void Remove (Car car)
-        {
-            Properties.CarsToRemove.Add (car);
-        }
+//        public void Remove (Car car)
+//        {
+//            Properties.CarsToRemove.Add (car);
+//        }
 
         //------------------------------------------------------------------
         private void OwnCar (Car car)
         {
+            if (car.Lane != this) 
+                car.Lane.Cars.Remove (car);
+            
             car.Lane = this;
-            car.Position = new Vector2 (0, car.Position.Y);
+            car.Position = new Vector2 (0, car.GlobalPosition.Y);
             car.Driver.Velocity = Velocity - Random.Next ((int) (Velocity * 0.4));
         }
 
@@ -206,12 +196,23 @@ namespace Traffic
 
         #endregion
 
-        #endregion
-
         //------------------------------------------------------------------
         public override string ToString ()
         {
             return string.Format ("{0}", Properties.ID);
+        }
+
+        //------------------------------------------------------------------
+        private void Debug ()
+        {
+            new Text (ToString () + ":" + Cars.Count, Position);
+            
+            int number = 1;
+            foreach (var car in Cars)
+            {
+//                new Text (car.ID.ToString (), new Vector2 (Position.X, 20 * number));
+                number++;
+            }
         }
     }
 }
