@@ -6,9 +6,7 @@ namespace Traffic
 {
     internal class Object
     {
-        protected Vector2 position;
-        
-        protected readonly Object Root;
+        public Object Root;
 
         public List <Object> Components { get; private set; }
         
@@ -16,15 +14,17 @@ namespace Traffic
         public bool Anchored { get; set; }
 
         //------------------------------------------------------------------
-        public Vector2 Position
+        public Vector2 Position { get; set; }
+
+        //------------------------------------------------------------------
+        public Vector2 GlobalPosition
         {
             get
             {
                 if (!Anchored && Root != null)
-                    return position + Root.Position;
-                return position;
+                    return Position + Root.Position;
+                return Position;
             }
-            set { position = value; }
         }
 
         //------------------------------------------------------------------

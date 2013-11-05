@@ -133,7 +133,6 @@ namespace Traffic
             CleanUp ();
             AppendCars ();
 
-
 //            new Text (ToString () + ":" + Cars.Count, Position);
         }
 
@@ -195,9 +194,7 @@ namespace Traffic
         private void OwnCar (Car car)
         {
             car.Lane = this;
-
-//            car.Position = new Vector2 (Position.X, car.Position.Y);
-
+            car.Position = new Vector2 (0, car.Position.Y);
             car.Driver.Velocity = Velocity - Random.Next ((int) (Velocity * 0.4));
         }
 

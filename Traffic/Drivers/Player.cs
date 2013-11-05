@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace Traffic.Drivers
 {
@@ -19,6 +20,8 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public override void Update ()
         {
+            var closestCar = FindClosestCar (Car.Lane.Cars);
+            closestCar.Color = Color.GreenYellow;
         }
     }
 }

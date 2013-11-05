@@ -44,8 +44,8 @@ namespace Traffic.Drivers
 
             if (Lane.Random.Next (30) == Car.ID)
             {
-                Actions.Add (new Actions.Generic (ChangeLane));
-                Car.Color = Color.Green;
+//                Actions.Add (new Actions.Generic (ChangeLane));
+//                Car.Color = Color.Green;
             }
         }
 

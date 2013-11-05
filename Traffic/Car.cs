@@ -26,13 +26,25 @@ namespace Traffic
 
         public static float VelocityFactor = 100;
         private float angle;
+        private Lane lane;
 
         public float Velocity { get; set; }
         public Color Color { get; set; }
-        public Lane Lane { get; set; }
         public int Lenght { get; set; }
         public Driver Driver { get; set; }
         public int Lives { get; set; }
+
+        //------------------------------------------------------------------
+        public Lane Lane
+        {
+            get { return lane; }
+            set
+            {
+                lane = value;
+                Root = value;
+            }
+        }
+
 
         //------------------------------------------------------------------
 //        public Vector2 Position
@@ -45,7 +57,6 @@ namespace Traffic
 //                position = value;
 //            }
 //        }
-
 
         #region Creation
 
@@ -90,18 +101,22 @@ namespace Traffic
         {
             base.Update (elapsed);
 
-            if (ID == 0)
-                Console.WriteLine (Position);
-
             Color = InitialColor;
 
             Move (-Velocity);
+
+            // Simulate Camera moving
+            Move (Lane.Road.Player.Velocity);
 
             Driver.Update ();
 
             DetectCollisions ();
 
-            new Text (ID.ToString (), Position, Color.CadetBlue, true);
+            new Text (GlobalPosition.ToString (), GlobalPosition, Color.OrangeRed, true);
+//            new Text (Lane.ToString (), GlobalPosition, Color.OrangeRed, true);
+            
+//            if (this is Player) 
+//                Console.WriteLine (GlobalPosition);
         }
 
         #endregion
@@ -127,14 +142,13 @@ namespace Traffic
         //------------------------------------------------------------------
         public void Move (float velocity)
         {
-            position += new Vector2 (0, velocity / VelocityFactor);
+            Position += new Vector2 (0, velocity / VelocityFactor);
         }
 
         //------------------------------------------------------------------
-        void CorrectPositionOnLane ()
+        private void CorrectPositionOnLane ()
         {
-            var finalPoint = new Vector2 (Lane.Position.X, Position.Y);
-//            Position = finalPoint;
+            Position = new Vector2 (0, Position.Y);
         }
 
         //------------------------------------------------------------------
@@ -142,8 +156,7 @@ namespace Traffic
         {
             if (lane == null) return;
 
-            lane.Add (this);
-            Lane.Remove (this);
+            
 
             AnimateGhangingLane (lane);
         }
@@ -160,20 +173,27 @@ namespace Traffic
 
             // Rotate
             Action <float> rotate = share => angle += share;
-            float finalAngle = (lane.Position.X < Position.X) ? MathHelper.ToRadians (-5) : MathHelper.ToRadians (5);
+            float finalAngle = MathHelper.ToRadians ((lane.GlobalPosition.X < GlobalPosition.X) ? -5 : 5);
             sequence.Add (new Controller (rotate, finalAngle, 0.1f));
 
             // Moving
             Action <Vector2> move = shift => Position += shift;
-            var diapason = new Vector2 (lane.Position.X - Position.X, 0);
+            var diapason = new Vector2 (lane.GlobalPosition.X - GlobalPosition.X, 0);
             sequence.Add (new Controller (move, diapason, 0.2f));
 
             // Inverse rotating
             var inverseRotating = new Controller (rotate, -finalAngle, 0.1f);
             sequence.Add (inverseRotating);
 
+
+            sequence.Add (new Generic (() =>
+            {
+                lane.Add (this);
+                Lane.Remove (this);
+            }));
+
             // Level float rounding error
-            sequence.Add (new Generic (CorrectPositionOnLane));
+//            sequence.Add (new Generic (CorrectPositionOnLane));
 
             sequence.AddToManager ();
         }
@@ -209,8 +229,8 @@ namespace Traffic
                 }
             }
 
-            if (Lives <= 0)
-                Deleted = true;
+//            if (Lives <= 0)
+//                Deleted = true;
 
 //            new Text (Lives.ToString (), Position, Color.RoyalBlue, true);
 
@@ -234,7 +254,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Draw (SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw (Texture, Position, null, Color, angle, origin, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw (Texture, GlobalPosition, null, Color, angle, origin, 1.0f, SpriteEffects.None, 1.0f);
 
             base.Draw (spriteBatch);
         }
