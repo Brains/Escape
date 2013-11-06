@@ -1,16 +1,11 @@
 using System;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Tools.Markers;
 using Traffic.Actions;
 using Traffic.Drivers;
-using Traffic.Helpers;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Tools;
-using Tools.Markers;
-using Point = Tools.Markers.Point;
 
-namespace Traffic
+namespace Traffic.Cars
 {
     internal class Car : Object
     {
@@ -23,10 +18,11 @@ namespace Traffic
         protected Texture2D Texture;
         protected Color InitialColor;
         protected string TextureName;
+        private Lights brakes;
+        private Lights blinker;
 
         //------------------------------------------------------------------
         public int ID;
-
         public float Velocity { get; set; }
         public Color Color { get; set; }
         public int Lenght { get; set; }
@@ -56,21 +52,31 @@ namespace Traffic
             TextureName = "Car";
             Position = new Vector2 (0, horizont);
             Lives = 1;
-            Acceleration = 3;
+            Acceleration = 1;
         }
 
         //------------------------------------------------------------------
-        public void Create ()
+        public override void Setup ()
         {
+            // Load Texture
             Texture = Lane.Road.Images[TextureName];
             origin = new Vector2 (Texture.Width / 2, Texture.Height / 2);
             Lenght = Texture.Height;
 
-            Driver.Create ();
-
+            // Bounding Box
             bounds = new Bounds (this, GlobalPosition, origin);
             bounds.Inflate (-5, -5);
             Add (bounds);
+
+            // Lights
+            brakes = new Lights (this, "Brake");
+            brakes.Position = new Vector2 (0, Texture.Height / 2 + 5);
+            Add (brakes);
+
+            blinker = new Lights (this, "Blinker");
+            Add (blinker);
+
+            base.Setup ();
         }
 
         #endregion
@@ -82,7 +88,7 @@ namespace Traffic
         {
             base.Update (elapsed);
 
-            Color = InitialColor;
+            Reset ();
 
             Move (-Velocity);
 
@@ -94,6 +100,13 @@ namespace Traffic
             DetectCollisions ();
 
             Debug ();
+        }
+
+        //------------------------------------------------------------------
+        private void Reset ()
+        {
+            Color = InitialColor;
+            brakes.Visible = false;
         }
 
         #endregion
@@ -112,8 +125,9 @@ namespace Traffic
         public void Brake ()
         {
             if (Velocity > 0)
-                Velocity -= Acceleration;
-//            new Text ("Brake", GlobalPosition, Color.DarkOrange);
+                Velocity -= Acceleration * 3;
+//            new Text ("Brake", GlobalPosition, Color.Red);
+            brakes.Visible = true;
         }
 
         //------------------------------------------------------------------
@@ -129,9 +143,9 @@ namespace Traffic
         {
             // No Lane changing when car doesn't move
             if (Velocity < 10) return;
-            
+
             var sequence = new Sequence {Lock = true};
-            float duration = 400.0f / Velocity;
+            float duration = 300.0f / Velocity;
 
             // Rotate
             Action <float> rotate = share => angle += share;
@@ -203,15 +217,40 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Draw (SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw (Texture, GlobalPosition, null, Color, angle, origin, 1.0f, SpriteEffects.None, 1.0f);
-
             base.Draw (spriteBatch);
+
+            spriteBatch.Draw (Texture, GlobalPosition, null, Color, angle, origin, 1.0f, SpriteEffects.None, 1.0f);
         }
 
         //------------------------------------------------------------------
         private void Debug ()
         {
-            new Text (Velocity.ToString (), GlobalPosition, Color.GreenYellow, true);
+            new Text (Velocity.ToString (), GlobalPosition, Color.DarkSeaGreen, true);
+        }
+
+        //------------------------------------------------------------------
+        public override string ToString ()
+        {
+            return ID.ToString ();
+        }
+
+        //------------------------------------------------------------------
+        public void EnableBlinker (Lane newLane)
+        {
+            const int shift = 30;
+
+            if (newLane == Lane.Left)
+            {
+                blinker.Position = new Vector2 (-shift, 0);
+                blinker.Flip (false);
+            }
+            else if (newLane == Lane.Right)
+            {
+                blinker.Position = new Vector2 (shift, 0);
+                blinker.Flip (true);
+            } 
+
+            blinker.Enable ();
         }
     }
 }

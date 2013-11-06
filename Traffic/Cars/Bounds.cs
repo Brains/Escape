@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Traffic.Helpers
+namespace Traffic.Cars
 {
     public class Bounds : Object
     {
@@ -37,7 +37,7 @@ namespace Traffic.Helpers
         {
             var @from = new Vector2 (Rectangle.X, Rectangle.Y);
             var to = new Vector2 (Rectangle.X + Rectangle.Width, Rectangle.Y + Rectangle.Height);
-            new Tools.Markers.Rectangle (@from, to);
+//            new Tools.Markers.Rectangle (@from, to);
 
             return Rectangle.Intersects (bounds.Rectangle);
         }

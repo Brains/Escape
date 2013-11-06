@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Traffic.Helpers;
 
-namespace Traffic
+namespace Traffic.Cars
 {
     internal class Player : Car
     {
@@ -13,7 +11,7 @@ namespace Traffic
             InitialColor = Color.White;
             TextureName = "Player";
             Lives = 99;
-            Acceleration = 5;
+            Acceleration = 3;
         }
     }
 }
