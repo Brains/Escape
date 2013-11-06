@@ -6,23 +6,66 @@ namespace Traffic.Drivers
 {
     internal class Common : Driver
     {
-        private float cruiseZone;
+        private Sequence dodge;
 
         //------------------------------------------------------------------
-        public Common (Car car)
+        public Common (Car car) : base(car)
         {
-            Car = car;
+//            Add (new Loop (Car.Accelerate));
+//            Add (new Loop (AvoidCollisions));
 
-            Add (new Loop (Car.Accelerate));
-            Add (new Loop (AvoidCollisions));
-
-            //            cruiseZone = Car.Lenght * 4.0f;
+            dodge = new Sequence {Name = "Dodge"};
+            Add (dodge);
+            StartDodge ();
         }
 
-        //-----------------------------------------------------------------
-        private void ChangeLane ()
+        //------------------------------------------------------------------
+        private void StartDodge ()
         {
-            ChangeLane (Lane.Random.Next (2) == 0 ? Car.Lane.Left : Car.Lane.Right);
+            DetectDanger ();
+
+            // Provide looping for the action
+            dodge.Add (new Generic (StartDodge) { Name = "Start" });
+        }
+
+        //------------------------------------------------------------------
+        private void DetectDanger ()
+        {
+            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
+            if (closestCar == null)
+            {
+                Accelerate ();
+                return;
+            }
+
+            // Set safely distance
+            if (Distance (closestCar) < 200)
+                Brake ();
+
+
+
+            if (Distance (closestCar) > 300)
+                Accelerate ();
+
+
+            if (Velocity <= closestCar.Velocity) return;
+
+            CalculateDangerousZone ();
+            if (Distance (closestCar) > DangerousZone) return;
+
+
+        }
+
+        //------------------------------------------------------------------
+        private void Brake ()
+        {
+            dodge.Add (new Repeated (Car.Brake, 10) {Name = "Brake"});
+        }
+
+        //------------------------------------------------------------------
+        private void Accelerate ()
+        {
+            dodge.Add (new Repeated (Car.Accelerate, 5) {Name = "Accelerate"});
         }
     }
 }

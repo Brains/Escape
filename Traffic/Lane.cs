@@ -198,7 +198,7 @@ namespace Traffic
         private void Debug ()
         {
 //            new Text (ToString () + ":" + Cars.Count, Position);
-            new Text (Velocity.ToString ("F0"), Position);
+//            new Text (Velocity.ToString ("F0"), Position);
 
             int number = 1;
             foreach (var car in Cars)

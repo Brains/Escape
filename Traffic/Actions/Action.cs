@@ -7,6 +7,7 @@
 
         public bool Finished { get; set; }
         public bool Lock { get; set; }
+        public string Name { get; set; }
 
 //        public event Action Finish = delegate { };
 
@@ -38,6 +39,12 @@
         public void AddToManager ()
         {
             Manager.Add (this);
+        }
+
+        //------------------------------------------------------------------
+        public override string ToString ()
+        {
+            return Name;
         }
     }
 }

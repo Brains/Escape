@@ -11,7 +11,7 @@ namespace Traffic.Cars
             InitialColor = Color.White;
             TextureName = "Player";
             Lives = 99;
-            Acceleration = 3;
+            Acceleration = 0.5f;
         }
     }
 }

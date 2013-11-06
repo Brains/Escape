@@ -18,5 +18,15 @@ namespace Traffic.Actions
             Actions.Add (action);
         }
 
+        //------------------------------------------------------------------
+        public override string ToString ()
+        {
+            string componentsNames = ": ";
+
+            foreach (var action in Actions)
+                componentsNames += action.Name + "; ";
+
+            return Name + componentsNames;
+        }
     }
 }

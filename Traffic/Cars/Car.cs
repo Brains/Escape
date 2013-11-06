@@ -11,7 +11,6 @@ namespace Traffic.Cars
     {
         //-----------------------------------------------------------------
         private Lane lane;
-        private float angle;
         private Vector2 origin;
         private Bounds bounds;
 
@@ -29,6 +28,7 @@ namespace Traffic.Cars
         public Driver Driver { get; set; }
         public int Lives { get; set; }
         public float Acceleration { get; set; }
+        public float Angle { get; set; }
 
         //------------------------------------------------------------------
         public Lane Lane
@@ -41,6 +41,7 @@ namespace Traffic.Cars
             }
         }
 
+
         #region Creation
 
         //------------------------------------------------------------------
@@ -52,7 +53,7 @@ namespace Traffic.Cars
             TextureName = "Car";
             Position = new Vector2 (0, horizont);
             Lives = 1;
-            Acceleration = 1;
+            Acceleration = 0.5f;
         }
 
         //------------------------------------------------------------------
@@ -131,41 +132,6 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        public void ChangeLane (Lane lane)
-        {
-            if (lane == null) return;
-
-            AnimateGhangingLane (lane);
-        }
-
-        //------------------------------------------------------------------
-        private void AnimateGhangingLane (Lane newLane)
-        {
-            // No Lane changing when car doesn't move
-            if (Velocity < 10) return;
-
-            var sequence = new Sequence {Lock = true};
-            float duration = 300.0f / Velocity;
-
-            // Rotate
-            Action <float> rotate = share => angle += share;
-            float finalAngle = MathHelper.ToRadians ((newLane.GlobalPosition.X < GlobalPosition.X) ? -10 : 10);
-            sequence.Add (new Controller (rotate, finalAngle, duration * 0.1f));
-
-            // Moving
-            Action <Vector2> move = shift => Position += shift;
-            var diapason = new Vector2 (newLane.GlobalPosition.X - GlobalPosition.X, 0);
-            sequence.Add (new Controller (move, diapason, duration * 0.2f));
-
-            // Inverse rotating
-            var inverseRotating = new Controller (rotate, -finalAngle, duration * 0.1f);
-            sequence.Add (inverseRotating);
-
-            // Add to new Lane
-            sequence.Add (new Generic (() => newLane.Add (this)));
-
-            Driver.Add (sequence);
-        }
 
         #endregion
 
@@ -219,13 +185,13 @@ namespace Traffic.Cars
         {
             base.Draw (spriteBatch);
 
-            spriteBatch.Draw (Texture, GlobalPosition, null, Color, angle, origin, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw (Texture, GlobalPosition, null, Color, Angle, origin, 1.0f, SpriteEffects.None, 1.0f);
         }
 
         //------------------------------------------------------------------
         private void Debug ()
         {
-            new Text (Velocity.ToString (), GlobalPosition, Color.DarkSeaGreen, true);
+//            new Text (Velocity.ToString (), GlobalPosition, Color.DarkSeaGreen, true);
         }
 
         //------------------------------------------------------------------
@@ -248,9 +214,15 @@ namespace Traffic.Cars
             {
                 blinker.Position = new Vector2 (shift, 0);
                 blinker.Flip (true);
-            } 
+            }
 
             blinker.Enable ();
+        }
+
+        //------------------------------------------------------------------
+        public void DisableBlinker ()
+        {
+            blinker.Disable ();
         }
     }
 }
