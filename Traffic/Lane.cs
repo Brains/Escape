@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
+using Traffic.Cars;
 
 namespace Traffic
 {
@@ -18,7 +19,7 @@ namespace Traffic
         }
 
         private Attributes Properties = new Attributes ();
-        private static int carsCounter ;
+        private static int carsCounter;
 
         //------------------------------------------------------------------
         public List <Car> Cars { get; private set; }
@@ -42,13 +43,11 @@ namespace Traffic
             Properties.ID = id;
             Road = road;
             Anchored = true;
-            Properties.Height = Road.Game.GraphicsDevice.Viewport.Height;
             CalculatePosition (Properties.ID);
             CalculateVelocity (Properties.ID);
 
             Cars = new List <Car> ();
             Properties.CarsToAdd = new List <Car> ();
-            new List <Car> ();
         }
 
         //------------------------------------------------------------------
@@ -69,36 +68,35 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public void Create ()
+        public override void Setup ()
         {
-            int carsAmount = Random.Next (Properties.MaximumCars);
-
-            foreach (var number in Enumerable.Range (0, carsAmount))
-            {
-                CreateCar ();
-            }
+            Properties.Height = Road.Game.GraphicsDevice.Viewport.Height;
+            
+            base.Setup ();
         }
 
         //------------------------------------------------------------------
         private void CreateCar ()
         {
-            var car = new Car (this, GetInsertionPosition ());
-            car.ID = carsCounter;
-            carsCounter++;
-            car.Create ();
+            var car = new Car (this, GetInsertionPosition ()) {ID = carsCounter};
+            car.Setup ();
+
             Cars.Add (car);
             OwnCar (car);
+
+            carsCounter++;
         }
 
         //------------------------------------------------------------------
         public Player CreatePlayer (Game game)
         {
-            var player = new Player (this, 400);
-            player.ID = carsCounter;
-            carsCounter++; 
-            player.Create ();
+            var player = new Player (this, 400) {ID = carsCounter};
+            player.Setup ();
+            
             Cars.Add (player);
             OwnCar (player);
+
+            carsCounter++;
 
             return player;
         }
@@ -174,12 +172,12 @@ namespace Traffic
         //------------------------------------------------------------------
         private void OwnCar (Car car)
         {
-            if (car.Lane != this) 
+            if (car.Lane != this)
                 car.Lane.Cars.Remove (car);
-            
+
             car.Lane = this;
             car.Position = new Vector2 (0, car.GlobalPosition.Y);
-            car.Driver.Velocity = Velocity - Random.Next ((int) (Velocity * 0.4));
+            car.Driver.Velocity = Velocity;
         }
 
         //------------------------------------------------------------------
@@ -199,8 +197,9 @@ namespace Traffic
         //------------------------------------------------------------------
         private void Debug ()
         {
-            new Text (ToString () + ":" + Cars.Count, Position);
-            
+//            new Text (ToString () + ":" + Cars.Count, Position);
+            new Text (Velocity.ToString ("F0"), Position);
+
             int number = 1;
             foreach (var car in Cars)
             {

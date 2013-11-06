@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Tools.Extensions;
+using Tools.Markers;
+using Traffic.Actions;
+using Traffic.Cars;
 
 namespace Traffic.Drivers
 {
@@ -14,7 +18,7 @@ namespace Traffic.Drivers
         protected float DangerousZone;
         protected bool Locked;
 
-        public float Velocity { get; set; }
+        public virtual float Velocity { get; set; }
 
         //------------------------------------------------------------------
         public virtual void Update (float elapsed)
@@ -42,18 +46,14 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public virtual void Create ()
-        {
-            DangerousZone = Car.Lenght * 1.5f;
-        }
-
-        //------------------------------------------------------------------
         protected void AvoidCollisions ()
         {
             Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
             if (closestCar == null) return;
 
             if (Velocity <= closestCar.Velocity) return;
+
+            CalculateDangerousZone ();
             if (Distance (closestCar) > DangerousZone) return;
 
             // Avoid Danger situation
@@ -65,6 +65,15 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         protected bool ChangeLane (Lane lane)
         {
+            Car.EnableBlinker (lane);
+
+            var sequence = new Actions.Sequence ();
+            sequence.Add (new Sleep (1.0f));
+//            sequence.Add (new Generic (() => Car.Blinker.Disable ()));
+            Add (sequence);
+
+//            Add (new Repeated (() => Add (sequence), 10));
+
             if (CheckLane (lane))
             {
                 Car.ChangeLane (lane);
@@ -116,6 +125,13 @@ namespace Traffic.Drivers
         public Car FindClosestCar (IEnumerable <Car> cars)
         {
             return cars.MinBy (Distance);
+        }
+
+        //------------------------------------------------------------------
+        protected void CalculateDangerousZone ()
+        {
+            DangerousZone = Car.Lenght * Car.Velocity / 60.0f;
+//            new Line (Car.GlobalPosition, Car.GlobalPosition + new Vector2 (0, -DangerousZone));
         }
 
         #endregion

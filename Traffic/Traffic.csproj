@@ -56,16 +56,17 @@
     <Compile Include="Actions\Repeated.cs" />
     <Compile Include="Actions\Sequence.cs" />
     <Compile Include="Actions\Sleep.cs" />
-    <Compile Include="Car.cs" />
+    <Compile Include="Cars\Bounds.cs" />
+    <Compile Include="Cars\Car.cs" />
+    <Compile Include="Cars\Lights.cs" />
+    <Compile Include="Cars\Player.cs" />
     <Compile Include="Drivers\Common.cs" />
     <Compile Include="Drivers\Driver.cs" />
     <Compile Include="Drivers\Player.cs" />
-    <Compile Include="Helpers\Bounds.cs" />
     <Compile Include="Helpers\KeyboardInput.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Object.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Road.cs" />
   </ItemGroup>

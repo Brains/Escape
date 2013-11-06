@@ -12,6 +12,7 @@ namespace Traffic
         public Object Root { get; set; }
         public bool Deleted { get; set; }
         public bool Anchored { get; set; }
+        public bool Visible { get; set; }
 
         //------------------------------------------------------------------
         public Vector2 GlobalPosition
@@ -42,9 +43,6 @@ namespace Traffic
         public virtual void Update (float elapsed)
         {
             Components.ForEach (item => item.Update (elapsed));
-
-            if (Components.Count > 30) 
-                Debugger.Break ();
         }
 
         //------------------------------------------------------------------
@@ -68,7 +66,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void Move (float shift)
         {
-            const float factor = 100; // Just for comfortable values
+            const float factor = 50; // Just for comfortable values
 
             Position += new Vector2 (0, shift / factor);
         }

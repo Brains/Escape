@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools;
 using Tools.Extensions;
+using Traffic.Cars;
 
 namespace Traffic
 {
@@ -22,6 +23,7 @@ namespace Traffic
         public Road (Game game) : base (null)
         {
             Game = game;
+            CreateLanes ();
         }
 
         //------------------------------------------------------------------
@@ -30,8 +32,9 @@ namespace Traffic
             Images = Game.Content.LoadContentFolder <Texture2D> ("Images/Road");
             texture = Images["Road"];
 
-            CreateLanes ();
             Player = ((Lane) Components.First ()).CreatePlayer (Game);
+
+            base.Setup ();
         }
 
         //------------------------------------------------------------------
@@ -49,7 +52,6 @@ namespace Traffic
                     lane.Left.Right = lane;
                 }
 
-                lane.Create ();
                 Add (lane);
 
                 left = lane;
@@ -62,7 +64,7 @@ namespace Traffic
             base.Update (elapsed);
 
             // Camera movement simulation
-            MoveCamera (Player.Velocity);
+            MoveCamera (Player.Velocity * 2);
         }
 
         //------------------------------------------------------------------

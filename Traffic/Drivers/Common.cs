@@ -1,5 +1,6 @@
 using System.Linq;
 using Traffic.Actions;
+using Traffic.Cars;
 
 namespace Traffic.Drivers
 {
@@ -11,17 +12,11 @@ namespace Traffic.Drivers
         public Common (Car car)
         {
             Car = car;
-        }
-
-        //------------------------------------------------------------------
-        public override void Create ()
-        {
-            base.Create ();
-
-            cruiseZone = Car.Lenght * 4.0f;
 
             Add (new Loop (Car.Accelerate));
             Add (new Loop (AvoidCollisions));
+
+            //            cruiseZone = Car.Lenght * 4.0f;
         }
 
         //-----------------------------------------------------------------
