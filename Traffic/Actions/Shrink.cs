@@ -43,11 +43,13 @@ namespace Traffic.Actions
                 return;
             }
 
-            if (driver.Distance (closestCar) < driver.DangerousZone / 1.5)
-                driver.Brake (this, 50);
-            else
-                // Change Lane
+            // There is a Threat of Collision
+            if (driver.Distance (closestCar) > driver.DangerousZone / 1.5)
+                // Change Lane if we have enough space
                 Add (new Conditional (IsThreatOfCollision, TryChangeLanes) {Name = "Try Change Lane"});
+            else 
+                // Or try to strong Brake to avoid a collision
+                driver.Brake (this, 50);
         }
 
         //------------------------------------------------------------------
@@ -55,8 +57,8 @@ namespace Traffic.Actions
         {
             if (closestCar == null) return false;
 
-            bool mySpeedLarger = driver.Car.Velocity > closestCar.Velocity;
             bool tooCloseDistance = driver.Distance (closestCar) < driver.DangerousZone;
+            bool mySpeedLarger = driver.Car.Velocity > closestCar.Velocity;
 
             return tooCloseDistance && mySpeedLarger;
         }

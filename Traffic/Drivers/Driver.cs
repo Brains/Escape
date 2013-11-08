@@ -153,6 +153,7 @@ namespace Traffic.Drivers
             // No Lane changing when car doesn't move
             if (Car.Velocity < 10) return;
 
+            // If speed is 200 whole lane changing took 0.5 second
             float duration = 200.0f / Car.Velocity;
 
             // Rotate
