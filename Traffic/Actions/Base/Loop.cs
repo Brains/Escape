@@ -1,19 +1,31 @@
 ﻿namespace Traffic.Actions.Base
 {
-    public class Loop : Action
+    public class Loop : Sequence
     {
-        private readonly System.Action action;
+        private Action initial;
 
         //------------------------------------------------------------------
-        public Loop (System.Action action)
+        protected Action Initial
         {
-            this.action = action;
+            get { return initial; }
+            set
+            {
+                initial = value;
+                Add (Initial);
+            }
         }
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            action.Invoke ();
+            base.Update (elapsed);
+            
+            // Provide looping
+            if (Finished)
+            {
+                Add (Initial);
+                Finished = false;
+            }
         }
 
     }
