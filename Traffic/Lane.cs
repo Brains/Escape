@@ -102,6 +102,18 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
+        public void CreatePolice (Game game)
+        {
+            var police = new Police (this, 800) { ID = carsCounter };
+            police.Setup ();
+
+            Cars.Add (police);
+            OwnCar (police);
+
+            carsCounter++;
+        }
+
+        //------------------------------------------------------------------
         // Return point outside the screen
         private int GetInsertionPosition ()
         {

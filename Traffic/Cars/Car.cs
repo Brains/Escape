@@ -2,7 +2,6 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
-using Traffic.Actions;
 using Traffic.Drivers;
 
 namespace Traffic.Cars
@@ -40,7 +39,6 @@ namespace Traffic.Cars
                 Root = value;
             }
         }
-
 
         #region Creation
 
@@ -117,8 +115,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public void Accelerate ()
         {
-            if (Velocity < Driver.Velocity)
-                Velocity += Acceleration;
+            Velocity += Acceleration;
 //            new Text ("Accelerate", GlobalPosition, Color.DarkOrange);
         }
 
@@ -127,8 +124,8 @@ namespace Traffic.Cars
         {
             if (Velocity > 0)
                 Velocity -= Acceleration * 3;
-//            new Text ("Brake", GlobalPosition, Color.Red);
             brakes.Visible = true;
+            //            new Text ("Brake", GlobalPosition, Color.Red);
         }
 
         //------------------------------------------------------------------
