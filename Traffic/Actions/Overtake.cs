@@ -8,7 +8,7 @@ using Traffic.Drivers;
 
 namespace Traffic.Actions
 {
-    internal class Overtake : Sequence
+    internal class Overtake : Loop
     {
         private Driver driver;
         private Car target;
@@ -19,19 +19,13 @@ namespace Traffic.Actions
             this.driver = driver;
             this.target = target;
             Name = "Overtake";
+            Initial = new Generic (Start) {Name = "AdjustSpeed"};
         }
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
             base.Update (elapsed);
-
-            // Loop sequnce
-            if (Finished)
-            {
-                Add (new Generic (Start) { Name = "AdjustSpeed" });
-                Finished = false;
-            }
 
             Debug ();
         }

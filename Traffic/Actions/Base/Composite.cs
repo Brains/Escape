@@ -21,13 +21,12 @@ namespace Traffic.Actions.Base
         //------------------------------------------------------------------
         public override string ToString ()
         {
-            string tab = "\t";
             string componentsNames = "";
 
             foreach (var action in Actions)
-                componentsNames += tab + action + "\n";
+                componentsNames += action + "; ";
 
-            return Name + "\n" + componentsNames;
+            return Name + ": " + componentsNames;
 //            return Name;
         }
     }

@@ -8,7 +8,7 @@ using Traffic.Drivers;
 
 namespace Traffic.Actions
 {
-    internal class Shrink : Sequence
+    internal class Shrink : Loop
     {
         private readonly Driver driver;
 
@@ -17,6 +17,7 @@ namespace Traffic.Actions
         {
             this.driver = driver;
             Name = "Shrink";
+            Initial = new Generic (DetectDanger) { Name = "DetectDanger" };
         }
 
         //------------------------------------------------------------------
@@ -24,12 +25,7 @@ namespace Traffic.Actions
         {
             base.Update (elapsed);
 
-            // Loop sequnce
-            if (Finished)
-            {
-                Add (new Generic (DetectDanger) { Name = "DetectDanger" });
-                Finished = false;
-            }
+            Debug ();
         }
 
         //------------------------------------------------------------------
@@ -81,5 +77,10 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
+        private void Debug ()
+        {
+            
+        }
+
     }
 }

@@ -1,10 +1,7 @@
 using System;
 using System.Linq;
-using Android.OS;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+using Traffic.Actions;
 using Traffic.Cars;
-using Traffic.Helpers;
 using Tools.Markers;
 
 namespace Traffic.Drivers
@@ -12,7 +9,10 @@ namespace Traffic.Drivers
     internal class Player : Common
     {
         //------------------------------------------------------------------
-        public Player (Car car) : base (car) {}
+        public Player (Car car) : base (car)
+        {
+            Add (new Input (this));
+        }
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
@@ -21,7 +21,8 @@ namespace Traffic.Drivers
 
 //            AdjustSpeed ();
 
-            UpdateInput ();
+
+
 
             Debug ();
         }
@@ -61,20 +62,9 @@ namespace Traffic.Drivers
 //                Car.Velocity -= 5.0f;
         }
 
-        //------------------------------------------------------------------
-        public void UpdateInput ()
-        {
-            if (KeyboardInput.IsKeyPressed (Keys.Right)) Car.Lane.Right.Add (Car); //Car.Driver.ChangeLane (Car.Lane.Right);
-            if (KeyboardInput.IsKeyPressed (Keys.Left)) Car.Lane.Left.Add (Car); //Car.Driver.ChangeLane (Car.Lane.Left);
-            if (KeyboardInput.IsKeyDown (Keys.Down)) Car.Brake ();
-            if (KeyboardInput.IsKeyDown (Keys.Up)) /*Car.Accelerate ();*/ ForceAccelerate ();
-        }
 
-        //------------------------------------------------------------------
-        protected void ForceAccelerate ()
-        {
-            Car.Velocity += Car.Acceleration;
-        }
+
+
 
         //-----------------------------------------------------------------
         private void Debug ()

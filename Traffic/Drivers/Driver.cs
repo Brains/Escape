@@ -137,7 +137,7 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public bool TryChangeLane (Lane lane, Composite action)
+        public bool TryChangeLane (Lane lane, Sequence action)
         {
             if (CheckLane (lane))
             {
@@ -150,7 +150,7 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public void ChangeLane (Lane lane, Composite action)
+        public void ChangeLane (Lane lane, Sequence action)
         {
             if (lane == null) return;
 
