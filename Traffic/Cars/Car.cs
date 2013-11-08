@@ -52,6 +52,7 @@ namespace Traffic.Cars
             Position = new Vector2 (0, horizont);
             Lives = 1;
             Acceleration = 0.5f;
+            Velocity = Lane.Velocity;
         }
 
         //------------------------------------------------------------------
@@ -188,7 +189,9 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         private void Debug ()
         {
-//            new Text (Velocity.ToString (), GlobalPosition, Color.DarkSeaGreen, true);
+            new Text (Velocity.ToString ("F0"), GlobalPosition, Color.DarkRed, true);
+            
+            //            new Text (Velocity.ToString (), GlobalPosition, Color.DarkSeaGreen, true);
         }
 
         //------------------------------------------------------------------

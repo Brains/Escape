@@ -189,7 +189,6 @@ namespace Traffic
 
             car.Lane = this;
             car.Position = new Vector2 (0, car.GlobalPosition.Y);
-            car.Driver.Velocity = Velocity;
         }
 
         //------------------------------------------------------------------

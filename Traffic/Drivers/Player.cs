@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Traffic.Actions;
+using Traffic.Actions.Base;
 using Traffic.Cars;
 using Tools.Markers;
 
@@ -11,6 +13,8 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public Player (Car car) : base (car)
         {
+            Velocity = 400;
+
             AddParallel (new Input (this));
         }
 
@@ -46,6 +50,9 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         private void Debug ()
         {
+//            new Text (Car.Velocity, Car.GlobalPosition, Color.DarkRed, true);
+
+
             string actionsNames = Actions.Aggregate ("", (current, action) => current + (action + ""));
 //            new Text (actionsNames, Car.GlobalPosition, Color.DarkRed, true);
 //            Console.WriteLine (actionsNames);
@@ -54,6 +61,13 @@ namespace Traffic.Drivers
 //            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
 //            if (closestCar != null)
 //                closestCar.Color = Color.Red;
+        }
+
+        //------------------------------------------------------------------
+        public void Accelerate ()
+        {
+            if (Car.Velocity < Velocity)
+                Car.Accelerate ();
         }
     }
 }

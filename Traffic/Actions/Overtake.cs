@@ -70,7 +70,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         void Debug ()
         {
-            new Text (driver.Distance (target).ToString (), target.GlobalPosition, Color.MediumOrchid, true);
+//            new Text (driver.Distance (target).ToString (), target.GlobalPosition, Color.MediumOrchid, true);
         }
 
     }

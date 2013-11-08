@@ -7,12 +7,12 @@ namespace Traffic.Actions
 {
     internal class Input : Loop
     {
-        private Driver driver;
+        private Drivers.Player driver;
         private static KeyboardState current;
         private static KeyboardState previous;
 
         //------------------------------------------------------------------
-        public Input (Driver driver)
+        public Input (Drivers.Player driver)
         {
             this.driver = driver;
             Name = "Input";
@@ -34,7 +34,7 @@ namespace Traffic.Actions
             if (IsKeyPressed (Keys.Right)) ChangeLane (driver.Car.Lane.Right);
             if (IsKeyPressed (Keys.Left)) ChangeLane (driver.Car.Lane.Left);
             if (IsKeyDown (Keys.Down)) driver.Car.Brake ();
-            if (IsKeyDown (Keys.Up)) ForceAccelerate ();
+            if (IsKeyDown (Keys.Up)) driver.Accelerate ();
         }
 
         //------------------------------------------------------------------

@@ -122,7 +122,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public void Accelerate (Composite action, int times)
         {
-            if (Car.Velocity < Velocity)
+            if (Car.Velocity < Car.Lane.Velocity)
                 action.Add (new Repeated (Car.Accelerate, times) { Name = "Accelerate" });
         }
 
