@@ -57,6 +57,7 @@
     <Compile Include="Actions\Base\Repeated.cs" />
     <Compile Include="Actions\Base\Sequence.cs" />
     <Compile Include="Actions\Base\Sleep.cs" />
+    <Compile Include="Actions\Input.cs" />
     <Compile Include="Actions\Overtake.cs" />
     <Compile Include="Actions\Shrink.cs" />
     <Compile Include="Cars\Bounds.cs" />
@@ -68,7 +69,6 @@
     <Compile Include="Drivers\Driver.cs" />
     <Compile Include="Drivers\Player.cs" />
     <Compile Include="Drivers\Police.cs" />
-    <Compile Include="Helpers\KeyboardInput.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Object.cs" />
