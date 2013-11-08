@@ -12,7 +12,7 @@ namespace Tools.Markers
         //------------------------------------------------------------------
         static Text ()
         {
-            font = Manager.Instance.Game.Content.Load<SpriteFont> ("Fonts/Segoe UI Light");
+            font = Manager.Instance.Game.Content.Load<SpriteFont> ("Fonts/Segoe (Markers)");
         }
 
         //------------------------------------------------------------------
