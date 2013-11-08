@@ -10,7 +10,7 @@ namespace Tools.Markers
         private SpriteBatch spriteBatch;
         public static Manager Instance { get; set; }
         public List<Marker> Markers { get; set; }
-        public bool Clear { get; set; }
+        public static bool Clear { get; set; }
         
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)

@@ -24,6 +24,7 @@ namespace Traffic
         {
             Game = game;
             CreateLanes ();
+            Add (new Indicators (this));
         }
 
         //------------------------------------------------------------------
@@ -33,7 +34,7 @@ namespace Traffic
             texture = Images["Road"];
 
             Player = ((Lane) Components.First ()).CreatePlayer (Game);
-            ((Lane) Components[6]).CreatePolice (Game);
+//            ((Lane) Components[6]).CreatePolice (Game);
 
             base.Setup ();
         }

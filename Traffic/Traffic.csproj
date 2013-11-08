@@ -69,6 +69,7 @@
     <Compile Include="Drivers\Driver.cs" />
     <Compile Include="Drivers\Player.cs" />
     <Compile Include="Drivers\Police.cs" />
+    <Compile Include="Indicators.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Object.cs" />
