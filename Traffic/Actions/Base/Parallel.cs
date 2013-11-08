@@ -7,12 +7,11 @@ namespace Traffic.Actions.Base
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            var actions = new List <Action> ();
-            actions.ForEach (action => action.Update (elapsed));
+            Actions.ForEach (action => action.Update (elapsed));
             
-            actions.RemoveAll (action => action.Finished);
+            Actions.RemoveAll (action => action.Finished);
             
-            Finished = actions.Count == 0;
+            Finished = Actions.Count == 0;
         }
     }
 }
