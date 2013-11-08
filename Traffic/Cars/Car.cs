@@ -187,20 +187,6 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        private void Debug ()
-        {
-            new Text (Velocity.ToString ("F0"), GlobalPosition, Color.DarkRed, true);
-            
-            //            new Text (Velocity.ToString (), GlobalPosition, Color.DarkSeaGreen, true);
-        }
-
-        //------------------------------------------------------------------
-        public override string ToString ()
-        {
-            return ID.ToString ();
-        }
-
-        //------------------------------------------------------------------
         public void EnableBlinker (Lane newLane)
         {
             const int shift = 30;
@@ -223,6 +209,19 @@ namespace Traffic.Cars
         public void DisableBlinker ()
         {
             blinker.Disable ();
+        }
+
+        //------------------------------------------------------------------
+        public override string ToString ()
+        {
+            return ID.ToString ();
+        }
+
+        //------------------------------------------------------------------
+        private void Debug ()
+        {
+//            new Text (Velocity.ToString ("F0"), GlobalPosition, Color.DarkSeaGreen, true);
+//            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.DangerousZone / 1.5f), Color.IndianRed);
         }
     }
 }

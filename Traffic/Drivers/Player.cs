@@ -23,8 +23,6 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
-//            AdjustSpeed ();
-
             Debug ();
         }
 
@@ -46,6 +44,12 @@ namespace Traffic.Drivers
 //            new Text (factor.ToString ("F3"), Car.GlobalPosition, Color.Red);
         }
 
+        //------------------------------------------------------------------
+        public void Accelerate ()
+        {
+            if (Car.Velocity < Velocity)
+                Car.Accelerate ();
+        }
 
         //-----------------------------------------------------------------
         private void Debug ()
@@ -63,11 +67,5 @@ namespace Traffic.Drivers
 //                closestCar.Color = Color.Red;
         }
 
-        //------------------------------------------------------------------
-        public void Accelerate ()
-        {
-            if (Car.Velocity < Velocity)
-                Car.Accelerate ();
-        }
     }
 }

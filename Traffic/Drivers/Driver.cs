@@ -13,19 +13,23 @@ namespace Traffic.Drivers
     internal abstract class Driver
     {
         //------------------------------------------------------------------
-        protected List<Actions.Base.Action> Actions = new List<Actions.Base.Action> ();
-        protected List<Actions.Base.Action> ActionsToAdd = new List<Actions.Base.Action> ();
-        protected float DangerousZone;
+        protected List <Actions.Base.Action> Actions = new List <Actions.Base.Action> ();
+        protected List <Actions.Base.Action> ActionsToAdd = new List <Actions.Base.Action> ();
 
         //------------------------------------------------------------------
         public Car Car { get; set; }
         public float Velocity { get; set; }
 
+        public float DangerousZone
+        {
+            // Hardcoded numbers are constants
+            get { return Car.Lenght * 3 * Car.Velocity / 200; }
+        }
+
         //------------------------------------------------------------------
         protected Driver (Car car)
         {
             Car = car;
-
         }
 
         #region Actions
@@ -61,17 +65,10 @@ namespace Traffic.Drivers
         #region Sensor Analysis
 
         //------------------------------------------------------------------
-        public void CalculateDangerousZone ()
-        {
-            DangerousZone = Car.Lenght * Car.Velocity / 60.0f;
-//            new Line (Car.GlobalPosition, Car.GlobalPosition + new Vector2 (0, -DangerousZone));
-        }
-
-        //------------------------------------------------------------------
         public float Distance (Car car)
         {
             // Don't react with own Car
-            if (car == null  || car == Car) return float.MaxValue;
+            if (car == null || car == Car) return float.MaxValue;
 
             var distance = Car.GlobalPosition - car.GlobalPosition;
 
@@ -79,7 +76,7 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public Car FindClosestCar (IEnumerable<Car> cars)
+        public Car FindClosestCar (IEnumerable <Car> cars)
         {
             return cars.MinBy (Distance);
         }
@@ -103,7 +100,7 @@ namespace Traffic.Drivers
         {
             if (lane == null) return false;
 
-            if (GetMinimumDistance (lane.Cars) < DangerousZone)
+            if (GetMinimumDistance (lane.Cars) < DangerousZone / 1.5)
                 return false;
 
             return true;
@@ -123,7 +120,7 @@ namespace Traffic.Drivers
         public void Accelerate (Composite action, int times)
         {
             if (Car.Velocity < Car.Lane.Velocity)
-                action.Add (new Repeated (Car.Accelerate, times) { Name = "Accelerate" });
+                action.Add (new Repeated (Car.Accelerate, times) {Name = "Accelerate"});
         }
 
         //------------------------------------------------------------------

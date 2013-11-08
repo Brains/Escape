@@ -11,6 +11,7 @@ namespace Traffic.Actions
     internal class Shrink : Loop
     {
         private readonly Driver driver;
+        private Car closestCar;
 
         //------------------------------------------------------------------
         public Shrink (Driver driver)
@@ -23,6 +24,8 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
+            FindClosestCar ();
+
             base.Update (elapsed);
 
             Debug ();
@@ -40,28 +43,28 @@ namespace Traffic.Actions
                 return;
             }
 
-            // Set safely distance
-            if (IsThreatOfCollision ())
-                driver.Brake (this, 5);
-
-            // Change Lane
-            Add (new Conditional (IsThreatOfCollision, TryChangeLanes) { Name = "Try Change Lane" });
-
-            // Last chance to avoid collision
-            if (IsThreatOfCollision ())
+            if (driver.Distance (closestCar) < driver.DangerousZone / 1.5)
                 driver.Brake (this, 50);
+            else
+                // Change Lane
+                Add (new Conditional (IsThreatOfCollision, TryChangeLanes) {Name = "Try Change Lane"});
         }
 
         //------------------------------------------------------------------
         private bool IsThreatOfCollision ()
         {
-            Car closestCar = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsAhead));
             if (closestCar == null) return false;
 
             bool mySpeedLarger = driver.Car.Velocity > closestCar.Velocity;
-            bool tooCloseDistance = driver.Distance (closestCar) < 200;
+            bool tooCloseDistance = driver.Distance (closestCar) < driver.DangerousZone;
 
             return tooCloseDistance && mySpeedLarger;
+        }
+
+        //------------------------------------------------------------------
+        private void FindClosestCar ()
+        {
+            closestCar = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsAhead));
         }
 
         //------------------------------------------------------------------
@@ -72,8 +75,8 @@ namespace Traffic.Actions
 
             if (driver.TryChangeLane (driver.Car.Lane.Right, this)) return;
 
-//            var sequence = new Sequence () { Name = "Change Lane" };
-//            var sequence = new Sequence () { Name = "Blinker" };
+            // Last chance to avoid collision if no free Lanes
+            driver.Brake (this, 50);
         }
 
         //------------------------------------------------------------------
