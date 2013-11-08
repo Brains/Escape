@@ -2,6 +2,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Traffic.Actions.Base;
 using Traffic.Helpers;
 
 #endregion
@@ -21,7 +22,7 @@ namespace Application
             
             Content.RootDirectory = "Content";
 
-            Components.Add (new Traffic.Actions.Manager (this));
+            Components.Add (new Manager (this));
             Components.Add (new Tools.Timers.Manager (this));
             Components.Add (new Traffic.Manager (this));
             Components.Add (new KeyboardInput (this));

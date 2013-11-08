@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Traffic.Actions
+namespace Traffic.Actions.Base
 {
     public class Manager : GameComponent
     {

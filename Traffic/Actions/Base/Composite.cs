@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Traffic.Actions
+namespace Traffic.Actions.Base
 {
     public abstract class Composite : Action
     {
-        protected List<Action> Actions;
+        public List <Action> Actions { get; set; }
 
         //------------------------------------------------------------------
         protected Composite ()
@@ -21,12 +21,14 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public override string ToString ()
         {
-            string componentsNames = ": ";
+            string tab = "\t";
+            string componentsNames = "";
 
             foreach (var action in Actions)
-                componentsNames += action.Name + "; ";
+                componentsNames += tab + action + "\n";
 
-            return Name + componentsNames;
+            return Name + "\n" + componentsNames;
+//            return Name;
         }
     }
 }

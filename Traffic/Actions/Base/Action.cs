@@ -1,4 +1,4 @@
-﻿namespace Traffic.Actions
+﻿namespace Traffic.Actions.Base
 {
     public abstract class Action
     {
@@ -6,7 +6,7 @@
         protected readonly float Duration;
 
         public bool Finished { get; set; }
-        public bool Lock { get; set; }
+//        public bool Lock { get; set; }
         public string Name { get; set; }
 
 //        public event Action Finish = delegate { };
@@ -15,12 +15,14 @@
         protected Action (float duration)
         {
             Duration = duration;
+            Name = GetType ().Name;
         }
 
         //------------------------------------------------------------------
         protected Action ()
         {
             Duration = 0;
+            Name = GetType ().Name;
         }
 
         //------------------------------------------------------------------

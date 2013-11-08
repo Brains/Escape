@@ -1,17 +1,20 @@
-﻿namespace Traffic.Actions
+﻿namespace Traffic.Actions.Base
 {
-    public class Sleep : Action
+    public class Loop : Action
     {
+        private readonly System.Action action;
+
         //------------------------------------------------------------------
-        public Sleep (float duration) : base (duration) {}
+        public Loop (System.Action action)
+        {
+            this.action = action;
+        }
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            Elapsed += elapsed;
-
-            if (Elapsed >= Duration)
-                Finished = true;
+            action.Invoke ();
         }
+
     }
 }

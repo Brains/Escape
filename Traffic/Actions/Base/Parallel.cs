@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
-namespace Traffic.Actions
+namespace Traffic.Actions.Base
 {
     public class Parallel : Composite
     {
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            Actions.ForEach (action => action.Update (elapsed));
+            var actions = new List <Action> ();
+            actions.ForEach (action => action.Update (elapsed));
             
-            Actions.RemoveAll (action => action.Finished);
+            actions.RemoveAll (action => action.Finished);
             
-            Finished = Actions.Count == 0;
+            Finished = actions.Count == 0;
         }
     }
 }

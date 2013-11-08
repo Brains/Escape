@@ -1,13 +1,11 @@
-﻿namespace Traffic.Actions
+﻿namespace Traffic.Actions.Base
 {
-    public class Loop : Action
+    public class Generic : Action
     {
         private readonly System.Action action;
-        private int counter;
-        private readonly int times;
 
         //------------------------------------------------------------------
-        public Loop (System.Action action)
+        public Generic (System.Action action)
         {
             this.action = action;
         }
@@ -16,6 +14,8 @@
         public override void Update (float elapsed)
         {
             action.Invoke ();
+
+            Finished = true;
         }
 
     }

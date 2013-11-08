@@ -1,4 +1,4 @@
-﻿namespace Traffic.Actions
+﻿namespace Traffic.Actions.Base
 {
     public class Controller : Action
     {
