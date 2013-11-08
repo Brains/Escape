@@ -7,8 +7,8 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public Police (Cars.Police police) : base (police)
         {
-//            Add (new Shrink (this));
-            Add (new Overtake (this, Car.Lane.Road.Player));
+            AddParallel (new Shrink (this));
+            AddParallel (new Overtake (this, Car.Lane.Road.Player));
         }
     }
 }

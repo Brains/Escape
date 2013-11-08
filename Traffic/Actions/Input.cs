@@ -16,14 +16,14 @@ namespace Traffic.Actions
         {
             this.driver = driver;
             Name = "Input";
-            Initial = new Generic (CheckInput) { Name = "CheckInput" };
+            Initial = new Generic (CheckInput) {Name = "CheckInput"};
         }
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
             base.Update (elapsed);
-            
+
             previous = current;
             current = Keyboard.GetState ();
         }
@@ -31,8 +31,8 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public void CheckInput ()
         {
-            if (IsKeyPressed (Keys.Right)) driver.ChangeLane (driver.Car.Lane.Right, this);
-            if (IsKeyPressed (Keys.Left)) driver.ChangeLane (driver.Car.Lane.Left, this);
+            if (IsKeyPressed (Keys.Right)) ChangeLane (driver.Car.Lane.Right);
+            if (IsKeyPressed (Keys.Left)) ChangeLane (driver.Car.Lane.Left);
             if (IsKeyDown (Keys.Down)) driver.Car.Brake ();
             if (IsKeyDown (Keys.Up)) ForceAccelerate ();
         }
@@ -53,6 +53,31 @@ namespace Traffic.Actions
         protected void ForceAccelerate ()
         {
             driver.Car.Velocity += driver.Car.Acceleration;
+        }
+
+        //------------------------------------------------------------------
+        private void Accelerate ()
+        {
+            if (driver.Car.Velocity < 300)
+                driver.Car.Accelerate ();
+        }
+
+        //------------------------------------------------------------------
+        private void Brake ()
+        {
+            if (driver.Car.Velocity > 150)
+                driver.Car.Brake ();
+        }
+
+        //------------------------------------------------------------------
+        private void ChangeLane (Lane lane)
+        {
+            // Add blinker as Parallel action sequence
+            Sequence blinker = new Sequence();
+            driver.EnableBlinker (lane, blinker, 1.0f);
+            driver.AddParallel (blinker);
+
+            driver.ChangeLane (lane, this);
         }
     }
 }

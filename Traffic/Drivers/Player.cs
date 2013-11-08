@@ -6,12 +6,12 @@ using Tools.Markers;
 
 namespace Traffic.Drivers
 {
-    internal class Player : Common
+    internal class Player : Driver
     {
         //------------------------------------------------------------------
         public Player (Car car) : base (car)
         {
-            Add (new Input (this));
+            AddParallel (new Input (this));
         }
 
         //------------------------------------------------------------------
@@ -20,9 +20,6 @@ namespace Traffic.Drivers
             base.Update (elapsed);
 
 //            AdjustSpeed ();
-
-
-
 
             Debug ();
         }
@@ -45,43 +42,18 @@ namespace Traffic.Drivers
 //            new Text (factor.ToString ("F3"), Car.GlobalPosition, Color.Red);
         }
 
-        //------------------------------------------------------------------
-        private void Accelerate ()
-        {
-            if (Car.Velocity < 300)
-                Car.Velocity += 1.0f;
-        }
-
-        //------------------------------------------------------------------
-        private void Brake ()
-        {
-            if (Car.Velocity > 150)
-                Car.Brake ();
-
-//            if (Car.Velocity > 150)
-//                Car.Velocity -= 5.0f;
-        }
-
-
-
-
 
         //-----------------------------------------------------------------
         private void Debug ()
         {
-            string actionsNames = "";
+            string actionsNames = Actions.Aggregate ("", (current, action) => current + (action + ""));
+//            new Text (actionsNames, Car.GlobalPosition, Color.DarkRed, true);
+//            Console.WriteLine (actionsNames);
 
-            foreach (var action in Actions)
-                actionsNames += action + "";
 
 //            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
 //            if (closestCar != null)
 //                closestCar.Color = Color.Red;
-
-
-//            new Text (actionsNames, Car.GlobalPosition, Color.DarkRed, true);
-
-//            Console.WriteLine (actionsNames);
         }
     }
 }

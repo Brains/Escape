@@ -26,7 +26,6 @@ namespace Traffic.Drivers
         {
             Car = car;
 
-            Add (new Shrink (this));
         }
 
         #region Actions
@@ -52,7 +51,7 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public void Add (Actions.Base.Action action)
+        public void AddParallel (Actions.Base.Action action)
         {
             ActionsToAdd.Add (action);
         }
@@ -128,11 +127,11 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public void EnableBlinker (Lane lane, Composite action)
+        public void EnableBlinker (Lane lane, Composite action, float delay)
         {
             Car.EnableBlinker (lane);
 
-            action.Add (new Sleep (0.5f));
+            action.Add (new Sleep (delay));
             action.Add (new Generic (() => Car.DisableBlinker ()));
         }
 
@@ -141,7 +140,7 @@ namespace Traffic.Drivers
         {
             if (CheckLane (lane))
             {
-                EnableBlinker (lane, action);
+                EnableBlinker (lane, action, 0.5f);
                 ChangeLane (lane, action);
                 return true;
             }

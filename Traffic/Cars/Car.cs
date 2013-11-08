@@ -124,8 +124,8 @@ namespace Traffic.Cars
         {
             if (Velocity > 0)
                 Velocity -= Acceleration * 3;
+
             brakes.Visible = true;
-            //            new Text ("Brake", GlobalPosition, Color.Red);
         }
 
         //------------------------------------------------------------------
