@@ -64,8 +64,8 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public void UpdateInput ()
         {
-            if (KeyboardInput.IsKeyPressed (Keys.Right)) Car.Driver.ChangeLane (Car.Lane.Right);
-            if (KeyboardInput.IsKeyPressed (Keys.Left)) Car.Driver.ChangeLane (Car.Lane.Left);
+            if (KeyboardInput.IsKeyPressed (Keys.Right)) Car.Lane.Right.Add (Car); //Car.Driver.ChangeLane (Car.Lane.Right);
+            if (KeyboardInput.IsKeyPressed (Keys.Left)) Car.Lane.Left.Add (Car); //Car.Driver.ChangeLane (Car.Lane.Left);
             if (KeyboardInput.IsKeyDown (Keys.Down)) Car.Brake ();
             if (KeyboardInput.IsKeyDown (Keys.Up)) /*Car.Accelerate ();*/ ForceAccelerate ();
         }
@@ -82,12 +82,16 @@ namespace Traffic.Drivers
             string actionsNames = "";
 
             foreach (var action in Actions)
-                actionsNames += action + "\n";
+                actionsNames += action + "";
+
+//            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
+//            if (closestCar != null)
+//                closestCar.Color = Color.Red;
 
 
-            new Text (actionsNames, Car.GlobalPosition, Color.DarkRed, true);
+//            new Text (actionsNames, Car.GlobalPosition, Color.DarkRed, true);
 
-//            Console.WriteLine (actionsNames + "\n\n\n");
+//            Console.WriteLine (actionsNames);
         }
     }
 }

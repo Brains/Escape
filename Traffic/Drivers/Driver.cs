@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Tools.Extensions;
 using Tools.Markers;
 using Traffic.Actions;
+using Traffic.Actions.Base;
 using Traffic.Cars;
 
 namespace Traffic.Drivers
@@ -12,33 +13,31 @@ namespace Traffic.Drivers
     internal abstract class Driver
     {
         //------------------------------------------------------------------
-        protected Car Car;
-        protected List <Actions.Action> Actions = new List <Actions.Action> ();
-        protected List <Actions.Action> ActionsToAdd = new List <Actions.Action> ();
+        protected List<Actions.Base.Action> Actions = new List<Actions.Base.Action> ();
+        protected List<Actions.Base.Action> ActionsToAdd = new List<Actions.Base.Action> ();
         protected float DangerousZone;
-        protected bool Locked;
 
+        //------------------------------------------------------------------
+        public Car Car { get; set; }
         public float Velocity { get; set; }
 
         //------------------------------------------------------------------
         protected Driver (Car car)
         {
             Car = car;
+
+            Add (new Shrink (this));
         }
 
-        //------------------------------------------------------------------
+        #region Actions
+
+        //-----------------------------------------------------------------
         public virtual void Update (float elapsed)
         {
-            Locked = false;
-
-            foreach (var action in Actions)
-            {
-                action.Update (elapsed);
-
-                if (action.Lock) Locked = true;
-            }
+            Actions.ForEach (action => action.Update (elapsed));
 
             AddDeferredActions ();
+
             Actions.RemoveAll (actions => actions.Finished);
         }
 
@@ -46,23 +45,44 @@ namespace Traffic.Drivers
         private void AddDeferredActions ()
         {
             // Insert in first position to detect Lock property as early as possible
-            ActionsToAdd.ForEach (action => Actions.Insert (0, action));
+//            ActionsToAdd.ForEach (action => Actions.Insert (0, action));
 
+            Actions.AddRange (ActionsToAdd);
             ActionsToAdd.Clear ();
         }
 
+        //------------------------------------------------------------------
+        public void Add (Actions.Base.Action action)
+        {
+            ActionsToAdd.Add (action);
+        }
+
+        #endregion
 
         #region Sensor Analysis
 
         //------------------------------------------------------------------
-        protected float Distance (Car car)
+        public void CalculateDangerousZone ()
+        {
+            DangerousZone = Car.Lenght * Car.Velocity / 60.0f;
+//            new Line (Car.GlobalPosition, Car.GlobalPosition + new Vector2 (0, -DangerousZone));
+        }
+
+        //------------------------------------------------------------------
+        public float Distance (Car car)
         {
             // Don't react with own Car
-            if (car == Car) return float.MaxValue;
+            if (car == null  || car == Car) return float.MaxValue;
 
             var distance = Car.GlobalPosition - car.GlobalPosition;
 
             return Math.Abs (distance.Y);
+        }
+
+        //------------------------------------------------------------------
+        public Car FindClosestCar (IEnumerable<Car> cars)
+        {
+            return cars.MinBy (Distance);
         }
 
         //------------------------------------------------------------------
@@ -74,7 +94,7 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        protected bool IsAhead (Car car)
+        public bool IsAhead (Car car)
         {
             return car.GlobalPosition.Y < Car.GlobalPosition.Y;
         }
@@ -90,54 +110,39 @@ namespace Traffic.Drivers
             return true;
         }
 
-        //------------------------------------------------------------------
-        public Car FindClosestCar (IEnumerable <Car> cars)
-        {
-            return cars.MinBy (Distance);
-        }
-
-        //------------------------------------------------------------------
-        protected void CalculateDangerousZone ()
-        {
-            DangerousZone = Car.Lenght * Car.Velocity / 60.0f;
-//            new Line (Car.GlobalPosition, Car.GlobalPosition + new Vector2 (0, -DangerousZone));
-        }
-
         #endregion
 
-        #region Actions
+        #region Car Controll
 
-        //-----------------------------------------------------------------
-        public void Add (Actions.Action action)
+        //------------------------------------------------------------------
+        public void Brake (Composite action, int times)
         {
-            if (!Locked)
-                ActionsToAdd.Add (action);
+            action.Add (new Repeated (Car.Brake, times) {Name = "Brake"});
         }
 
         //------------------------------------------------------------------
-        protected void AvoidCollisions ()
+        public void Accelerate (Composite action, int times)
         {
-            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
-            if (closestCar == null) return;
-
-            if (Velocity <= closestCar.Velocity) return;
-
-            CalculateDangerousZone ();
-            if (Distance (closestCar) > DangerousZone) return;
-
-            // Avoid Danger situation
-            if (TryChangeLane (Car.Lane.Left)) return;
-            if (TryChangeLane (Car.Lane.Right)) return;
-            Car.Brake ();
+            if (Car.Velocity < Velocity)
+                action.Add (new Repeated (Car.Accelerate, times) { Name = "Accelerate" });
         }
 
         //------------------------------------------------------------------
-        protected bool TryChangeLane (Lane lane)
+        public void EnableBlinker (Lane lane, Composite action)
+        {
+            Car.EnableBlinker (lane);
+
+            action.Add (new Sleep (0.5f));
+            action.Add (new Generic (() => Car.DisableBlinker ()));
+        }
+
+        //------------------------------------------------------------------
+        public bool TryChangeLane (Lane lane, Composite action)
         {
             if (CheckLane (lane))
             {
-                EnableBlinker (lane);
-                ChangeLane (lane);
+                EnableBlinker (lane, action);
+                ChangeLane (lane, action);
                 return true;
             }
 
@@ -145,45 +150,31 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        private void EnableBlinker (Lane lane)
+        public void ChangeLane (Lane lane, Composite action)
         {
-            Car.EnableBlinker (lane);
-            var sequence = new Actions.Sequence ();
-            sequence.Add (new Actions.Sleep (1.0f));
-            sequence.Add (new Actions.Generic (() => Car.DisableBlinker ()));
-            Add (sequence);
-        }
-
-
-        //------------------------------------------------------------------
-        public void ChangeLane (Lane newLane)
-        {
-            if (newLane == null) return;
+            if (lane == null) return;
 
             // No Lane changing when car doesn't move
             if (Car.Velocity < 10) return;
 
-            var sequence = new Sequence {Lock = true};
-            float duration = 100.0f / Car.Velocity;
+            float duration = 200.0f / Car.Velocity;
 
             // Rotate
-            Action<float> rotate = share => Car.Angle += share;
-            float finalAngle = MathHelper.ToRadians ((newLane.GlobalPosition.X < Car.GlobalPosition.X) ? -10 : 10);
-            sequence.Add (new Controller (rotate, finalAngle, duration * 0.1f));
+            Action <float> rotate = share => Car.Angle += share;
+            float finalAngle = MathHelper.ToRadians ((lane.GlobalPosition.X < Car.GlobalPosition.X) ? -10 : 10);
+            action.Add (new Controller (rotate, finalAngle, duration * 0.1f));
 
             // Moving
-            Action<Vector2> move = shift => Car.Position += shift;
-            var diapason = new Vector2 (newLane.GlobalPosition.X - Car.GlobalPosition.X, 0);
-            sequence.Add (new Controller (move, diapason, duration * 0.2f));
+            Action <Vector2> move = shift => Car.Position += shift;
+            var diapason = new Vector2 (lane.GlobalPosition.X - Car.GlobalPosition.X, 0);
+            action.Add (new Controller (move, diapason, duration * 0.2f));
 
             // Inverse rotating
             var inverseRotating = new Controller (rotate, -finalAngle, duration * 0.1f);
-            sequence.Add (inverseRotating);
+            action.Add (inverseRotating);
 
             // Add to new Lane
-            sequence.Add (new Generic (() => newLane.Add (Car)));
-
-            Add (sequence);
+            action.Add (new Generic (() => lane.Add (Car)));
         }
 
         #endregion
