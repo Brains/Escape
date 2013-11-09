@@ -33,7 +33,7 @@ namespace Traffic.Actions
         {
             if (IsKeyPressed (Keys.Right)) ChangeLane (driver.Car.Lane.Right);
             if (IsKeyPressed (Keys.Left)) ChangeLane (driver.Car.Lane.Left);
-            if (IsKeyDown (Keys.Down)) driver.Car.Brake ();
+            if (IsKeyDown (Keys.Down)) driver.Brake ();
             if (IsKeyDown (Keys.Up)) driver.Accelerate ();
         }
 
@@ -56,26 +56,12 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
-        private void Accelerate ()
-        {
-            if (driver.Car.Velocity < 300)
-                driver.Car.Accelerate ();
-        }
-
-        //------------------------------------------------------------------
-        private void Brake ()
-        {
-            if (driver.Car.Velocity > 150)
-                driver.Car.Brake ();
-        }
-
-        //------------------------------------------------------------------
         private void ChangeLane (Lane lane)
         {
             // Add blinker as Parallel action sequence
-            Sequence blinker = new Sequence();
-            driver.EnableBlinker (lane, blinker, 1.0f);
-            driver.AddParallel (blinker);
+//            Sequence blinker = new Sequence();
+//            driver.EnableBlinker (lane, blinker, 1.0f);
+//            driver.AddParallel (blinker);
 
             driver.ChangeLane (lane, this);
         }
