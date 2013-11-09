@@ -13,7 +13,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public Player (Car car) : base (car)
         {
-            Velocity = 400;
+            Velocity = 320;
 
             AddParallel (new Input (this));
         }
@@ -23,6 +23,8 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
+            AdjustSpeed ();
+
             Debug ();
         }
 
@@ -31,17 +33,19 @@ namespace Traffic.Drivers
         {
             float distance = GetMinimumDistance (Car.Lane.Cars.Where (IsAhead));
 
-            if (distance < 600)
-                Car.Velocity += distance / 300 - 1.5f;
+            // A point of the "factor" is to accelerate when (distance > Lenght * 3)
+            int factor = Math.Sign (distance / Car.Lenght - 3);
 
-//            if (distance > 300) Accelerate ();
-//            else if (distance < 100) Brake ();
+//            float factor = (distance / Car.Lenght - 3) / 9;
+//            if (factor > 1) factor = 1.0f;
+//            if (factor < -1) factor = -1.0f;
+//            Car.Velocity += Car.Acceleration * factor;
+//            new Text (factor.ToString (), Vector2.One * 100, Color.DarkViolet);
 
-
-//            float factor = distance / (DangerousZone);
-//            Car.Velocity *= factor;
-
-//            new Text (factor.ToString ("F3"), Car.GlobalPosition, Color.Red);
+            if (factor > 0) 
+                Accelerate ();
+            else
+                Brake ();
         }
 
         //------------------------------------------------------------------
@@ -51,13 +55,20 @@ namespace Traffic.Drivers
                 Car.Accelerate ();
         }
 
+        //------------------------------------------------------------------
+        public void Brake ()
+        {
+            if (Car.Velocity > 100)
+                Car.Brake ();
+        }
+
         //-----------------------------------------------------------------
         private void Debug ()
         {
 //            new Text (Car.Velocity, Car.GlobalPosition, Color.DarkRed, true);
 
 
-            string actionsNames = Actions.Aggregate ("", (current, action) => current + (action + ""));
+//            string actionsNames = Actions.Aggregate ("", (current, action) => current + (action + ""));
 //            new Text (actionsNames, Car.GlobalPosition, Color.DarkRed, true);
 //            Console.WriteLine (actionsNames);
 

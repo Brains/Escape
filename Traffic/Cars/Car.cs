@@ -11,13 +11,14 @@ namespace Traffic.Cars
         //-----------------------------------------------------------------
         private Lane lane;
         private Vector2 origin;
-        private Bounds bounds;
 
         protected Texture2D Texture;
         protected Color InitialColor;
         protected string TextureName;
+        protected internal Bounds Bounds;
         private Lights brakes;
         private Lights blinker;
+        private Lights boost;
 
         //------------------------------------------------------------------
         public int ID;
@@ -27,6 +28,7 @@ namespace Traffic.Cars
         public Driver Driver { get; set; }
         public int Lives { get; set; }
         public float Acceleration { get; set; }
+        public float Deceleration { get; set; }
         public float Angle { get; set; }
 
         //------------------------------------------------------------------
@@ -50,8 +52,9 @@ namespace Traffic.Cars
             InitialColor = Color.White;
             TextureName = "Car";
             Position = new Vector2 (0, horizont);
-            Lives = 1;
-            Acceleration = 0.5f;
+            Lives = 3;
+            Acceleration = 0.3f;
+            Deceleration = 2.0f;
             Velocity = Lane.Velocity;
         }
 
@@ -64,14 +67,18 @@ namespace Traffic.Cars
             Lenght = Texture.Height;
 
             // Bounding Box
-            bounds = new Bounds (this, GlobalPosition, origin);
-            bounds.Inflate (-5, -5);
-            Add (bounds);
+            Bounds = new Bounds (this, GlobalPosition, origin);
+            Bounds.Inflate (-5, -5);
+            Add (Bounds);
 
             // Lights
             brakes = new Lights (this, "Brake");
-            brakes.Position = new Vector2 (0, Texture.Height / 2 + 5);
+            brakes.Position = new Vector2 (0, Texture.Height / 2 + 10);
             Add (brakes);
+
+            boost = new Lights (this, "Acceleration");
+            boost.Position = new Vector2 (0, -Texture.Height / 2 - 10);
+            Add (boost);
 
             blinker = new Lights (this, "Blinker");
             Add (blinker);
@@ -107,6 +114,7 @@ namespace Traffic.Cars
         {
             Color = InitialColor;
             brakes.Visible = false;
+            boost.Visible = false;
         }
 
         #endregion
@@ -117,14 +125,15 @@ namespace Traffic.Cars
         public void Accelerate ()
         {
             Velocity += Acceleration;
-//            new Text ("Accelerate", GlobalPosition, Color.DarkOrange);
+            
+            boost.Visible = true;
         }
 
         //------------------------------------------------------------------
         public void Brake ()
         {
             if (Velocity > 0)
-                Velocity -= Acceleration * 3;
+                Velocity -= Deceleration;
 
             brakes.Visible = true;
         }
@@ -154,11 +163,12 @@ namespace Traffic.Cars
 
             if (Intersect (closestCar))
             {
-                Lives--;
+
+                Lives --;//= closestCar.Lives;
 //                closestCar.Lives--;
                 if (this is Player)
                 {
-//                    Console.WriteLine (ToString () + " : " + closestCar.ID + " : " + closestCar.Lives);                        
+                    Console.WriteLine (ToString () + " : " + closestCar.ID + " : " + closestCar.Lives);                        
                 }
             }
 
@@ -169,11 +179,11 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        public bool Intersect (Car car)
+        public virtual bool Intersect (Car car)
         {
             if (car == this) return false;
 
-            return bounds.Intersects (car.bounds);
+            return Bounds.Intersects (car.Bounds);
         }
 
         #endregion

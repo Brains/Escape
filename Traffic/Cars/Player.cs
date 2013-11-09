@@ -4,6 +4,8 @@ namespace Traffic.Cars
 {
     internal class Player : Car
     {
+        private Car lastCollided;
+
         //------------------------------------------------------------------
         public Player (Lane lane, int insertPoint) : base (lane, insertPoint)
         {
@@ -11,7 +13,24 @@ namespace Traffic.Cars
             InitialColor = Color.White;
             TextureName = "Player";
             Lives = 99;
-            Acceleration = 1.5f;
+            Acceleration = 0.5f;
+            Deceleration = 1.0f;
+        }
+
+        //------------------------------------------------------------------
+        public override bool Intersect (Car car)
+        {
+            if (car == this) return false;
+            if (car == lastCollided) return false;
+
+            if (Bounds.Intersects (car.Bounds))
+            {
+                lastCollided = car;
+                return true;
+            }
+
+
+            return false;
         }
     }
 }

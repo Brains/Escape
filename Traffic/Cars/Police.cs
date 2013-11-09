@@ -13,6 +13,7 @@ namespace Traffic.Cars
             TextureName = "Police";
             Lives = 99;
             Acceleration = 1.0f;
+            Deceleration = 2.0f;
         } 
     }
 }
