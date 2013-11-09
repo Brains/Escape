@@ -30,8 +30,8 @@ namespace Traffic
         {
             var offset = new Vector2 (0, 30);
 
-            spriteBatch.DrawString (font, road.Player.Lives.ToString (), GlobalPosition, Color.DarkRed);
-            spriteBatch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), GlobalPosition + offset * 1, Color.CadetBlue);
+            spriteBatch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), GlobalPosition, Color.CadetBlue);
+            spriteBatch.DrawString (font, road.Player.Lives.ToString (), GlobalPosition + offset * 1, Color.DarkRed);
         }
     }
 }
