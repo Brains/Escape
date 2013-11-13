@@ -31,11 +31,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\Road\Car.png">
-      <Name>Car</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Images\Road\Road.png">
       <Name>Road</Name>
       <Importer>TextureImporter</Importer>
@@ -78,6 +73,23 @@
   <ItemGroup>
     <Compile Include="Images\Road\Acceleration.png">
       <Name>Acceleration</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\Road\Car %28Heavy%29.png">
+      <Name>Car %28Heavy%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Road\Car %28Light%29.png">
+      <Name>Car %28Light%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Road\Car %28Medium%29.png">
+      <Name>Car %28Medium%29</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
