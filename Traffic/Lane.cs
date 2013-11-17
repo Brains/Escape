@@ -10,7 +10,7 @@ namespace Traffic
 {
     internal class Lane : Object
     {
-        private class Attributes
+        internal class Attributes
         {
             public int ID;
             public int MaximumCars = 3;
@@ -18,7 +18,7 @@ namespace Traffic
             public List <Car> CarsToAdd;
         }
 
-        private Attributes Properties = new Attributes ();
+        public Attributes Properties = new Attributes ();
         private static int carsCounter;
 
         //------------------------------------------------------------------
@@ -53,8 +53,8 @@ namespace Traffic
         //------------------------------------------------------------------
         private void CalculateVelocity (int id)
         {
-            int maximumVelocity = 240;
-            int step = 20;
+            const int maximumVelocity = 240;
+            const int step = 20;
             Velocity = maximumVelocity - id * step;
         }
 
@@ -76,7 +76,7 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private void CreateCar ()
+        protected virtual Car CreateCar ()
         {
             var car = new Car (this, GetInsertionPosition ()) {ID = carsCounter};
             car.Setup ();
@@ -85,6 +85,8 @@ namespace Traffic
             OwnCar (car);
 
             carsCounter++;
+
+            return car;
         }
 
         //------------------------------------------------------------------
@@ -129,6 +131,9 @@ namespace Traffic
         public override void Update (float elapsed)
         {
             base.Update (elapsed);
+
+//            var cars = Cars.FindAll (car => car is Police);
+//            new Text (cars.Count.ToString (), Position, Color.DarkOrange);
 
             AddQueuedCars ();
 

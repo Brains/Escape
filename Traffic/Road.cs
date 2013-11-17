@@ -33,8 +33,8 @@ namespace Traffic
             Images = Game.Content.LoadContentFolder <Texture2D> ("Images/Road");
             texture = Images["Road"];
 
-            Player = ((Lane) Components.First ()).CreatePlayer (Game);
-            ((Lane) Components[6]).CreatePolice (Game);
+            Player = ((Lane) Components[6]).CreatePlayer (Game);
+//            ((Lane) Components[6]).CreatePolice (Game);
 
             base.Setup ();
         }
@@ -46,8 +46,15 @@ namespace Traffic
 
             foreach (var index in Enumerable.Range (0, 12))
             {
-                var lane = new Lane (this, index);
+                Lane lane;
 
+                // Is Lane opposite?
+                if (index < 2)
+                    lane = new OppositeLane (this, index);
+                else
+                    lane = new Lane (this, index);
+
+                // Set Lane's neiborhoods
                 if (index != 0 && left != null)
                 {
                     lane.Left = left;
@@ -66,7 +73,7 @@ namespace Traffic
             base.Update (elapsed);
 
             // Camera movement simulation
-            MoveCamera (Player.Velocity * 2);
+            MoveCamera (Player.Velocity * elapsed * 2);
         }
 
         //------------------------------------------------------------------
