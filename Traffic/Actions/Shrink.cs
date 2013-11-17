@@ -97,7 +97,7 @@ namespace Traffic.Actions
             float distanceToCollision = driver.Distance (closestCar) - (driver.Car.Lenght / 2.0f + closestCar.Lenght / 2.0f);
             bool isCriticalDistance = distanceToCollision < driver.DangerousZone / 3.0f;
             
-            if (velocityDifference > 50 || isCriticalDistance) 
+            if (velocityDifference > 100 || isCriticalDistance) 
             {
                 Console.WriteLine ("Emergency");
                 return emergency;

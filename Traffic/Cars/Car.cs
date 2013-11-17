@@ -56,8 +56,8 @@ namespace Traffic.Cars
             TextureName = "Car";
             Position = new Vector2 (0, horizont);
             Lives = 3;
-            Acceleration = 0.3f;
-            Deceleration = 2.0f;
+            Acceleration = 0.2f;
+            Deceleration = 1.0f;
             Velocity = Lane.Velocity;
             CreateWeight ();
             TextureName += weight.TextureSuffix;
