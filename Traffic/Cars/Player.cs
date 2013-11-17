@@ -13,8 +13,8 @@ namespace Traffic.Cars
             InitialColor = Color.White;
             TextureName = "Player";
             Lives = 99;
-            Acceleration = 0.5f;
-            Deceleration = 1.0f;
+            Acceleration = 1.5f;
+            Deceleration = 3.0f;
         }
 
         //------------------------------------------------------------------

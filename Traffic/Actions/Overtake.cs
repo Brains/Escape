@@ -55,22 +55,23 @@ namespace Traffic.Actions
             if (Math.Abs (lane - targetLane) < float.Epsilon)
                 return;
             else if (lane < targetLane)
-                driver.TryChangeLane (driver.Car.Lane.Right, this);
+                driver.TryChangeLane (driver.Car.Lane.Right, this, driver.GetChangeLanesDuration());
             else if (lane > targetLane)
-                driver.TryChangeLane (driver.Car.Lane.Left, this);
+                driver.TryChangeLane (driver.Car.Lane.Left, this, driver.GetChangeLanesDuration());
         }
 
         //------------------------------------------------------------------
         public void Accelerate (Composite action, int times)
         {
-            if (driver.Car.Velocity < 500)
+            if (driver.Car.Velocity < driver.Velocity)
                 action.Add (new Repeated (driver.Car.Accelerate, times) { Name = "Accelerate" });
         }
 
         //------------------------------------------------------------------
         void Debug ()
         {
-//            new Text (driver.Distance (target).ToString (), target.GlobalPosition, Color.MediumOrchid, true);
+//            new Text (Actions.Count.ToString (), Vector2.One * 50, Color.MediumOrchid, true);
+            //Console.WriteLine (Actions);
         }
 
     }

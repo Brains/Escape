@@ -66,9 +66,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void Move (float shift)
         {
-            const float factor = 50; // Just for comfortable values
-
-            Position += new Vector2 (0, shift / factor);
+            Position += new Vector2 (0, shift);
         }
     }
 }

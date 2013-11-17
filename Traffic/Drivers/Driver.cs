@@ -20,7 +20,7 @@ namespace Traffic.Drivers
         public Car Car { get; set; }
         public float Velocity { get; set; }
 
-        public float DangerousZone
+        public virtual float DangerousZone
         {
             // Hardcoded numbers are constants
             get { return Car.Lenght * 3 * Car.Velocity / 200; }
@@ -92,7 +92,12 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public bool IsAhead (Car car)
         {
-            return car.GlobalPosition.Y < Car.GlobalPosition.Y;
+            if (Car.Velocity >= 0)
+                // Car on Normal Lane
+                return car.GlobalPosition.Y < Car.GlobalPosition.Y;
+            else
+                // Car on Opposite Lane
+                return car.GlobalPosition.Y > Car.GlobalPosition.Y;
         }
 
         //------------------------------------------------------------------
@@ -104,6 +109,12 @@ namespace Traffic.Drivers
                 return false;
 
             return true;
+        }
+
+        //-----------------------------------------------------------------
+        public float GetChangeLanesDuration ( )
+        {
+            return 400.0f / Car.Velocity;
         }
 
         #endregion
@@ -129,16 +140,24 @@ namespace Traffic.Drivers
             Car.EnableBlinker (lane);
 
             action.Add (new Sleep (delay));
+        }
+
+        //------------------------------------------------------------------
+        private void DisableBlinker (Composite action)
+        {
             action.Add (new Generic (() => Car.DisableBlinker ()));
         }
 
         //------------------------------------------------------------------
-        public bool TryChangeLane (Lane lane, Sequence action)
+        public bool TryChangeLane (Lane lane, Sequence action, float duration)
         {
+            Console.WriteLine (duration);
+
             if (CheckLane (lane))
             {
-                EnableBlinker (lane, action, 0.5f);
-                ChangeLane (lane, action);
+                EnableBlinker (lane, action, duration / 2.0f);
+                ChangeLane (lane, action, duration / 2.0f);
+                DisableBlinker (action); 
                 return true;
             }
 
@@ -146,15 +165,12 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public void ChangeLane (Lane lane, Sequence action)
+        public void ChangeLane (Lane lane, Sequence action, float duration)
         {
             if (lane == null) return;
 
             // No Lane changing when car doesn't move
             if (Car.Velocity < 10) return;
-
-            // If speed is 200 whole lane changing took 0.5 second
-            float duration = 200.0f / Car.Velocity;
 
             // Rotate
             Action <float> rotate = share => Car.Angle += share;

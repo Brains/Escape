@@ -65,6 +65,10 @@
     <Compile Include="Cars\Lights.cs" />
     <Compile Include="Cars\Player.cs" />
     <Compile Include="Cars\Police.cs" />
+    <Compile Include="Cars\Weights\Heavy.cs" />
+    <Compile Include="Cars\Weights\Light.cs" />
+    <Compile Include="Cars\Weights\Medium.cs" />
+    <Compile Include="Cars\Weights\Weight.cs" />
     <Compile Include="Drivers\Common.cs" />
     <Compile Include="Drivers\Driver.cs" />
     <Compile Include="Drivers\Player.cs" />
@@ -73,6 +77,7 @@
     <Compile Include="Lane.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Object.cs" />
+    <Compile Include="Opposite Lane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Road.cs" />
   </ItemGroup>

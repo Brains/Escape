@@ -44,7 +44,7 @@ namespace Traffic.Actions
             }
 
             // There is a Threat of Collision
-            if (driver.Distance (closestCar) > driver.DangerousZone / 1.5)
+            if (driver.Distance (closestCar) > driver.DangerousZone / 1.8f)
                 // Change Lane if we have enough space
                 Add (new Conditional (IsThreatOfCollision, TryChangeLanes) {Name = "Try Change Lane"});
             else 
@@ -56,6 +56,9 @@ namespace Traffic.Actions
         private bool IsThreatOfCollision ()
         {
             if (closestCar == null) return false;
+
+            if (driver.Distance (closestCar) < driver.DangerousZone / 2.0f)
+                return true;
 
             bool tooCloseDistance = driver.Distance (closestCar) < driver.DangerousZone;
             bool mySpeedLarger = driver.Car.Velocity > closestCar.Velocity;
@@ -73,18 +76,42 @@ namespace Traffic.Actions
         private void TryChangeLanes ()
         {
             // Change Lane on Left
-            if (driver.TryChangeLane (driver.Car.Lane.Left, this)) return;
+            if (driver.TryChangeLane (driver.Car.Lane.Left, this, CalculateChangeLanesDuration ())) return;
 
-            if (driver.TryChangeLane (driver.Car.Lane.Right, this)) return;
+            if (driver.TryChangeLane (driver.Car.Lane.Right, this, CalculateChangeLanesDuration ())) return;
 
             // Last chance to avoid collision if no free Lanes
             driver.Brake (this, 50);
         }
 
         //------------------------------------------------------------------
+        private float CalculateChangeLanesDuration ()
+        {
+            float normal = driver.GetChangeLanesDuration ();
+            float emergency = driver.GetChangeLanesDuration () / 2.0f;
+            float velocityDifference = Math.Abs (driver.Car.Velocity - closestCar.Velocity);
+
+            if (closestCar == null) return normal;
+            if (velocityDifference < float.Epsilon) return normal;
+
+            float distanceToCollision = driver.Distance (closestCar) - (driver.Car.Lenght / 2.0f + closestCar.Lenght / 2.0f);
+            bool isCriticalDistance = distanceToCollision < driver.DangerousZone / 3.0f;
+            
+            if (velocityDifference > 50 || isCriticalDistance) 
+            {
+                Console.WriteLine ("Emergency");
+                return emergency;
+            }
+
+            Console.WriteLine ("Normal");
+            return normal;
+        }
+
+        //------------------------------------------------------------------
         private void Debug ()
         {
-            
+//            var pos = driver.Car.GlobalPosition;
+//            new Line (pos, pos - new Vector2 (0, driver.DangerousZone), Color.IndianRed);
         }
 
     }

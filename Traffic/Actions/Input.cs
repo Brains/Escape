@@ -63,7 +63,7 @@ namespace Traffic.Actions
 //            driver.EnableBlinker (lane, blinker, 1.0f);
 //            driver.AddParallel (blinker);
 
-            driver.ChangeLane (lane, this);
+            driver.ChangeLane (lane, this, driver.GetChangeLanesDuration () / 2.0f); // Divide by two because blinkers are turned off and take no time
         }
     }
 }

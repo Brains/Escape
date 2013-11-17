@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
+using Traffic.Cars.Weights;
 using Traffic.Drivers;
 
 namespace Traffic.Cars
@@ -19,6 +20,7 @@ namespace Traffic.Cars
         private Lights brakes;
         private Lights blinker;
         private Lights boost;
+        private Weights.Weight weight;
 
         //------------------------------------------------------------------
         public int ID;
@@ -30,6 +32,7 @@ namespace Traffic.Cars
         public float Acceleration { get; set; }
         public float Deceleration { get; set; }
         public float Angle { get; set; }
+        public SpriteEffects SpriteEffects { get; set; }
 
         //------------------------------------------------------------------
         public Lane Lane
@@ -56,6 +59,19 @@ namespace Traffic.Cars
             Acceleration = 0.3f;
             Deceleration = 2.0f;
             Velocity = Lane.Velocity;
+            CreateWeight ();
+            TextureName += weight.TextureSuffix;
+        }
+
+        //------------------------------------------------------------------
+        private void CreateWeight ()
+        {
+            if (Lane.Properties.ID >= 0 && Lane.Properties.ID < 4)
+                weight = new Light (this);
+            if (Lane.Properties.ID >= 4 && Lane.Properties.ID < 8)
+                weight = new Medium (this);
+            if (Lane.Properties.ID >= 8 && Lane.Properties.ID < 12)
+                weight = new Heavy (this);
         }
 
         //------------------------------------------------------------------
@@ -97,10 +113,10 @@ namespace Traffic.Cars
 
             Reset ();
 
-            Move (-Velocity);
+            Move (-Velocity * elapsed);
 
             // Simulate Camera moving
-            Move (Lane.Road.Player.Velocity);
+            Move (Lane.Road.Player.Velocity * elapsed);
 
             Driver.Update (elapsed);
 
@@ -168,7 +184,7 @@ namespace Traffic.Cars
 //                closestCar.Lives--;
                 if (this is Player)
                 {
-                    Console.WriteLine (ToString () + " : " + closestCar.ID + " : " + closestCar.Lives);                        
+//                    Console.WriteLine (ToString () + " : " + closestCar.ID + " : " + closestCar.Lives);                        
                 }
             }
 
@@ -193,7 +209,7 @@ namespace Traffic.Cars
         {
             base.Draw (spriteBatch);
 
-            spriteBatch.Draw (Texture, GlobalPosition, null, Color, Angle, origin, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw (Texture, GlobalPosition, null, Color, Angle, origin, 1.0f, SpriteEffects, 1.0f);
         }
 
         //------------------------------------------------------------------

@@ -13,7 +13,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public Player (Car car) : base (car)
         {
-            Velocity = 320;
+            Velocity = 400;
 
             AddParallel (new Input (this));
         }
@@ -23,7 +23,7 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
-            AdjustSpeed ();
+//            AdjustSpeed ();
 
             Debug ();
         }
@@ -58,7 +58,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public void Brake ()
         {
-            if (Car.Velocity > 100)
+//            if (Car.Velocity > 100)
                 Car.Brake ();
         }
 

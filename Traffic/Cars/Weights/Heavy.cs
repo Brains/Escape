@@ -1,11 +1,13 @@
 ﻿namespace Traffic.Cars.Weights
 {
-    public class Heavy : Weight
+    internal class Heavy : Weight
     {
         //------------------------------------------------------------------
-        public Heavy ()
+        public Heavy (Car car) : base (car)
         {
             Lives = 3;
+            this.car.Acceleration *= 0.5f;
+            this.car.Deceleration *= 0.5f;
         }
 
         //------------------------------------------------------------------
