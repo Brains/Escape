@@ -1,4 +1,7 @@
-﻿using Traffic.Actions;
+﻿using System;
+using Microsoft.Xna.Framework;
+using Tools.Markers;
+using Traffic.Actions;
 
 namespace Traffic.Drivers
 {
@@ -7,7 +10,7 @@ namespace Traffic.Drivers
         public override float DangerousZone
         {
             // Hardcoded numbers are constants
-            get { return Car.Lenght * Car.Velocity / 200; }
+            get { return base.DangerousZone / 1; }
         }
 
         //------------------------------------------------------------------
@@ -15,8 +18,24 @@ namespace Traffic.Drivers
         {
             Velocity = 500;
 
-            AddParallel (new Shrink (this));
-            AddParallel (new Overtake (this, Car.Lane.Road.Player));
+            AddInLoop (new Shrink (this));
+            AddInLoop (new Overtake (this, Car.Lane.Road.Player));
+        }
+
+        //------------------------------------------------------------------
+        public override void Update (float elapsed)
+        {
+            base.Update (elapsed);
+
+            Debug ();
+        }
+
+        //------------------------------------------------------------------
+        private void Debug ()
+        {
+            // Draw DangerousZone
+            var pos = Car.GlobalPosition;
+            new Line (pos, pos - new Vector2 (0, DangerousZone), Color.IndianRed);
         }
     }
 }

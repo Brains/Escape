@@ -10,7 +10,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public Common (Car car) : base(car)
         {
-            AddParallel (new Shrink (this));
+            AddInLoop (new Shrink (this));
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Traffic.Drivers
         {
             Velocity = 400;
 
-            AddParallel (new Input (this));
+            AddInLoop (new Input (this));
         }
 
         //------------------------------------------------------------------

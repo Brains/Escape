@@ -5,7 +5,7 @@ using Traffic.Drivers;
 
 namespace Traffic.Actions
 {
-    internal class Input : Loop
+    internal class Input : Sequence
     {
         private Drivers.Player driver;
         private static KeyboardState current;
@@ -16,7 +16,7 @@ namespace Traffic.Actions
         {
             this.driver = driver;
             Name = "Input";
-            Initial = new Generic (CheckInput) {Name = "CheckInput"};
+            Add (new Generic (CheckInput) {Name = "CheckInput"});
         }
 
         //------------------------------------------------------------------
@@ -61,7 +61,7 @@ namespace Traffic.Actions
             // Add blinker as Parallel action sequence
 //            Sequence blinker = new Sequence();
 //            driver.EnableBlinker (lane, blinker, 1.0f);
-//            driver.AddParallel (blinker);
+//            driver.AddInLoop (blinker);
 
             driver.ChangeLane (lane, this, driver.GetChangeLanesDuration () / 2.0f); // Divide by two because blinkers are turned off and take no time
         }

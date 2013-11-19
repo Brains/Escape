@@ -8,7 +8,7 @@ using Traffic.Drivers;
 
 namespace Traffic.Actions
 {
-    internal class Shrink : Loop
+    internal class Shrink : Sequence
     {
         private readonly Driver driver;
         private Car closestCar;
@@ -18,7 +18,7 @@ namespace Traffic.Actions
         {
             this.driver = driver;
             Name = "Shrink";
-            Initial = new Generic (DetectDanger) { Name = "DetectDanger" };
+            Add (new Generic (DetectDanger) {Name = "DetectDanger"});
         }
 
         //------------------------------------------------------------------
@@ -95,24 +95,25 @@ namespace Traffic.Actions
             if (velocityDifference < float.Epsilon) return normal;
 
             float distanceToCollision = driver.Distance (closestCar) - (driver.Car.Lenght / 2.0f + closestCar.Lenght / 2.0f);
-            bool isCriticalDistance = distanceToCollision < driver.DangerousZone / 3.0f;
-            
-            if (velocityDifference > 100 || isCriticalDistance) 
-            {
-                Console.WriteLine ("Emergency");
-                return emergency;
-            }
+            bool distanceIsCritical = distanceToCollision < driver.DangerousZone / 3.0f;
 
-            Console.WriteLine ("Normal");
+            if (velocityDifference > 100 || distanceIsCritical)
+                return emergency;
+
             return normal;
         }
 
         //------------------------------------------------------------------
         private void Debug ()
         {
+            // Draw DangerousZone
 //            var pos = driver.Car.GlobalPosition;
 //            new Line (pos, pos - new Vector2 (0, driver.DangerousZone), Color.IndianRed);
-        }
 
+            // Mark closest car
+//            var pos = driver.Car.GlobalPosition;
+//            if (closestCar is Cars.Player)
+//                new Line (pos, closestCar.GlobalPosition);
+        }
     }
 }

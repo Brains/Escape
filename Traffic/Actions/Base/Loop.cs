@@ -1,32 +1,59 @@
-﻿namespace Traffic.Actions.Base
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Traffic.Actions.Base
 {
-    public class Loop : Sequence
+    public class Loop : Composite
     {
-        private Action initial;
+        private List<Action>.Enumerator enumerator;
+        private Dictionary<Action, Action> startPoints;
 
         //------------------------------------------------------------------
-        protected Action Initial
+        public Loop ()
         {
-            get { return initial; }
-            set
-            {
-                initial = value;
-                Add (Initial);
-            }
+            startPoints = new Dictionary<Action, Action> ();
+        }
+
+        //-----------------------------------------------------------------
+        public override void Add (Action action)
+        {
+            base.Add (action);
+
+            // Add Start Point for Composite Action
+            Composite composite = action as Composite;
+
+            if (composite != null)
+                startPoints.Add (composite, composite.Actions.First ());
         }
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            base.Update (elapsed);
-            
-            // Provide looping
-            if (Finished)
+            // Create enumerator
+            if (enumerator.Current == null)
             {
-                Add (Initial);
-                Finished = false;
+                enumerator = Actions.GetEnumerator ();
+                enumerator.MoveNext ();
             }
+
+            // Update current Sequence
+            enumerator.Current.Update (elapsed);
+
+            if (enumerator.Current.Finished)
+                FinishAction (enumerator.Current);
         }
 
+        //------------------------------------------------------------------
+        // Finish Sequence so we can start it on next iteration
+        private void FinishAction (Action action)
+        {
+            Composite composite = action as Composite;
+
+            if (composite != null)
+                composite.Add (startPoints[action]);
+
+            action.Finished = false;
+            enumerator.MoveNext ();
+        }
     }
 }

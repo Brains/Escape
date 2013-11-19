@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Tools.Extensions;
@@ -13,8 +14,8 @@ namespace Traffic.Drivers
     internal abstract class Driver
     {
         //------------------------------------------------------------------
-        protected List <Actions.Base.Action> Actions = new List <Actions.Base.Action> ();
-        protected List <Actions.Base.Action> ActionsToAdd = new List <Actions.Base.Action> ();
+        protected Loop Loop = new Loop ();
+//        protected  Parallel Parallel = new Parallel ();
 
         //------------------------------------------------------------------
         public Car Car { get; set; }
@@ -37,27 +38,20 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         public virtual void Update (float elapsed)
         {
-            Actions.ForEach (action => action.Update (elapsed));
 
-            AddDeferredActions ();
 
-            Actions.RemoveAll (actions => actions.Finished);
+
+            Loop.Update (elapsed);
+//            Parallel.Update (elapsed);
+
+            if (this is Police)
+                Debug ();
         }
 
         //------------------------------------------------------------------
-        private void AddDeferredActions ()
+        public void AddInLoop (Sequence action)
         {
-            // Insert in first position to detect Lock property as early as possible
-//            ActionsToAdd.ForEach (action => Actions.Insert (0, action));
-
-            Actions.AddRange (ActionsToAdd);
-            ActionsToAdd.Clear ();
-        }
-
-        //------------------------------------------------------------------
-        public void AddParallel (Actions.Base.Action action)
-        {
-            ActionsToAdd.Add (action);
+            Loop.Add (action);
         }
 
         #endregion
@@ -151,8 +145,6 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public bool TryChangeLane (Lane lane, Sequence action, float duration)
         {
-            Console.WriteLine (duration);
-
             if (CheckLane (lane))
             {
                 EnableBlinker (lane, action, duration / 2.0f);
@@ -191,5 +183,23 @@ namespace Traffic.Drivers
         }
 
         #endregion
+
+        //-----------------------------------------------------------------
+        private void Debug ( )
+        {
+//            Console.WriteLine (Loop);
+
+            // Check Left Lane
+            var pos = Car.Lane.Left.GlobalPosition;
+            pos.Y = Car.GlobalPosition.Y;
+            new Line (pos, pos - new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
+            new Line (pos, pos + new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
+
+            // Check Right Lane
+            pos = Car.Lane.Right.GlobalPosition;
+            pos.Y = Car.GlobalPosition.Y;
+            new Line (pos, pos - new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
+            new Line (pos, pos + new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
+        }
     }
 }
