@@ -84,10 +84,11 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Draw (SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw (texture, GlobalPosition, Color.White);
-            spriteBatch.Draw (texture, GlobalPosition - new Vector2 (0, texture.Height), Color.White);
-
             base.Draw (spriteBatch);
+
+            spriteBatch.Draw (texture, GlobalPosition, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw (texture, GlobalPosition - new Vector2 (0, texture.Height), null, 
+                Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
         }
     }
 }

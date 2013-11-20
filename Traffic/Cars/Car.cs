@@ -1,4 +1,5 @@
 using System;
+using Animation;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
@@ -12,15 +13,16 @@ namespace Traffic.Cars
         //-----------------------------------------------------------------
         private Lane lane;
         private Vector2 origin;
+        private Lights brakes;
+        private Lights blinker;
+        private Lights boost;
+        private Weight weight;
 
+        //------------------------------------------------------------------
         protected Texture2D Texture;
         protected Color InitialColor;
         protected string TextureName;
         protected internal Bounds Bounds;
-        private Lights brakes;
-        private Lights blinker;
-        private Lights boost;
-        private Weights.Weight weight;
 
         //------------------------------------------------------------------
         public int ID;
@@ -55,7 +57,6 @@ namespace Traffic.Cars
             InitialColor = Color.White;
             TextureName = "Car";
             Position = new Vector2 (0, horizont);
-            Lives = 3;
             Acceleration = 0.2f;
             Deceleration = 1.0f;
             Velocity = Lane.Velocity;
@@ -202,19 +203,30 @@ namespace Traffic.Cars
 
             if (Intersect (closestCar))
             {
-
                 Lives --;//= closestCar.Lives;
 //                closestCar.Lives--;
                 if (this is Player)
                 {
+                    Console.WriteLine (closestCar.Lives);
 //                    Console.WriteLine (ToString () + " : " + closestCar.ID + " : " + closestCar.Lives);                        
                 }
             }
 
             if (Lives <= 0)
+            {
                 Deleted = true;
 
+            }
+
 //            new Text (Lives.ToString (), Position, Color.RoyalBlue, true);
+        }
+
+        //------------------------------------------------------------------
+        protected void Explose ()
+        {
+            var animatedTexture = new AnimatedTexture (this, 1.3f, 0.0f);
+            animatedTexture.Load (Lane.Road.Images["Explosion"], 24, 12);
+            Add (animatedTexture);
         }
 
         //------------------------------------------------------------------
@@ -232,12 +244,8 @@ namespace Traffic.Cars
         {
             base.Draw (spriteBatch);
 
-            spriteBatch.Draw (Texture, GlobalPosition, null, Color, Angle, origin, 1.0f, SpriteEffects, 1.0f);
+            spriteBatch.Draw (Texture, GlobalPosition, null, Color, Angle, origin, 1.0f, SpriteEffects, 0.5f);
         }
-
-        //------------------------------------------------------------------
-
-        //------------------------------------------------------------------
 
         //------------------------------------------------------------------
         public override string ToString ()
@@ -249,6 +257,7 @@ namespace Traffic.Cars
         private void Debug ()
         {
 //            new Text (Velocity.ToString ("F0"), GlobalPosition, Color.DarkSeaGreen, true);
+            new Text (Lives.ToString (), GlobalPosition, Color.White);
 //            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.DangerousZone / 1.5f), Color.IndianRed);
         }
     }

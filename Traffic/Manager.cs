@@ -33,7 +33,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
-            spriteBatch.Begin ();
+            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
             road.Draw (spriteBatch);
 
