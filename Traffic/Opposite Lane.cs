@@ -8,7 +8,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public OppositeLane (Road road, int id) : base (road, id)
         {
-            Velocity *= -1;
+            IsOpposite = true;
         }
 
         //------------------------------------------------------------------
