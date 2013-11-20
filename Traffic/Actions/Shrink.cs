@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Tools.Markers;
@@ -89,7 +90,7 @@ namespace Traffic.Actions
         {
             float normal = driver.GetChangeLanesDuration ();
             float emergency = driver.GetChangeLanesDuration () / 2.0f;
-            float velocityDifference = Math.Abs (driver.Car.Velocity - closestCar.Velocity);
+            float velocityDifference = driver.Car.Velocity - closestCar.Velocity;
 
             if (closestCar == null) return normal;
             if (velocityDifference < float.Epsilon) return normal;
@@ -111,9 +112,9 @@ namespace Traffic.Actions
 //            new Line (pos, pos - new Vector2 (0, driver.DangerousZone), Color.IndianRed);
 
             // Mark closest car
-//            var pos = driver.Car.GlobalPosition;
-//            if (closestCar is Cars.Player)
-//                new Line (pos, closestCar.GlobalPosition);
+            var pos = driver.Car.GlobalPosition;
+            if (closestCar is Cars.Player)
+                new Line (pos, closestCar.GlobalPosition);
         }
     }
 }

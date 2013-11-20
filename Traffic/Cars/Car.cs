@@ -66,11 +66,11 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         private void CreateWeight ()
         {
-            if (Lane.Properties.ID >= 0 && Lane.Properties.ID < 4)
+            if (Lane.ID >= 0 && Lane.ID < 4)
                 weight = new Light (this);
-            if (Lane.Properties.ID >= 4 && Lane.Properties.ID < 8)
+            if (Lane.ID >= 4 && Lane.ID < 8)
                 weight = new Medium (this);
-            if (Lane.Properties.ID >= 8 && Lane.Properties.ID < 12)
+            if (Lane.ID >= 8 && Lane.ID < 12)
                 weight = new Heavy (this);
         }
 
@@ -154,6 +154,29 @@ namespace Traffic.Cars
             brakes.Visible = true;
         }
 
+        public void EnableBlinker (Lane newLane)
+        {
+            const int shift = 30;
+
+            if (newLane == Lane.Left)
+            {
+                blinker.Position = new Vector2 (-shift, 0);
+                blinker.Flip (false);
+            }
+            else if (newLane == Lane.Right)
+            {
+                blinker.Position = new Vector2 (shift, 0);
+                blinker.Flip (true);
+            }
+
+            blinker.Enable ();
+        }
+
+        public void DisableBlinker ()
+        {
+            blinker.Disable ();
+        }
+
         //------------------------------------------------------------------
 
         #endregion
@@ -213,29 +236,8 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        public void EnableBlinker (Lane newLane)
-        {
-            const int shift = 30;
-
-            if (newLane == Lane.Left)
-            {
-                blinker.Position = new Vector2 (-shift, 0);
-                blinker.Flip (false);
-            }
-            else if (newLane == Lane.Right)
-            {
-                blinker.Position = new Vector2 (shift, 0);
-                blinker.Flip (true);
-            }
-
-            blinker.Enable ();
-        }
 
         //------------------------------------------------------------------
-        public void DisableBlinker ()
-        {
-            blinker.Disable ();
-        }
 
         //------------------------------------------------------------------
         public override string ToString ()

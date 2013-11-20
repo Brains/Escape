@@ -15,6 +15,7 @@ namespace Traffic.Cars
             Lives = 99;
             Acceleration = 1.5f;
             Deceleration = 3.0f;
+            Velocity = 100;
         }
 
         //------------------------------------------------------------------

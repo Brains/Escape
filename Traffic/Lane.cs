@@ -10,19 +10,15 @@ namespace Traffic
 {
     internal class Lane : Object
     {
-        internal class Attributes
-        {
-            public int ID;
-            public int MaximumCars = 3;
-            public int Height;
-            public List <Car> CarsToAdd;
-        }
-
-        public Attributes Properties = new Attributes ();
+        private int maximumCars;
+        private int height;
+        private List <Car> carsToAdd;
         private static int carsCounter;
 
         //------------------------------------------------------------------
-        public List <Car> Cars { get; private set; }
+        public readonly int ID;
+        public bool IsOpposite;
+        public List<Car> Cars { get; private set; }
         public int Velocity { get; set; }
         public Lane Left { get; set; }
         public Lane Right { get; set; }
@@ -40,14 +36,16 @@ namespace Traffic
         //------------------------------------------------------------------
         public Lane (Road road, int id) : base (road)
         {
-            Properties.ID = id;
+            ID = id;
+            IsOpposite = false;
+            maximumCars = 3;
             Road = road;
             Anchored = true;
-            CalculatePosition (Properties.ID);
-            CalculateVelocity (Properties.ID);
+            CalculatePosition (ID);
+            CalculateVelocity (ID);
 
             Cars = new List <Car> ();
-            Properties.CarsToAdd = new List <Car> ();
+            carsToAdd = new List <Car> ();
         }
 
         //------------------------------------------------------------------
@@ -70,7 +68,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Setup ()
         {
-            Properties.Height = Road.Game.GraphicsDevice.Viewport.Height;
+            height = Road.Game.GraphicsDevice.Viewport.Height;
             
             base.Setup ();
         }
@@ -120,9 +118,9 @@ namespace Traffic
         private int GetInsertionPosition ()
         {
             float playerVelocity = (Road.Player != null) ? Road.Player.Velocity : 0;
-            int shift = (Velocity > playerVelocity) ? Properties.Height : -Properties.Height;
+            int shift = (Velocity > playerVelocity) ? height : -height;
 
-            return (int) (Random.NextDouble () * Properties.Height + shift);
+            return (int) (Random.NextDouble () * height + shift);
         }
 
         #endregion
@@ -151,7 +149,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AppendCars ()
         {
-            if (Cars.Count < Properties.MaximumCars)
+            if (Cars.Count < maximumCars)
             {
                 CreateCar ();
             }
@@ -161,7 +159,7 @@ namespace Traffic
         private void CleanUp ()
         {
             // Remove Cars outside the screen
-            var border = Properties.Height * 3;
+            var border = height * 3;
             Cars.RemoveAll (car =>
             {
                 int position = (int) car.GlobalPosition.Y;
@@ -175,15 +173,15 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AddQueuedCars ()
         {
-            Cars.AddRange (Properties.CarsToAdd);
-            Properties.CarsToAdd.ForEach (OwnCar);
-            Properties.CarsToAdd.Clear ();
+            Cars.AddRange (carsToAdd);
+            carsToAdd.ForEach (OwnCar);
+            carsToAdd.Clear ();
         }
 
         //------------------------------------------------------------------
         public void Add (Car car)
         {
-            Properties.CarsToAdd.Add (car);
+            carsToAdd.Add (car);
         }
 
         //------------------------------------------------------------------
@@ -207,7 +205,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public override string ToString ()
         {
-            return string.Format ("{0}", Properties.ID);
+            return string.Format ("{0}", ID);
         }
 
         //------------------------------------------------------------------

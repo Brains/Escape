@@ -49,7 +49,7 @@ namespace Traffic
                 Lane lane;
 
                 // Is Lane opposite?
-                if (index < 2)
+                if (index < 12)
                     lane = new OppositeLane (this, index);
                 else
                     lane = new Lane (this, index);

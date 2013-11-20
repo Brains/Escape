@@ -15,7 +15,6 @@ namespace Traffic.Drivers
     {
         //------------------------------------------------------------------
         protected Loop Loop = new Loop ();
-//        protected  Parallel Parallel = new Parallel ();
 
         //------------------------------------------------------------------
         public Car Car { get; set; }
@@ -38,11 +37,7 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         public virtual void Update (float elapsed)
         {
-
-
-
             Loop.Update (elapsed);
-//            Parallel.Update (elapsed);
 
             if (this is Police)
                 Debug ();
@@ -86,12 +81,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public bool IsAhead (Car car)
         {
-            if (Car.Velocity >= 0)
-                // Car on Normal Lane
-                return car.GlobalPosition.Y < Car.GlobalPosition.Y;
-            else
-                // Car on Opposite Lane
-                return car.GlobalPosition.Y > Car.GlobalPosition.Y;
+            return car.GlobalPosition.Y < Car.GlobalPosition.Y;
         }
 
         //------------------------------------------------------------------
