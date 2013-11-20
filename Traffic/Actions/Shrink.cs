@@ -112,9 +112,9 @@ namespace Traffic.Actions
 //            new Line (pos, pos - new Vector2 (0, driver.DangerousZone), Color.IndianRed);
 
             // Mark closest car
-            var pos = driver.Car.GlobalPosition;
-            if (closestCar is Cars.Player)
-                new Line (pos, closestCar.GlobalPosition);
+//            var pos = driver.Car.GlobalPosition;
+//            if (closestCar is Cars.Player)
+//                new Line (pos, closestCar.GlobalPosition);
         }
     }
 }
