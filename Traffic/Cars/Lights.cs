@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Traffic.Cars
@@ -10,6 +11,21 @@ namespace Traffic.Cars
         private readonly string textureName;
         private Vector2 origin;
         private SpriteEffects flip;
+        private Color color = Color.White;
+        private bool blink;
+
+        //------------------------------------------------------------------
+        public bool Blink
+        {
+            get { return blink; }
+            set
+            {
+                blink = value;
+                
+                if (value)
+                    Tools.Timers.Loop.Create (0.2f, Turn);
+            }
+        }
 
         //------------------------------------------------------------------
         public Lights (Car car, string textureName) : base (car)
@@ -30,13 +46,15 @@ namespace Traffic.Cars
         //-----------------------------------------------------------------
         public void Turn ( )
         {
-            Visible = !Visible;
+//            Visible = !Visible;
+            color = color == Color.White ? Color.Transparent : Color.White;
         }
 
         //-----------------------------------------------------------------
         public void Enable ()
         {
             Visible = true;
+
         }
 
         //-----------------------------------------------------------------
@@ -58,7 +76,7 @@ namespace Traffic.Cars
 
             if (!Visible) return;
 
-            spriteBatch.Draw (texture, GlobalPosition, null, Color.White, 0, origin, 1.0f, flip, 1.0f);
+            spriteBatch.Draw (texture, GlobalPosition, null, color, 0, origin, 1.0f, flip, 0.5f);
         }
     }
 }
