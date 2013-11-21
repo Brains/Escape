@@ -56,6 +56,7 @@
     <Compile Include="Markers\Text.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Timers\Loop.cs" />
     <Compile Include="Timers\Timer.cs" />
     <Compile Include="Timers\Manager.cs" />
   </ItemGroup>
