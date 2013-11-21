@@ -6,7 +6,7 @@ namespace Traffic.Actions.Base
     public class Loop : Composite
     {
         private List<Action>.Enumerator enumerator;
-        private Dictionary<Action, Action> startPoints;
+        private readonly Dictionary<Action, Action> startPoints;
 
         //------------------------------------------------------------------
         public Loop ()
@@ -15,7 +15,7 @@ namespace Traffic.Actions.Base
         }
 
         //-----------------------------------------------------------------
-        public override void Add (Action action)
+        public new void Add (Action action)
         {
             base.Add (action);
 

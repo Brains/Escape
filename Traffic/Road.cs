@@ -34,7 +34,7 @@ namespace Traffic
             texture = Images["Road"];
 
             Player = ((Lane) Components.First ()).CreatePlayer (Game);
-            ((Lane) Components[10]).CreatePolice (Game);
+            ((Lane) Components[4]).CreatePolice (Game);
 
             base.Setup ();
         }

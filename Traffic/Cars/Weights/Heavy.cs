@@ -5,7 +5,7 @@
         //------------------------------------------------------------------
         public Heavy (Car car) : base (car)
         {
-            Lives = 3;
+            this.car.Lives = 3;
             this.car.Acceleration *= 0.5f;
             this.car.Deceleration *= 0.5f;
         }

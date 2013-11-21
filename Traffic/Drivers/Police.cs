@@ -10,13 +10,13 @@ namespace Traffic.Drivers
         public override float DangerousZone
         {
             // Hardcoded numbers are constants
-            get { return base.DangerousZone / 1; }
+            get { return base.DangerousZone ; }
         }
 
         //------------------------------------------------------------------
         public Police (Cars.Police police) : base (police)
         {
-            Velocity = 500;
+            Velocity = 400;
 
             AddInLoop (new Shrink (this));
             AddInLoop (new Overtake (this, Car.Lane.Road.Player));

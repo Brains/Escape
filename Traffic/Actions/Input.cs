@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using System.Linq;
+using Microsoft.Xna.Framework.Input;
 using Traffic.Actions.Base;
 using Traffic.Cars;
 using Traffic.Drivers;
@@ -7,14 +8,14 @@ namespace Traffic.Actions
 {
     internal class Input : Sequence
     {
-        private Drivers.Player driver;
+        private Drivers.Player player;
         private static KeyboardState current;
         private static KeyboardState previous;
 
         //------------------------------------------------------------------
-        public Input (Drivers.Player driver)
+        public Input (Drivers.Player player)
         {
-            this.driver = driver;
+            this.player = player;
             Name = "Input";
             Add (new Generic (CheckInput) {Name = "CheckInput"});
         }
@@ -31,10 +32,18 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public void CheckInput ()
         {
-            if (IsKeyPressed (Keys.Right)) ChangeLane (driver.Car.Lane.Right);
-            if (IsKeyPressed (Keys.Left)) ChangeLane (driver.Car.Lane.Left);
-            if (IsKeyDown (Keys.Down)) driver.Brake ();
-            if (IsKeyDown (Keys.Up)) driver.Accelerate ();
+            int factor = 5;
+
+            if (IsKeyPressed (Keys.Right)) ChangeLane (player.Car.Lane.Right);
+            if (IsKeyPressed (Keys.Left)) ChangeLane (player.Car.Lane.Left);
+            
+            if (IsKeyDown (Keys.Down)) 
+                foreach (var index in Enumerable.Range (0, factor))
+                    player.Brake ();
+            
+            if (IsKeyDown (Keys.Up))
+                foreach (var index in Enumerable.Range (0, factor))
+                    player.Accelerate ();
         }
 
         //------------------------------------------------------------------
@@ -52,7 +61,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         protected void ForceAccelerate ()
         {
-            driver.Car.Velocity += driver.Car.Acceleration;
+            player.Car.Velocity += player.Car.Acceleration;
         }
 
         //------------------------------------------------------------------
@@ -60,10 +69,11 @@ namespace Traffic.Actions
         {
             // Add blinker as Parallel action sequence
 //            Sequence blinker = new Sequence();
-//            driver.EnableBlinker (lane, blinker, 1.0f);
-//            driver.AddInLoop (blinker);
+//            player.EnableBlinker (lane, blinker, 1.0f);
+//            player.AddInLoop (blinker);
 
-            driver.ChangeLane (lane, this, driver.GetChangeLanesDuration () / 2.0f); // Divide by two because blinkers are turned off and take no time
+            player.ChangeLane (lane, this, player.GetChangeLanesDuration () / 2.0f);
+                // Divide by two because blinkers are turned off and take no time
         }
     }
 }

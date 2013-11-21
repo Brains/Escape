@@ -5,7 +5,7 @@
         //------------------------------------------------------------------
         public Light (Car car) : base (car)
         {
-            Lives = 1;
+            this.car.Lives = 1;
             this.car.Acceleration *= 2;
             this.car.Deceleration *= 2;
         }

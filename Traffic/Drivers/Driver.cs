@@ -22,8 +22,8 @@ namespace Traffic.Drivers
 
         public virtual float DangerousZone
         {
-            // Hardcoded numbers are constants
-            get { return Car.Lenght * 3 * Car.Velocity / 200; }
+            // Hardcoded numbers are constants for normalization
+            get { return Car.Lenght + (Car.Lenght * Car.Velocity / 200); }
         }
 
         //------------------------------------------------------------------
@@ -39,8 +39,7 @@ namespace Traffic.Drivers
         {
             Loop.Update (elapsed);
 
-            if (this is Police)
-                Debug ();
+            Debug ();
         }
 
         //------------------------------------------------------------------
@@ -179,17 +178,19 @@ namespace Traffic.Drivers
         {
 //            Console.WriteLine (Loop);
 
+//            if (!(this is Police)) return;
+
             // Check Left Lane
-            var pos = Car.Lane.Left.GlobalPosition;
-            pos.Y = Car.GlobalPosition.Y;
-            new Line (pos, pos - new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
-            new Line (pos, pos + new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
+//            var pos = Car.Lane.Left.GlobalPosition;
+//            pos.Y = Car.GlobalPosition.Y;
+//            new Line (pos, pos - new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
+//            new Line (pos, pos + new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
 
             // Check Right Lane
-            pos = Car.Lane.Right.GlobalPosition;
-            pos.Y = Car.GlobalPosition.Y;
-            new Line (pos, pos - new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
-            new Line (pos, pos + new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
+//            pos = Car.Lane.Right.GlobalPosition;
+//            pos.Y = Car.GlobalPosition.Y;
+//            new Line (pos, pos - new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
+//            new Line (pos, pos + new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
         }
     }
 }

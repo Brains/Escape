@@ -5,7 +5,7 @@
         //------------------------------------------------------------------
         public Medium (Car car) : base (car)
         {
-            Lives = 2;
+            this.car.Lives = 2;
             this.car.Acceleration *= 1;
             this.car.Deceleration *= 1;
         }

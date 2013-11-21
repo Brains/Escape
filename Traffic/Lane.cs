@@ -10,20 +10,19 @@ namespace Traffic
 {
     internal class Lane : Object
     {
-        private int maximumCars;
         private int height;
-        private List <Car> carsToAdd;
+        private readonly List <Car> carsToAdd;
         private static int carsCounter;
 
         //------------------------------------------------------------------
         public readonly int ID;
-        public bool IsOpposite;
         public List<Car> Cars { get; private set; }
         public int Velocity { get; set; }
         public Lane Left { get; set; }
         public Lane Right { get; set; }
         public static Random Random { get; set; }
         public Road Road { get; private set; }
+        public int MaximumCars { get; set; }
 
         #region Creation
 
@@ -37,10 +36,10 @@ namespace Traffic
         public Lane (Road road, int id) : base (road)
         {
             ID = id;
-            IsOpposite = false;
-            maximumCars = 3;
+            MaximumCars = 5;
             Road = road;
             Anchored = true;
+
             CalculatePosition (ID);
             CalculateVelocity (ID);
 
@@ -90,7 +89,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public Player CreatePlayer (Game game)
         {
-            var player = new Player (this, 400) {ID = carsCounter};
+            var player = new Player (this, 500) {ID = carsCounter};
             player.Setup ();
             
             Cars.Add (player);
@@ -104,7 +103,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void CreatePolice (Game game)
         {
-            var police = new Police (this, 600) { ID = carsCounter };
+            var police = new Police (this, 200) { ID = carsCounter };
             police.Setup ();
 
             Cars.Add (police);
@@ -120,7 +119,24 @@ namespace Traffic
             float playerVelocity = (Road.Player != null) ? Road.Player.Velocity : 0;
             int shift = (Velocity > playerVelocity) ? height : -height;
 
-            return (int) (Random.NextDouble () * height + shift);
+
+            int position;
+            float minimum = float.MaxValue;
+            int iteration = 0;
+
+            do
+            {
+                position = (int) (Random.NextDouble () * height + shift);
+
+                if (Cars.Any ())
+                    minimum = Cars.Min (car => Math.Abs(car.GlobalPosition.Y - position));
+
+                iteration++;
+            }
+            while (minimum < 200 && iteration < 10);
+
+
+            return position;
         }
 
         #endregion
@@ -129,9 +145,6 @@ namespace Traffic
         public override void Update (float elapsed)
         {
             base.Update (elapsed);
-
-//            var cars = Cars.FindAll (car => car is Police);
-//            new Text (cars.Count.ToString (), Position, Color.DarkOrange);
 
             AddQueuedCars ();
 
@@ -149,7 +162,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AppendCars ()
         {
-            if (Cars.Count < maximumCars)
+            if (Cars.Count < MaximumCars)
             {
                 CreateCar ();
             }
@@ -213,6 +226,7 @@ namespace Traffic
         {
 //            new Text (ToString () + ":" + Cars.Count, Position);
 //            new Text (Velocity.ToString ("F0"), Position);
+            new Text (MaximumCars.ToString (), Position);
 
             int number = 1;
             foreach (var car in Cars)

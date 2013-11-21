@@ -13,7 +13,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public Player (Car car) : base (car)
         {
-            Velocity = 400;
+            Velocity = 300;
 
             AddInLoop (new Input (this));
         }
@@ -23,7 +23,7 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
-//            AdjustSpeed ();
+            AdjustSpeed ();
 
             Debug ();
         }
@@ -51,14 +51,17 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public void Accelerate ()
         {
-            if (Car.Velocity < Velocity)
+            if (Car.Velocity < Velocity) 
+            {
                 Car.Accelerate ();
+                Car.EnableBoost ();
+            }
         }
 
         //------------------------------------------------------------------
         public void Brake ()
         {
-//            if (Car.Velocity > 100)
+            if (Car.Velocity > 100)
                 Car.Brake ();
         }
 

@@ -13,7 +13,7 @@ namespace Traffic.Actions.Base
         }
 
         //------------------------------------------------------------------
-        public virtual void Add (Action action)
+        public void Add (Action action)
         {
             Actions.Add (action);
         }

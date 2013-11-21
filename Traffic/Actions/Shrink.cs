@@ -35,9 +35,6 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void DetectDanger ()
         {
-            // ToDo: In statement below is window [200, 300] with constant speed
-//            if (driver.Distance (closestCar) > 300)
-
             if (!IsThreatOfCollision ())
             {
                 driver.Accelerate (this, 5);
