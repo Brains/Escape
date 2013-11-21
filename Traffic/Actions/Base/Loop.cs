@@ -5,19 +5,22 @@ namespace Traffic.Actions.Base
 {
     public class Loop : Composite
     {
-        private List<Action>.Enumerator enumerator;
-        private readonly Dictionary<Action, Action> startPoints;
+        private List <Action>.Enumerator enumerator;
+//        private List <Action> newActions;
+        private readonly Dictionary <Action, Action> startPoints;
 
         //------------------------------------------------------------------
         public Loop ()
         {
-            startPoints = new Dictionary<Action, Action> ();
+//            newActions = new List <Action> ();
+            startPoints = new Dictionary <Action, Action> ();
         }
 
         //-----------------------------------------------------------------
         public new void Add (Action action)
         {
             base.Add (action);
+//            newActions.Add (action);
 
             // Add Start Point for Composite Action
             Composite composite = action as Composite;
@@ -29,7 +32,6 @@ namespace Traffic.Actions.Base
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            // Create enumerator
             if (enumerator.Current == null)
             {
                 enumerator = Actions.GetEnumerator ();
@@ -42,6 +44,16 @@ namespace Traffic.Actions.Base
             if (enumerator.Current.Finished)
                 FinishAction (enumerator.Current);
         }
+
+        //------------------------------------------------------------------
+//        private void AddNewActions ()
+//        {
+//            Actions.AddRange (newActions);
+//            newActions.Clear ();
+//
+//            // Add New actions only if Enumerator isn't valid otherwise exception will be throwed
+//
+//        }
 
         //------------------------------------------------------------------
         // Finish Sequence so we can start it on next iteration
