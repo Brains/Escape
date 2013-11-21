@@ -6,17 +6,17 @@ namespace Tools.Timers
     {
         public Action Trigger;
         public float Interval;
-        private float elapsed;
+        protected float Elapsed;
 
         //------------------------------------------------------------------
         public Timer () {}
 
         //------------------------------------------------------------------
-        public void Update (float seconds)
+        public virtual void Update (float seconds)
         {
-            elapsed += seconds;
+            Elapsed += seconds;
 
-            if (elapsed >= Interval)
+            if (Elapsed >= Interval)
             {
                 Trigger.Invoke ();
                 Destroy ();
