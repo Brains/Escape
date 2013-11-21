@@ -12,6 +12,7 @@ namespace Traffic
         public Object Root { get; set; }
         public bool Deleted { get; set; }
         public bool Anchored { get; set; }
+        public bool Active { get; set; }
         public bool Visible { get; set; }
 
         //------------------------------------------------------------------
@@ -31,6 +32,8 @@ namespace Traffic
             Root = root;
 
             Components = new List <Object> ();
+
+            Active = true;
         }
 
         //------------------------------------------------------------------
@@ -58,6 +61,12 @@ namespace Traffic
         }
 
         //-----------------------------------------------------------------
+        protected void Delete ()
+        {
+            Deleted = true;
+        }
+
+        //------------------------------------------------------------------
         protected void Remove (Object item)
         {
             Components.Remove (item);
@@ -68,5 +77,6 @@ namespace Traffic
         {
             Position += new Vector2 (0, shift);
         }
+
     }
 }

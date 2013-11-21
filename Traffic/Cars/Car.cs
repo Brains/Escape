@@ -52,16 +52,18 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public Car (Lane lane, int horizont) : base (lane)
         {
-            Lane = lane;
-            Driver = new Common (this);
+            Position = new Vector2 (0, horizont);
             InitialColor = Color.White;
             TextureName = "Car";
-            Position = new Vector2 (0, horizont);
+            Lane = lane;
+            
+            Velocity = Lane.Velocity;
             Acceleration = 0.2f;
             Deceleration = 1.0f;
-            Velocity = Lane.Velocity;
+
+            Driver = new Common (this);
+
             CreateWeight ();
-            TextureName += weight.TextureSuffix;
         }
 
         //------------------------------------------------------------------
@@ -73,6 +75,8 @@ namespace Traffic.Cars
                 weight = new Medium (this);
             if (Lane.ID >= 8 && Lane.ID < 12)
                 weight = new Heavy (this);
+            
+            TextureName += weight.TextureSuffix;
         }
 
         //------------------------------------------------------------------
@@ -98,6 +102,7 @@ namespace Traffic.Cars
             Add (boost);
 
             blinker = new Lights (this, "Blinker");
+            blinker.Blink = true;
             Add (blinker);
 
             base.Setup ();
@@ -142,8 +147,6 @@ namespace Traffic.Cars
         public void Accelerate ()
         {
             Velocity += Acceleration;
-            
-            boost.Visible = true;
         }
 
         //------------------------------------------------------------------
@@ -155,6 +158,7 @@ namespace Traffic.Cars
             brakes.Visible = true;
         }
 
+        //------------------------------------------------------------------
         public void EnableBlinker (Lane newLane)
         {
             const int shift = 30;
@@ -173,12 +177,18 @@ namespace Traffic.Cars
             blinker.Enable ();
         }
 
+        //------------------------------------------------------------------
         public void DisableBlinker ()
         {
             blinker.Disable ();
         }
 
         //------------------------------------------------------------------
+        public void EnableBoost ()
+        {
+            boost.Visible = true;
+        }
+
 
         #endregion
 
@@ -195,47 +205,65 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         private void DetectCollisionsOnLane (Lane lane)
         {
-//            if (Lives <= 0) return;
             if (lane == null) return;
 
             var closestCar = Driver.FindClosestCar (lane.Cars);
             if (closestCar == null) return;
 
-            if (Intersect (closestCar))
+            if (!Intersect (closestCar)) return;
+
+            // Destroy all cars
+            if (Lives == closestCar.Lives)
             {
-                Lives --;//= closestCar.Lives;
-//                closestCar.Lives--;
-                if (this is Player)
-                {
-                    Console.WriteLine (closestCar.Lives);
-//                    Console.WriteLine (ToString () + " : " + closestCar.ID + " : " + closestCar.Lives);                        
-                }
+                Explose ();
+                closestCar.Explose ();
             }
-
-            if (Lives <= 0)
+            // Destroy closest Car
+            else if (Lives > closestCar.Lives)
             {
-                Deleted = true;
-
+                Lives -= closestCar.Lives;
+                closestCar.Explose ();
             }
-
-//            new Text (Lives.ToString (), Position, Color.RoyalBlue, true);
-        }
-
-        //------------------------------------------------------------------
-        protected void Explose ()
-        {
-            var animatedTexture = new AnimatedTexture (this, 1.3f, 0.0f);
-            animatedTexture.Load (Lane.Road.Images["Explosion"], 24, 12);
-            Add (animatedTexture);
+            // Destroy myself
+            else if (Lives < closestCar.Lives)
+            {
+                closestCar.Lives -= Lives;
+                Explose ();
+            }
         }
 
         //------------------------------------------------------------------
         public virtual bool Intersect (Car car)
         {
             if (car == this) return false;
+            if (Bounds == null) return false;
+            if (car.Bounds == null) return false;
 
             return Bounds.Intersects (car.Bounds);
         }
+
+        //------------------------------------------------------------------
+        protected void Explose ()
+        {
+            Destroy ();
+
+            var explosion = new AnimatedTexture (this, Vector2.Zero, 1.5f, 0.0f);
+            explosion.Load (Lane.Road.Images["Explosion"], 24, 12);
+            explosion.Finish += Delete;
+            Add (explosion);
+        }
+
+        //------------------------------------------------------------------
+        private void Destroy ()
+        {
+            Velocity = 0;
+            Lives = 0;
+            InitialColor = Color.Transparent;
+            Bounds = null;
+            
+            Components.Clear ();
+        }
+
 
         #endregion
 
@@ -257,8 +285,10 @@ namespace Traffic.Cars
         private void Debug ()
         {
 //            new Text (Velocity.ToString ("F0"), GlobalPosition, Color.DarkSeaGreen, true);
-            new Text (Lives.ToString (), GlobalPosition, Color.White);
-//            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.DangerousZone / 1.5f), Color.IndianRed);
+//            new Text (Lives.ToString (), GlobalPosition, Color.Red);
+
+            // DangerousZone
+            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.DangerousZone), Color.IndianRed);
         }
     }
 }
