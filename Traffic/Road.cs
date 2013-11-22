@@ -9,7 +9,7 @@ using Traffic.Cars;
 
 namespace Traffic
 {
-    internal class Road : Object
+    public class Road : Object
     {
         //------------------------------------------------------------------
         private Texture2D texture;
@@ -47,6 +47,7 @@ namespace Traffic
             foreach (var index in Enumerable.Range (0, 12))
             {
                 Lane lane = new Lane (this, index);
+                lane.MaximumCars = Lane.Random.Next (5, 25);
 
                 // Set Lane's neiborhoods
                 if (index != 0 && left != null)

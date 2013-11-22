@@ -3,7 +3,7 @@ using Traffic.Drivers;
 
 namespace Traffic.Cars
 {
-    internal class Police : Car
+    public class Police : Car
     {
                 //------------------------------------------------------------------
         public Police (Lane lane, int insertPoint) : base (lane, insertPoint)
@@ -11,7 +11,7 @@ namespace Traffic.Cars
             Driver = new Drivers.Police (this);
             InitialColor = Color.White;
             TextureName = "Police";
-            Lives = 99;
+            Lives = 9;
             Acceleration = 1.5f;
             Deceleration = 2.0f;
         } 

@@ -8,7 +8,7 @@ using Traffic.Drivers;
 
 namespace Traffic.Cars
 {
-    internal class Car : Object
+    public class Car : Object
     {
         //-----------------------------------------------------------------
         private Lane lane;
@@ -20,7 +20,7 @@ namespace Traffic.Cars
 
         //------------------------------------------------------------------
         protected Texture2D Texture;
-        protected Color InitialColor;
+        public Color InitialColor;
         protected string TextureName;
         protected internal Bounds Bounds;
 
@@ -288,7 +288,7 @@ namespace Traffic.Cars
 //            new Text (Lives.ToString (), GlobalPosition, Color.Red);
 
             // DangerousZone
-            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.DangerousZone), Color.IndianRed);
+//            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.DangerousZone), Color.IndianRed);
         }
     }
 }

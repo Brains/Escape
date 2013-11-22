@@ -57,6 +57,7 @@
     <Compile Include="Actions\Base\Repeated.cs" />
     <Compile Include="Actions\Base\Sequence.cs" />
     <Compile Include="Actions\Base\Sleep.cs" />
+    <Compile Include="Actions\TryChangeLane.cs" />
     <Compile Include="Actions\Input.cs" />
     <Compile Include="Actions\Overtake.cs" />
     <Compile Include="Actions\Shrink.cs" />

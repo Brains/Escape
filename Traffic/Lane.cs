@@ -8,7 +8,7 @@ using Traffic.Cars;
 
 namespace Traffic
 {
-    internal class Lane : Object
+    public class Lane : Object
     {
         private int height;
         private readonly List <Car> carsToAdd;
@@ -16,7 +16,8 @@ namespace Traffic
 
         //------------------------------------------------------------------
         public readonly int ID;
-        public List<Car> Cars { get; private set; }
+        private int border;
+        public List <Car> Cars { get; private set; }
         public int Velocity { get; set; }
         public Lane Left { get; set; }
         public Lane Right { get; set; }
@@ -36,7 +37,6 @@ namespace Traffic
         public Lane (Road road, int id) : base (road)
         {
             ID = id;
-            MaximumCars = 5;
             Road = road;
             Anchored = true;
 
@@ -68,7 +68,8 @@ namespace Traffic
         public override void Setup ()
         {
             height = Road.Game.GraphicsDevice.Viewport.Height;
-            
+            border = height * 4;
+
             base.Setup ();
         }
 
@@ -91,7 +92,7 @@ namespace Traffic
         {
             var player = new Player (this, 500) {ID = carsCounter};
             player.Setup ();
-            
+
             Cars.Add (player);
             OwnCar (player);
 
@@ -103,7 +104,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void CreatePolice (Game game)
         {
-            var police = new Police (this, 200) { ID = carsCounter };
+            var police = new Police (this, 200) {ID = carsCounter};
             police.Setup ();
 
             Cars.Add (police);
@@ -116,25 +117,40 @@ namespace Traffic
         // Return point outside the screen
         private int GetInsertionPosition ()
         {
+            // Determine where place car: above Player or bottom
             float playerVelocity = (Road.Player != null) ? Road.Player.Velocity : 0;
-            int shift = (Velocity > playerVelocity) ? height : -height;
 
+            int sign = (Velocity > playerVelocity) ? 1 : -1;
 
-            int position;
-            float minimum = float.MaxValue;
-            int iteration = 0;
+            return GetFreePosition (sign);
+        }
 
-            do
+        //------------------------------------------------------------------
+        private int GetFreePosition (int sign)
+        {
+            int position = 0;
+            int lower = 1000 * sign;
+            int upper = border * sign;
+
+            // Set right borders
+            if (lower > upper)
             {
-                position = (int) (Random.NextDouble () * height + shift);
-
-                if (Cars.Any ())
-                    minimum = Cars.Min (car => Math.Abs(car.GlobalPosition.Y - position));
-
-                iteration++;
+                var temp = lower;
+                lower = upper;
+                upper = temp;
             }
-            while (minimum < 200 && iteration < 10);
 
+            // Get free position
+            foreach (var index in Enumerable.Range (0, 20))
+            {
+                position = Random.Next (lower, upper);
+
+                if (!Cars.Any ()) break;
+
+                float minimum = Cars.Min (car => Math.Abs (car.GlobalPosition.Y - position));
+
+                if (minimum > 400) break;
+            }
 
             return position;
         }
@@ -172,7 +188,6 @@ namespace Traffic
         private void CleanUp ()
         {
             // Remove Cars outside the screen
-            var border = height * 3;
             Cars.RemoveAll (car =>
             {
                 int position = (int) car.GlobalPosition.Y;

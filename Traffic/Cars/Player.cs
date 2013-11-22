@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Traffic.Cars
 {
-    internal class Player : Car
+    public class Player : Car
     {
         //------------------------------------------------------------------
         public Player (Lane lane, int insertPoint) : base (lane, insertPoint)

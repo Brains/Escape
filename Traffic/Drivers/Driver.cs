@@ -11,10 +11,10 @@ using Traffic.Cars;
 
 namespace Traffic.Drivers
 {
-    internal abstract class Driver
+    public abstract class Driver
     {
         //------------------------------------------------------------------
-        protected Loop Loop = new Loop ();
+        protected Loop Loop;
 
         //------------------------------------------------------------------
         public Car Car { get; set; }
@@ -29,6 +29,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         protected Driver (Car car)
         {
+            Loop = new Loop ();
             Car = car;
         }
 
@@ -44,6 +45,12 @@ namespace Traffic.Drivers
 
         //------------------------------------------------------------------
         public void AddInLoop (Sequence action)
+        {
+            Loop.AddLooped (action);
+        }
+
+        //------------------------------------------------------------------
+        public void AddInSequnce (Sequence action)
         {
             Loop.Add (action);
         }
@@ -88,16 +95,30 @@ namespace Traffic.Drivers
         {
             if (lane == null) return false;
 
-            if (GetMinimumDistance (lane.Cars) < DangerousZone / 1.5)
+            if (GetMinimumDistance (lane.Cars) < DangerousZone / 2)
+                return false;
+            if (GetMinimumDistance (lane.Cars) > DangerousZone * 3)
+                return true;
+
+            // So closest Car is in zone: [Dangerous / 2, Dangerous * 1.5]
+            var closestCar = FindClosestCar (lane.Cars);
+
+            // Analyze Velocity
+            if (IsAhead (closestCar) && closestCar.Velocity < Car.Velocity)
+                return false;
+            if (!IsAhead (closestCar) && closestCar.Velocity > Car.Velocity)
                 return false;
 
             return true;
         }
 
         //-----------------------------------------------------------------
-        public float GetChangeLanesDuration ( )
+        public float GetChangeLanesDuration ()
         {
-            return 400.0f / Car.Velocity;
+            var duration = 400 / Car.Velocity;
+            const int limit = 5;
+
+            return duration < limit ? duration : limit;
         }
 
         #endregion
@@ -138,7 +159,7 @@ namespace Traffic.Drivers
             {
                 EnableBlinker (lane, action, duration / 2.0f);
                 ChangeLane (lane, action, duration / 2.0f);
-                DisableBlinker (action); 
+                DisableBlinker (action);
                 return true;
             }
 
@@ -173,24 +194,35 @@ namespace Traffic.Drivers
 
         #endregion
 
+        #region Debug
+
         //-----------------------------------------------------------------
-        private void Debug ( )
+        private void Debug ()
         {
+//            DrawCheckLane (Car.Lane);
+
 //            Console.WriteLine (Loop);
 
+//            Draw DangerousZone
+//            var pos = Car.GlobalPosition;
+//            new Line (pos, pos - new Vector2 (0, DangerousZone), Color.IndianRed);
+
+
 //            if (!(this is Police)) return;
-
-            // Check Left Lane
-//            var pos = Car.Lane.Left.GlobalPosition;
-//            pos.Y = Car.GlobalPosition.Y;
-//            new Line (pos, pos - new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
-//            new Line (pos, pos + new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
-
-            // Check Right Lane
-//            pos = Car.Lane.Right.GlobalPosition;
-//            pos.Y = Car.GlobalPosition.Y;
-//            new Line (pos, pos - new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
-//            new Line (pos, pos + new Vector2 (0, DangerousZone / 1.5f), Color.IndianRed);
         }
+
+        //------------------------------------------------------------------
+        private void DrawCheckLane (Lane lane)
+        {
+            if (lane == null) return;
+
+            var pos = lane.GlobalPosition;
+            pos.Y = Car.GlobalPosition.Y;
+
+            new Line (pos, pos - new Vector2 (0, DangerousZone / 2), Color.IndianRed);
+            new Line (pos, pos + new Vector2 (0, DangerousZone * 1.5f), Color.Orange);
+        }
+
+        #endregion
     }
 }

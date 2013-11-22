@@ -33,9 +33,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         private void Debug ()
         {
-            // Draw DangerousZone
-            var pos = Car.GlobalPosition;
-            new Line (pos, pos - new Vector2 (0, DangerousZone), Color.IndianRed);
+
         }
     }
 }
