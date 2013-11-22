@@ -19,7 +19,14 @@ namespace Traffic.Actions
         {
             this.driver = driver;
             Name = "Shrink";
+            
             Add (new Generic (DetectDanger) {Name = "DetectDanger"});
+        }
+
+        //------------------------------------------------------------------
+        public override Base.Action Copy ()
+        {
+            return new Shrink (driver);
         }
 
         //------------------------------------------------------------------

@@ -13,6 +13,12 @@
         }
 
         //------------------------------------------------------------------
+        public override Action Copy ()
+        {
+            return new Controller (action, diapason, Duration);
+        }
+
+        //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
             base.Update (elapsed);

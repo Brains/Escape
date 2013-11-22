@@ -13,5 +13,11 @@
             if (Elapsed >= Duration)
                 Finished = true;
         }
+
+        //------------------------------------------------------------------
+        public override Action Copy ()
+        {
+            return new Sleep (Duration);
+        }
     }
 }

@@ -11,6 +11,12 @@
         }
 
         //------------------------------------------------------------------
+        public override Action Copy ()
+        {
+            return new Generic (action);
+        }
+
+        //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
             action.Invoke ();

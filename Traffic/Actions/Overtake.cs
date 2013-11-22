@@ -23,6 +23,12 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
+        public override Base.Action Copy ()
+        {
+            return new Overtake (driver, target);
+        }
+
+        //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
             base.Update (elapsed);

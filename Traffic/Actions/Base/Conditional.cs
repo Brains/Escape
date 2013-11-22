@@ -15,6 +15,12 @@ namespace Traffic.Actions.Base
         }
 
         //------------------------------------------------------------------
+        public override Action Copy ()
+        {
+            return new Conditional (condition,action);
+        }
+
+        //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
             if (condition.Invoke ()) 

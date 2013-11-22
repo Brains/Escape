@@ -6,10 +6,9 @@
         protected readonly float Duration;
 
         public bool Finished { get; set; }
-//        public bool Lock { get; set; }
         public string Name { get; set; }
 
-//        public event Action Finish = delegate { };
+        public event System.Action Finish = delegate { };
 
         //------------------------------------------------------------------
         protected Action (float duration)
@@ -26,22 +25,25 @@
         }
 
         //------------------------------------------------------------------
+        public abstract Action Copy ();
+
+        //------------------------------------------------------------------
         public virtual void Update (float elapsed)
         {
             Elapsed += elapsed;
 
             if (Elapsed >= Duration)
             {
-//                Finish ();
+                Finish ();
                 Finished = true;
             }
         }
 
         //-----------------------------------------------------------------
-        public void AddToManager ()
-        {
-            Manager.Add (this);
-        }
+//        public void AddToManager ()
+//        {
+//            Manager.Add (this);
+//        }
 
         //------------------------------------------------------------------
         public override string ToString ()
