@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content", "Content\Content.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content (Adapter)", "Content (Adapter)\Content (Adapter).csproj", "{910F3EEB-ED49-43F5-8872-357DAF4B0EF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Escape", "Escape\Escape.csproj", "{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,22 @@ Global
 		{910F3EEB-ED49-43F5-8872-357DAF4B0EF0}.Release|Windows Phone.ActiveCfg = Release|Windows Phone
 		{910F3EEB-ED49-43F5-8872-357DAF4B0EF0}.Release|Windows Phone.Build.0 = Release|Windows Phone
 		{910F3EEB-ED49-43F5-8872-357DAF4B0EF0}.Release|x86.ActiveCfg = Release|Windows Phone
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Debug|Windows Phone.ActiveCfg = Debug|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Release|Windows Phone.ActiveCfg = Release|Any CPU
+		{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
