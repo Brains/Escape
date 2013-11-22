@@ -1,8 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using Traffic.Actions.Base;
 using Traffic.Cars;
 using Traffic.Drivers;
+using Action = Traffic.Actions.Base.Action;
 
 namespace Traffic.Actions
 {
@@ -21,6 +26,12 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
+        public override Action Copy ()
+        {
+            return new Input (player);
+        }
+
+        //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
             base.Update (elapsed);
@@ -32,15 +43,22 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public void CheckInput ()
         {
+            UpdateTouch ();
+            UpdateKeyboard ();
+        }
+
+        //------------------------------------------------------------------
+        private void UpdateKeyboard ()
+        {
             int factor = 5;
 
             if (IsKeyPressed (Keys.Right)) ChangeLane (player.Car.Lane.Right);
             if (IsKeyPressed (Keys.Left)) ChangeLane (player.Car.Lane.Left);
-            
-            if (IsKeyDown (Keys.Down)) 
+
+            if (IsKeyDown (Keys.Down))
                 foreach (var index in Enumerable.Range (0, factor))
                     player.Brake ();
-            
+
             if (IsKeyDown (Keys.Up))
                 foreach (var index in Enumerable.Range (0, factor))
                     player.Accelerate ();
@@ -59,6 +77,46 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
+        public void UpdateTouch ()
+        {
+            //Get the state of the touch panel
+            TouchCollection touches = TouchPanel.GetState ();
+
+            // ToDo: Only first Touch?
+            // Handle only first Touch
+            if (!touches.Any ()) return;
+
+            var first = touches.First ();
+
+            if (first.State == TouchLocationState.Pressed) 
+                        HandleTouch (first.Position);
+
+//            // Process touch locations
+//            foreach (TouchLocation location in curTouches)
+//            {
+//                switch (location.State)
+//                {
+//                    case TouchLocationState.Pressed:
+//                        HandleTouch (location.Position);
+//                        break;
+//                    case TouchLocationState.Released:
+//                        break;
+//                    case TouchLocationState.Moved:
+//                        break;
+//                }
+//            }
+        }
+
+        //------------------------------------------------------------------
+        private void HandleTouch (Vector2 position)
+        {
+            // ToDo: Width is hardcoded now
+            int halfWidth = 240;
+
+            ChangeLane (position.X < halfWidth ? player.Car.Lane.Left : player.Car.Lane.Right);
+        }
+
+        //------------------------------------------------------------------
         protected void ForceAccelerate ()
         {
             player.Car.Velocity += player.Car.Acceleration;
@@ -67,13 +125,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void ChangeLane (Lane lane)
         {
-            // Add blinker as Parallel action sequence
-//            Sequence blinker = new Sequence();
-//            player.EnableBlinker (lane, blinker, 1.0f);
-//            player.AddInLoop (blinker);
-
             player.ChangeLane (lane, this, player.GetChangeLanesDuration () / 2.0f);
-                // Divide by two because blinkers are turned off and take no time
         }
     }
 }
