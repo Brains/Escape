@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Traffic", "Traffic\Traffic.csproj", "{8B8E54D3-8816-48C7-82D2-B093DCAC1DA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{0D68DB64-C74C-4C8D-BAFA-0D125FD1BC40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Escape (Windows)", "Application\Escape (Windows).csproj", "{0D68DB64-C74C-4C8D-BAFA-0D125FD1BC40}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools", "Tools\Tools.csproj", "{9E4FF996-10DA-47C7-8008-1A4392F32EA5}"
 EndProject
@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content", "Content\Content.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content (Adapter)", "Content (Adapter)\Content (Adapter).csproj", "{910F3EEB-ED49-43F5-8872-357DAF4B0EF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Escape", "Escape\Escape.csproj", "{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Escape (Android)", "Escape\Escape (Android).csproj", "{8DEDC24F-C3B3-484D-BF0E-A559B3AF21E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
