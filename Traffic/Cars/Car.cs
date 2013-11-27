@@ -20,7 +20,7 @@ namespace Traffic.Cars
 
         //------------------------------------------------------------------
         protected Texture2D Texture;
-        public Color InitialColor;
+        protected Color InitialColor;
         protected string TextureName;
         protected internal Bounds Bounds;
 
@@ -59,7 +59,7 @@ namespace Traffic.Cars
             
             Velocity = Lane.Velocity;
             Acceleration = 0.2f;
-            Deceleration = 1.0f;
+            Deceleration = 2.0f;
 
             Driver = new Common (this);
 

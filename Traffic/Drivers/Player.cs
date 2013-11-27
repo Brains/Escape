@@ -23,7 +23,7 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
-            AdjustSpeed ();
+//            AdjustSpeed ();
 
             Debug ();
         }
@@ -70,12 +70,7 @@ namespace Traffic.Drivers
         {
 //            new Text (Car.Velocity, Car.GlobalPosition, Color.DarkRed, true);
 
-
-//            string actionsNames = Actions.Aggregate ("", (current, action) => current + (action + ""));
-//            new Text (actionsNames, Car.GlobalPosition, Color.DarkRed, true);
-//            Console.WriteLine (actionsNames);
-
-
+            // Draw Closest car
 //            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
 //            if (closestCar != null)
 //                closestCar.Color = Color.Red;
