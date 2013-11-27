@@ -104,7 +104,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void CreatePolice (Game game)
         {
-            var police = new Police (this, 200) {ID = carsCounter};
+            var police = new Police (this, -200) {ID = carsCounter};
             police.Setup ();
 
             Cars.Add (police);
@@ -241,14 +241,12 @@ namespace Traffic
         {
 //            new Text (ToString () + ":" + Cars.Count, Position);
 //            new Text (Velocity.ToString ("F0"), Position);
-            new Text (MaximumCars.ToString (), Position);
+//            new Text (MaximumCars.ToString (), Position);
 
-            int number = 1;
-            foreach (var car in Cars)
-            {
-//                new Text (car.ID.ToString (), new Vector2 (Position.X, 20 * number));
-                number++;
-            }
+//            // Particular Type counter
+//            int number = Cars.OfType <Player> ().Count ();
+//            if (number != 0) 
+//                new Text (number.ToString (""), Position);
         }
     }
 }

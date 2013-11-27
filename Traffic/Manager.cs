@@ -32,9 +32,9 @@ namespace Traffic
         //------------------------------------------------------------------
         private void CreateEvents ()
         {
-            Tools.Timers.Loop.Create (1, ChangeMaximumCarsOnLaneEvent);
-            Tools.Timers.Loop.Create (1, ChangeLaneForCarEvent);
-//            Tools.Timers.Loop.Create (3, CreatePolice);
+            Tools.Timers.Loop.Create (1, 0, ChangeMaximumCarsOnLaneEvent);
+            Tools.Timers.Loop.Create (5, 0, ChangeLaneForCarEvent);
+            Tools.Timers.Loop.Create (10, 0, CreatePolice);
         }
 
         //------------------------------------------------------------------
@@ -65,7 +65,7 @@ namespace Traffic
             
             // To Right
             car = GetRandomCar ();
-            car.Driver.AddInSequnce (new TryChangeLane (car.Driver, car.Lane.Left));
+            car.Driver.AddInSequnce (new TryChangeLane (car.Driver, car.Lane.Right));
         }
 
         //------------------------------------------------------------------
@@ -74,11 +74,28 @@ namespace Traffic
             var laneID = Lane.Random.Next(12);
             Lane lane = (Lane) road.Components[laneID];
 
-            var carID = Lane.Random.Next (lane.MaximumCars);
-            if (carID >= lane.Cars.Count) carID = lane.Cars.Count - 1;
-            var car = lane.Cars[carID];
+            // Find correct Car on road
+            Car car;
+
+            do
+            {
+                var carID = Lane.Random.Next (lane.MaximumCars);
+                
+                if (carID >= lane.Cars.Count) carID = lane.Cars.Count - 1;
+                
+                car = lane.Cars[carID];
+            }
+            while (!IsValid (car));
 
             return car;
+        }
+
+        //------------------------------------------------------------------
+        private bool IsValid (Car car)
+        {
+            if (car is Player) return false;
+
+            return true;
         }
 
         //------------------------------------------------------------------
