@@ -21,6 +21,8 @@ namespace Application
             
             Content.RootDirectory = "Content";
 
+            Window.SetPosition (new Point (600, 125));
+
             Components.Add (new Manager (this));
             Components.Add (new Tools.Timers.Manager (this));
             Components.Add (new Traffic.Manager (this));
