@@ -4,6 +4,10 @@ namespace Tools.Timers
 {
     public class Loop : Timer
     {
+        public int IterationsLimit;
+
+        private int counter;
+
         //------------------------------------------------------------------
         public override void Update (float seconds)
         {
@@ -13,13 +17,21 @@ namespace Tools.Timers
             {
                 Trigger.Invoke ();
                 Elapsed = 0;
+                counter++;
             }
+
+            // Infinite iterations
+            if (IterationsLimit == 0) return;
+
+            // Finite iterations
+            if (counter > IterationsLimit) 
+                Destroy ();
         }
 
         //------------------------------------------------------------------
-        public new static void Create (float interval, Action trigger)
+        public static void Create (float interval, int iterationsLimit, Action trigger)
         {
-            Loop timer = new Loop { Interval = interval, Trigger = trigger };
+            Loop timer = new Loop {Interval = interval, IterationsLimit = iterationsLimit, Trigger = trigger};
 
             Manager.Add (timer);
         }

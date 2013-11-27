@@ -12,20 +12,9 @@ namespace Traffic.Cars
         private Vector2 origin;
         private SpriteEffects flip;
         private Color color = Color.White;
-        private bool blink;
 
         //------------------------------------------------------------------
-        public bool Blink
-        {
-            get { return blink; }
-            set
-            {
-                blink = value;
-                
-                if (value)
-                    Tools.Timers.Loop.Create (0.2f, Turn);
-            }
-        }
+        public bool Blink { get; set; }
 
         //------------------------------------------------------------------
         public Lights (Car car, string textureName) : base (car)
@@ -55,6 +44,8 @@ namespace Traffic.Cars
         {
             Visible = true;
 
+            if (Blink)
+                Tools.Timers.Loop.Create (0.2f, 10, Turn);
         }
 
         //-----------------------------------------------------------------
