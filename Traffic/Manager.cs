@@ -10,13 +10,17 @@ namespace Traffic
 {
     public class Manager : DrawableGameComponent
     {
-        private readonly Road road;
         private SpriteBatch spriteBatch;
+        private readonly Director director;
+
+        //------------------------------------------------------------------
+        public Road Road { get; private set; }
 
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
         {
-            road = new Road (Game);
+            Road = new Road (Game);
+            director = new Director (this);
         }
 
         //------------------------------------------------------------------
@@ -24,17 +28,8 @@ namespace Traffic
         {
             spriteBatch = new SpriteBatch (Game.GraphicsDevice);
             
-            road.Setup ();
-
-            CreateEvents ();
-        }
-
-        //------------------------------------------------------------------
-        private void CreateEvents ()
-        {
-            Tools.Timers.Loop.Create (1, 0, ChangeMaximumCarsOnLaneEvent);
-            Tools.Timers.Loop.Create (5, 0, ChangeLaneForCarEvent);
-            Tools.Timers.Loop.Create (10, 0, CreatePolice);
+            Road.Setup ();
+            director.Setup ();
         }
 
         //------------------------------------------------------------------
@@ -42,7 +37,7 @@ namespace Traffic
         {
             float elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-            road.Update (elapsed);
+            Road.Update (elapsed);
         }
 
         //------------------------------------------------------------------
@@ -50,69 +45,11 @@ namespace Traffic
         {
             spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
-            road.Draw (spriteBatch);
+            Road.Draw (spriteBatch);
 
             spriteBatch.End ();
 
         }
 
-        //-----------------------------------------------------------------
-        private void ChangeLaneForCarEvent ( )
-        {
-            // To Left
-            var car = GetRandomCar ();
-            car.Driver.AddInSequnce (new TryChangeLane (car.Driver, car.Lane.Left));
-            
-            // To Right
-            car = GetRandomCar ();
-            car.Driver.AddInSequnce (new TryChangeLane (car.Driver, car.Lane.Right));
-        }
-
-        //------------------------------------------------------------------
-        private Car GetRandomCar ()
-        {
-            var laneID = Lane.Random.Next(12);
-            Lane lane = (Lane) road.Components[laneID];
-
-            // Find correct Car on road
-            Car car;
-
-            do
-            {
-                var carID = Lane.Random.Next (lane.MaximumCars);
-                
-                if (carID >= lane.Cars.Count) carID = lane.Cars.Count - 1;
-                
-                car = lane.Cars[carID];
-            }
-            while (!IsValid (car));
-
-            return car;
-        }
-
-        //------------------------------------------------------------------
-        private bool IsValid (Car car)
-        {
-            if (car is Player) return false;
-
-            return true;
-        }
-
-        //------------------------------------------------------------------
-        private void ChangeMaximumCarsOnLaneEvent ()
-        {
-            var laneID = Lane.Random.Next (12);
-            Lane lane = (Lane) road.Components[laneID];
-            lane.MaximumCars = Lane.Random.Next (5, 25);
-        }
-
-        //-----------------------------------------------------------------
-        private void CreatePolice ( )
-        {
-            var laneID = Lane.Random.Next (12);
-            Lane lane = (Lane) road.Components[laneID];
-            
-            lane.CreatePolice (Game);
-        }
     }
 }

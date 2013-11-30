@@ -16,11 +16,11 @@ namespace Traffic
         #region Events
 
         //-----------------------------------------------------------------
-        public void CreateEvents ()
+        public void Setup ()
         {
-            Tools.Timers.Loop.Create (1, 0, ChangeMaximumCarsOnLaneEvent);
-            Tools.Timers.Loop.Create (5, 0, ChangeLaneForCarEvent);
-            Tools.Timers.Loop.Create (10, 0, CreatePolice);
+//            Tools.Timers.Loop.Create (1, 0, ChangeMaximumCarsOnLaneEvent);
+//            Tools.Timers.Loop.Create (5, 0, ChangeLaneForCarEvent);
+            Tools.Timers.Loop.Create (0, 1, CreatePolice);
         }
 
         //-----------------------------------------------------------------
@@ -32,7 +32,6 @@ namespace Traffic
 
             // To Right
             car = GetRandomCar ();
-            car = car.Lane.Road.Player;
             car.Driver.AddInSequnce (new TryChangeLane (car.Driver, car.Lane.Right));
         }
 
@@ -87,10 +86,7 @@ namespace Traffic
         //-----------------------------------------------------------------
         private bool IsValid (Car car)
         {
-            if (car is Player) return false;
-            if (car is Police) return false;
-
-            return car is Car;
+            return car.GetType () == typeof (Car);
         }
 
         //-----------------------------------------------------------------
