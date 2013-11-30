@@ -23,7 +23,7 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
-//            AdjustSpeed ();
+            AdjustSpeed ();
 
             Debug ();
         }

@@ -14,7 +14,7 @@ namespace Traffic.Cars
         private Lane lane;
         private Vector2 origin;
         private Lights brakes;
-        private Lights blinker;
+        public Lights Blinker { get; private set; }
         private Lights boost;
         private Weight weight;
 
@@ -59,7 +59,7 @@ namespace Traffic.Cars
             
             Velocity = Lane.Velocity;
             Acceleration = 0.2f;
-            Deceleration = 2.0f;
+            Deceleration = 1.0f;
 
             Driver = new Common (this);
 
@@ -101,9 +101,9 @@ namespace Traffic.Cars
             boost.Position = new Vector2 (0, -Texture.Height / 2 - 10);
             Add (boost);
 
-            blinker = new Lights (this, "Blinker");
-            blinker.Blink = true;
-            Add (blinker);
+            Blinker = new Lights (this, "Blinker");
+            Blinker.Blink = true;
+            Add (Blinker);
 
             base.Setup ();
         }
@@ -135,8 +135,8 @@ namespace Traffic.Cars
         private void Reset ()
         {
             Color = InitialColor;
-            brakes.Visible = false;
-            boost.Visible = false;
+            brakes.Disable();
+            boost.Disable();
         }
 
         #endregion
@@ -155,7 +155,7 @@ namespace Traffic.Cars
             if (Velocity > 0)
                 Velocity -= Deceleration;
 
-            brakes.Visible = true;
+            brakes.Enable();
         }
 
         //------------------------------------------------------------------
@@ -165,28 +165,28 @@ namespace Traffic.Cars
 
             if (newLane == Lane.Left)
             {
-                blinker.Position = new Vector2 (-shift, 0);
-                blinker.Flip (false);
+                Blinker.Position = new Vector2 (-shift, 0);
+                Blinker.Flip (false);
             }
             else if (newLane == Lane.Right)
             {
-                blinker.Position = new Vector2 (shift, 0);
-                blinker.Flip (true);
+                Blinker.Position = new Vector2 (shift, 0);
+                Blinker.Flip (true);
             }
 
-            blinker.Enable ();
+            Blinker.Enable ();
         }
 
         //------------------------------------------------------------------
         public void DisableBlinker ()
         {
-            blinker.Disable ();
+            Blinker.Disable ();
         }
 
         //------------------------------------------------------------------
         public void EnableBoost ()
         {
-            boost.Visible = true;
+            boost.Enable();
         }
 
 
@@ -287,8 +287,8 @@ namespace Traffic.Cars
 //            new Text (Velocity.ToString ("F0"), GlobalPosition, Color.DarkSeaGreen, true);
 //            new Text (Lives.ToString (), GlobalPosition, Color.Red);
 
-            // DangerousZone
-//            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.DangerousZone), Color.IndianRed);
+            // SafeZone
+//            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.SafeZone), Color.IndianRed);
         }
     }
 }

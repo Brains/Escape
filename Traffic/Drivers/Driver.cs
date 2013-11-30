@@ -20,12 +20,6 @@ namespace Traffic.Drivers
         public Car Car { get; set; }
         public float Velocity { get; set; }
 
-        public virtual float DangerousZone
-        {
-            // Hardcoded numbers are constants for normalization
-            get { return Car.Lenght + (Car.Lenght * Car.Velocity / 200); }
-        }
-
         //------------------------------------------------------------------
         protected Driver (Car car)
         {
@@ -55,6 +49,12 @@ namespace Traffic.Drivers
             Loop.Add (action);
         }
 
+        //------------------------------------------------------------------
+//        private bool IsInLoop (Sequence newAction)
+//        {
+//            return Loop.Actions.Any (action => action.GetType () == newAction.GetType ());
+//        }
+
         #endregion
 
         #region Sensor Analysis
@@ -62,8 +62,9 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public float Distance (Car car)
         {
-            // Don't react with own Car
-            if (car == null || car == Car) return float.MaxValue;
+            if (car == null) return float.MaxValue;
+            if (car == Car) return float.MaxValue;
+            if (car.Bounds == null) return float.MaxValue;
 
             var distance = Car.GlobalPosition - car.GlobalPosition;
 
@@ -91,22 +92,24 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public bool CheckLane (Lane lane)
+        public virtual bool  CheckLane (Lane lane)
         {
             if (lane == null) return false;
+            
+            var closest = FindClosestCar (lane.Cars);
+            if (closest == null) return true;
+            float distance = Distance (closest);
 
-            if (GetMinimumDistance (lane.Cars) < DangerousZone / 2)
+            // If closest Car is outside the special zone
+            if (distance < GetSafeZone (0.5f))
                 return false;
-            if (GetMinimumDistance (lane.Cars) > DangerousZone * 3)
+            if (distance > GetSafeZone (1.5f))
                 return true;
 
-            // So closest Car is in zone: [Dangerous / 2, Dangerous * 1.5]
-            var closestCar = FindClosestCar (lane.Cars);
-
             // Analyze Velocity
-            if (IsAhead (closestCar) && closestCar.Velocity < Car.Velocity)
+            if (IsAhead (closest) && closest.Velocity < Car.Velocity)
                 return false;
-            if (!IsAhead (closestCar) && closestCar.Velocity > Car.Velocity)
+            if (!IsAhead (closest) && closest.Velocity > Car.Velocity)
                 return false;
 
             return true;
@@ -115,10 +118,18 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         public float GetChangeLanesDuration ()
         {
-            var duration = 400 / Car.Velocity;
-            const int limit = 5;
+            var duration = 300 / Car.Velocity;
+            const int limit = 4; // In seconds
 
             return duration < limit ? duration : limit;
+        }
+
+        //------------------------------------------------------------------
+        public float GetSafeZone (float factor = 1.0f)
+        {
+            const float scale = 0.7f;
+
+            return Car.Lenght + Car.Velocity * scale * factor;
         }
 
         #endregion
@@ -139,31 +150,19 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public void EnableBlinker (Lane lane, Composite action, float delay)
+        public bool TryChangeLane (Sequence action, Lane lane, float duration)
         {
-            Car.EnableBlinker (lane);
+            // Prevent changing on incorrect Lanes
+            if (lane == null) return false;
+            if (lane != Car.Lane.Left && lane != Car.Lane.Right) return false;
 
-            action.Add (new Sleep (delay));
-        }
+            // Check free space on Lane
+            if (!CheckLane (lane)) return false;
 
-        //------------------------------------------------------------------
-        private void DisableBlinker (Composite action)
-        {
-            action.Add (new Generic (() => Car.DisableBlinker ()));
-        }
+            // Change Lane
+            ChangeLane (lane, action, duration);
 
-        //------------------------------------------------------------------
-        public bool TryChangeLane (Lane lane, Sequence action, float duration)
-        {
-            if (CheckLane (lane))
-            {
-                EnableBlinker (lane, action, duration / 2.0f);
-                ChangeLane (lane, action, duration / 2.0f);
-                DisableBlinker (action);
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         //------------------------------------------------------------------
@@ -199,16 +198,30 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         private void Debug ()
         {
+            DrawSafeZone ();
+//            DrawActions ();
 //            DrawCheckLane (Car.Lane);
+        }
 
-//            Console.WriteLine (Loop);
+        //------------------------------------------------------------------
+        private void DrawSafeZone()
+        {
+            var pos = Car.GlobalPosition;
+            new Line (pos, pos - new Vector2 (0, GetSafeZone()), Color.IndianRed);
+        }
 
-//            Draw DangerousZone
-//            var pos = Car.GlobalPosition;
-//            new Line (pos, pos - new Vector2 (0, DangerousZone), Color.IndianRed);
+        //------------------------------------------------------------------
+        protected void DrawActions ()
+        {
+            var actionsNames = Loop.Actions.Aggregate ("\n", (current, action) => current + (action + "\n"));
+            new Text (actionsNames, Car.GlobalPosition, Color.SteelBlue, true);
+        }
 
-
-//            if (!(this is Police)) return;
+        //------------------------------------------------------------------
+        protected void WriteActions ()
+        {
+            var actionsNames = Loop.Actions.Aggregate ("", (current, action) => current + (action + "\n"));
+            Console.WriteLine (actionsNames);
         }
 
         //------------------------------------------------------------------
@@ -219,10 +232,11 @@ namespace Traffic.Drivers
             var pos = lane.GlobalPosition;
             pos.Y = Car.GlobalPosition.Y;
 
-            new Line (pos, pos - new Vector2 (0, DangerousZone / 2), Color.IndianRed);
-            new Line (pos, pos + new Vector2 (0, DangerousZone * 1.5f), Color.Orange);
+            new Line (pos, pos - new Vector2 (0, GetSafeZone () / 2), Color.IndianRed);
+            new Line (pos, pos + new Vector2 (0, GetSafeZone () * 1.5f), Color.Orange);
         }
 
         #endregion
+
     }
 }

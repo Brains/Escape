@@ -15,7 +15,7 @@ namespace Traffic.Actions
             this.lane = lane;
             Name = "TryChangeLane";
 
-            Add (new Generic (() => this.driver.TryChangeLane (this.lane, this, this.driver.GetChangeLanesDuration ())));
+            Add (new Generic (() => this.driver.TryChangeLane (this, this.lane, this.driver.GetChangeLanesDuration ())));
         }
 
         //------------------------------------------------------------------

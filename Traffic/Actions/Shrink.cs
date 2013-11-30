@@ -12,15 +12,15 @@ namespace Traffic.Actions
     internal class Shrink : Sequence
     {
         private readonly Driver driver;
-        private Car closestCar;
+        private Car closest; // Ahead
 
         //------------------------------------------------------------------
         public Shrink (Driver driver)
         {
             this.driver = driver;
             Name = "Shrink";
-            
-            Add (new Generic (DetectDanger) {Name = "DetectDanger"});
+
+            Add (new Generic (AnalyzeDistance));
         }
 
         //------------------------------------------------------------------
@@ -39,86 +39,102 @@ namespace Traffic.Actions
             Debug ();
         }
 
+        #region Analysis
+
         //------------------------------------------------------------------
-        private void DetectDanger ()
+        private void AnalyzeDistance ()
         {
-            if (!IsThreatOfCollision ())
+            float distance = driver.Distance (closest);
+            float safe = driver.GetSafeZone ();
+            
+            // Define different dangerous zones
+            float high = driver.GetSafeZone (0.33f);
+            float medium = driver.GetSafeZone (0.66f);
+            float low = driver.GetSafeZone (1.0f);
+
+            // There is a free way
+            if (distance > safe)
             {
                 driver.Accelerate (this, 5);
+                driver.Car.DisableBlinker();
                 return;
             }
 
-            // There is a Threat of Collision
-            if (driver.Distance (closestCar) > driver.DangerousZone / 1.8f)
-                // Change Lane if we have enough space
-                Add (new Conditional (IsThreatOfCollision, TryChangeLanes) {Name = "Try Change Lane"});
-            else 
-                // Or try to strong Brake to avoid a collision
-                driver.Brake (this, 50);
+            // Keep Safe Distance
+            if (distance < high)
+                driver.Brake (this, 20);
+
+            // Ahead Car approaches
+            if (driver.Car.Velocity > closest.Velocity)
+                AvoidCollision (distance, high, medium, low);
         }
 
-        //------------------------------------------------------------------
-        private bool IsThreatOfCollision ()
+        //-----------------------------------------------------------------
+        private void AvoidCollision (float distance, float high, float medium, float low)
         {
-            if (closestCar == null) return false;
+            // If closest Car approaches too fast
+            if (driver.Car.Velocity - closest.Velocity > 100)
+                driver.Brake (this, 20);
 
-            if (driver.Distance (closestCar) < driver.DangerousZone / 2.0f)
-                return true;
+            // High threat of the collision
+            if (distance < high)
+                driver.Brake (this, 50); // Strong braking
 
-            bool tooCloseDistance = driver.Distance (closestCar) < driver.DangerousZone;
-            bool mySpeedLarger = driver.Car.Velocity > closestCar.Velocity;
+            // Bypass the closest Car
+            else if (distance < medium)
+                TryChangeLanes();
 
-            return tooCloseDistance && mySpeedLarger;
+            // Enable Blinker
+            else if (distance < low)
+                EnableBlinker();
         }
 
         //------------------------------------------------------------------
         private void FindClosestCar ()
         {
-            closestCar = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsAhead));
+            closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsAhead));
         }
+
+        #endregion
 
         //------------------------------------------------------------------
         private void TryChangeLanes ()
         {
+            if (closest == null) return;
+
             // Change Lane on Left
-            if (driver.TryChangeLane (driver.Car.Lane.Left, this, CalculateChangeLanesDuration ())) return;
+            if (driver.TryChangeLane (this, driver.Car.Lane.Left, driver.GetChangeLanesDuration ())) 
+                return;
 
-            if (driver.TryChangeLane (driver.Car.Lane.Right, this, CalculateChangeLanesDuration ())) return;
+            if (driver.TryChangeLane (this, driver.Car.Lane.Right, driver.GetChangeLanesDuration ())) 
+                return;
 
-            // Last chance to avoid collision if no free Lanes
-            driver.Brake (this, 50);
+            // Brake if no free Lanes
+            driver.Brake (this, 20);
         }
 
         //------------------------------------------------------------------
-        private float CalculateChangeLanesDuration ()
+        private void EnableBlinker ()
         {
-            float normal = driver.GetChangeLanesDuration ();
-            float emergency = driver.GetChangeLanesDuration () / 2.0f;
-            float velocityDifference = driver.Car.Velocity - closestCar.Velocity;
+            if (driver.Car.Blinker.Visible) return;
 
-            if (closestCar == null) return normal;
-            if (velocityDifference < float.Epsilon) return normal;
-
-            float distanceToCollision = driver.Distance (closestCar) - (driver.Car.Lenght / 2.0f + closestCar.Lenght / 2.0f);
-            bool distanceIsCritical = distanceToCollision < driver.DangerousZone / 3.0f;
-
-            if (velocityDifference > 100 || distanceIsCritical)
-                return emergency;
-
-            return normal;
+            if (driver.CheckLane (driver.Car.Lane.Left))
+                driver.Car.EnableBlinker (driver.Car.Lane.Left);
+            else if (driver.CheckLane (driver.Car.Lane.Right))
+                driver.Car.EnableBlinker (driver.Car.Lane.Right);
         }
 
         //------------------------------------------------------------------
         private void Debug ()
         {
-            // Draw DangerousZone
+            // Draw SafeZone
 //            var pos = driver.Car.GlobalPosition;
-//            new Line (pos, pos - new Vector2 (0, driver.DangerousZone), Color.IndianRed);
+//            new Line (pos, pos - new Vector2 (0, driver.SafeZone), Color.IndianRed);
 
             // Mark closest car
 //            var pos = driver.Car.GlobalPosition;
-//            if (closestCar is Cars.Player)
-//                new Line (pos, closestCar.GlobalPosition);
+//            if (closest is Cars.Player)
+//                new Line (pos, closest.GlobalPosition);
         }
     }
 }
