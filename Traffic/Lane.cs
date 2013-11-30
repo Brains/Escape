@@ -15,6 +15,10 @@ namespace Traffic
         private static int carsCounter;
 
         //------------------------------------------------------------------
+        public const int MinimumCars = 5;
+        public const int MaximumCars = 15;
+
+        //------------------------------------------------------------------
         public readonly int ID;
         private int border;
         public List <Car> Cars { get; private set; }
@@ -23,7 +27,7 @@ namespace Traffic
         public Lane Right { get; set; }
         public static Random Random { get; set; }
         public Road Road { get; private set; }
-        public int MaximumCars { get; set; }
+        public int CarsQuantity { get; set; }
 
         #region Creation
 
@@ -68,7 +72,7 @@ namespace Traffic
         public override void Setup ()
         {
             height = Road.Game.GraphicsDevice.Viewport.Height;
-            border = height * 4;
+            border = 3000;
 
             base.Setup ();
         }
@@ -90,7 +94,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public Player CreatePlayer (Game game)
         {
-            var player = new Player (this, 500) {ID = carsCounter};
+            var player = new Player (this, 400) {ID = carsCounter};
             player.Setup ();
 
             Cars.Add (player);
@@ -132,7 +136,7 @@ namespace Traffic
             int lower = 1000 * sign;
             int upper = border * sign;
 
-            // Set right borders
+            // Swap borders if needed
             if (lower > upper)
             {
                 var temp = lower;
@@ -178,10 +182,8 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AppendCars ()
         {
-            if (Cars.Count < MaximumCars)
-            {
+            if (Cars.Count < CarsQuantity)
                 CreateCar ();
-            }
         }
 
         //------------------------------------------------------------------
@@ -241,7 +243,7 @@ namespace Traffic
         {
 //            new Text (ToString () + ":" + Cars.Count, Position);
 //            new Text (Velocity.ToString ("F0"), Position);
-//            new Text (MaximumCars.ToString (), Position);
+//            new Text (CarsQuantity.ToString (), Position);
 
 //            // Particular Type counter
 //            int number = Cars.OfType <Player> ().Count ();

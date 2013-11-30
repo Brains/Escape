@@ -11,6 +11,8 @@ namespace Traffic
 {
     public class Road : Object
     {
+        public const int LanesQuantity = 12;
+
         //------------------------------------------------------------------
         private Texture2D texture;
 
@@ -43,10 +45,10 @@ namespace Traffic
         {
             Lane left = null;
 
-            foreach (var index in Enumerable.Range (0, 12))
+            foreach (var index in Enumerable.Range (0, LanesQuantity))
             {
                 Lane lane = new Lane (this, index);
-                lane.MaximumCars = Lane.Random.Next (5, 25);
+                lane.CarsQuantity = Lane.Random.Next (Lane.MinimumCars, Lane.MaximumCars);
 
                 // Set Lane's neiborhoods
                 if (index != 0 && left != null)
