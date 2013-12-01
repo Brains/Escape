@@ -8,6 +8,8 @@ namespace Tools.Timers
         public float Interval;
         protected float Elapsed;
 
+        public event Action Finish  = delegate { };
+
         //------------------------------------------------------------------
         public Timer () {}
 
@@ -26,6 +28,7 @@ namespace Tools.Timers
         //------------------------------------------------------------------
         public void Destroy ()
         {
+            Finish();
             Manager.Remove (this);
         }
 

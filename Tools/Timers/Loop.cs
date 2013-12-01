@@ -24,14 +24,15 @@ namespace Tools.Timers
             if (IterationsLimit == 0) return;
 
             // Finite iterations
-            if (counter > IterationsLimit) 
+            if (counter >= IterationsLimit) 
                 Destroy ();
         }
 
         //------------------------------------------------------------------
-        public static void Create (float interval, int iterationsLimit, Action trigger)
+        public static void Create (float interval, int iterationsLimit, Action trigger, Action finish = null)
         {
             Loop timer = new Loop {Interval = interval, IterationsLimit = iterationsLimit, Trigger = trigger};
+            timer.Finish += finish;
 
             Manager.Add (timer);
         }

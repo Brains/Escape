@@ -6,8 +6,8 @@ namespace Tools.Timers
 {
     public class Manager : GameComponent
     {
-        private List <Timer> Timers = new List <Timer> ();
-        private List <Timer> ToRemove = new List <Timer> ();
+        private readonly List <Timer> timers = new List <Timer> ();
+        private readonly List <Timer> toRemove = new List <Timer> ();
 
         public static Manager Instance;
 
@@ -18,27 +18,27 @@ namespace Tools.Timers
         }
 
         //------------------------------------------------------------------
-        public static void Add (Timer Timer)
+        public static void Add (Timer timer)
         {
-            Instance.Timers.Add (Timer);
+            Instance.timers.Add (timer);
         }
 
         //------------------------------------------------------------------
-        public static void Remove (Timer Timer)
+        public static void Remove (Timer timer)
         {
-            Instance.ToRemove.Add (Timer);
+            Instance.toRemove.Add (timer);
         }
 
         //------------------------------------------------------------------
         public override void Update (GameTime gametime)
         {
-            foreach (var timer in Timers) 
+            foreach (var timer in timers) 
                 timer.Update ((float) gametime.ElapsedGameTime.TotalSeconds);
 
-            foreach (var timer in ToRemove)
-                Timers.Remove (timer);
+            foreach (var timer in toRemove)
+                timers.Remove (timer);
 
-            ToRemove.Clear ();
+            toRemove.Clear ();
         }
     }
 }
