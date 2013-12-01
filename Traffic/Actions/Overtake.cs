@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using Android.OS;
 using Microsoft.Xna.Framework;
 using Tools.Markers;
@@ -19,11 +21,11 @@ namespace Traffic.Actions
             this.driver = driver;
             this.target = target;
             Name = "Overtake";
-            Add (new Generic (Start) {Name = "AdjustSpeed"});
+            Add (new Generic (Start) {Name = "Catch"});
         }
 
         //------------------------------------------------------------------
-        public override Base.Action Copy ()
+        public override Base.Action Copy()
         {
             return new Overtake (driver, target);
         }
@@ -33,52 +35,74 @@ namespace Traffic.Actions
         {
             base.Update (elapsed);
 
-            Debug ();
+            Debug();
         }
 
         //------------------------------------------------------------------
-        private void Start ()
+        private void Start()
         {
-            AdjustSpeed ();
-            MatchLane ();
+            Catch();
+
+            // Change Lane if Target is visible
+            const int visibility = 100;
+
+            if (driver.Distance (target) < visibility)
+                MatchLane();
         }
 
         //------------------------------------------------------------------
-        private void AdjustSpeed ()
+        private void Catch()
         {
-            if (target.GlobalPosition.Y > driver.Car.GlobalPosition.Y)
-                driver.Brake (this, 5);
+            const int force = 5;
+
+            if (driver.IsAhead (target))
+                Accelerate (this, force);
             else
-                Accelerate (this, 5);
+                driver.Brake (this, force);
         }
 
         //------------------------------------------------------------------
-        private void MatchLane ()
+        private void MatchLane()
         {
             float lane = driver.Car.Lane.GlobalPosition.X;
             float targetLane = target.Lane.GlobalPosition.X;
-            
+
             if (Math.Abs (lane - targetLane) < float.Epsilon)
                 return;
             else if (lane < targetLane)
-                driver.TryChangeLane (driver.Car.Lane.Right, this, driver.GetChangeLanesDuration());
+                ChangeLane (driver.Car.Lane.Right);
             else if (lane > targetLane)
-                driver.TryChangeLane (driver.Car.Lane.Left, this, driver.GetChangeLanesDuration());
+                ChangeLane (driver.Car.Lane.Left);
+        }
+
+        //------------------------------------------------------------------
+        private void ChangeLane (Lane lane)
+        {
+            if (!driver.TryChangeLane (this, lane, driver.GetChangeLanesDuration()))
+                return;
+
+            if (!driver.Car.Blinker.Visible)
+                driver.Car.EnableBlinker (lane);
         }
 
         //------------------------------------------------------------------
         public void Accelerate (Composite action, int times)
         {
             if (driver.Car.Velocity < driver.Velocity)
-                action.Add (new Repeated (driver.Car.Accelerate, times) { Name = "Accelerate" });
+                action.Add (new Repeated (driver.Car.Accelerate, times) {Name = "Accelerate"});
         }
 
         //------------------------------------------------------------------
-        void Debug ()
+        private void Debug()
         {
-//            new Text (Actions.Count.ToString (), Vector2.One * 50, Color.MediumOrchid, true);
-            //Console.WriteLine (Actions);
+//            DrawActions();
         }
 
+        //------------------------------------------------------------------
+        protected void DrawActions()
+        {
+            var actionsNames = Actions.Aggregate ("\n", (current, action) => current + (action + "\n"));
+            new Text (actionsNames, driver.Car.GlobalPosition, Color.SteelBlue, true);
+        }
     }
 }

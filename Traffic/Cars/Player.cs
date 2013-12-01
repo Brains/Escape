@@ -15,7 +15,7 @@ namespace Traffic.Cars
             InitialColor = Color.White;
 
             Velocity = 100;
-            Acceleration = 0.4f;
+            Acceleration = 0.3f;
             Deceleration = 1.0f;
         }
     }

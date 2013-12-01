@@ -15,16 +15,28 @@ namespace Traffic.Drivers
     {
         //------------------------------------------------------------------
         protected Loop Loop;
+        protected float CheckLaneSafeZoneLower;
+        protected float CheckLaneSafeZoneUpper;
 
         //------------------------------------------------------------------
         public Car Car { get; set; }
         public float Velocity { get; set; }
+        public float ChangeLaneSpeed { get; set; }
 
         //------------------------------------------------------------------
         protected Driver (Car car)
         {
             Loop = new Loop ();
             Car = car;
+
+            ChangeLaneSpeed = 1;
+        }
+
+        //-----------------------------------------------------------------
+        public virtual void Setup ()
+        {
+            CheckLaneSafeZoneLower = GetSafeZone (0.5f);
+            CheckLaneSafeZoneUpper = GetSafeZone (1.5f);
         }
 
         #region Actions
@@ -64,7 +76,7 @@ namespace Traffic.Drivers
         {
             if (car == null) return float.MaxValue;
             if (car == Car) return float.MaxValue;
-            if (car.Bounds == null) return float.MaxValue;
+            if (!car.IsIntersectActive()) return float.MaxValue;
 
             var distance = Car.GlobalPosition - car.GlobalPosition;
 
@@ -92,7 +104,7 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public virtual bool  CheckLane (Lane lane)
+        public bool  CheckLane (Lane lane)
         {
             if (lane == null) return false;
             
@@ -101,9 +113,9 @@ namespace Traffic.Drivers
             float distance = Distance (closest);
 
             // If closest Car is outside the special zone
-            if (distance < GetSafeZone (0.5f))
+            if (distance < CheckLaneSafeZoneLower)
                 return false;
-            if (distance > GetSafeZone (1.5f))
+            if (distance > CheckLaneSafeZoneUpper)
                 return true;
 
             // Analyze Velocity
@@ -118,7 +130,8 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         public float GetChangeLanesDuration ()
         {
-            var duration = 300 / Car.Velocity;
+            var duration = 200 / Car.Velocity;
+            duration /= ChangeLaneSpeed;
             const int limit = 4; // In seconds
 
             return duration < limit ? duration : limit;
@@ -176,15 +189,15 @@ namespace Traffic.Drivers
             // Rotate
             Action <float> rotate = share => Car.Angle += share;
             float finalAngle = MathHelper.ToRadians ((lane.GlobalPosition.X < Car.GlobalPosition.X) ? -10 : 10);
-            action.Add (new Controller (rotate, finalAngle, duration * 0.1f));
+            action.Add (new Controller (rotate, finalAngle, duration * 0.3f));
 
             // Moving
             Action <Vector2> move = shift => Car.Position += shift;
             var diapason = new Vector2 (lane.GlobalPosition.X - Car.GlobalPosition.X, 0);
-            action.Add (new Controller (move, diapason, duration * 0.2f));
+            action.Add (new Controller (move, diapason, duration * 0.4f));
 
             // Inverse rotating
-            var inverseRotating = new Controller (rotate, -finalAngle, duration * 0.1f);
+            var inverseRotating = new Controller (rotate, -finalAngle, duration * 0.3f);
             action.Add (inverseRotating);
 
             // Add to new Lane
@@ -198,7 +211,7 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         private void Debug ()
         {
-            DrawSafeZone ();
+//            DrawSafeZone ();
 //            DrawActions ();
 //            DrawCheckLane (Car.Lane);
         }

@@ -14,6 +14,7 @@ namespace Traffic.Drivers
         public Player (Car car) : base (car)
         {
             Velocity = 300;
+            ChangeLaneSpeed = 1.5f;
 
             AddInLoop (new Input (this));
         }
