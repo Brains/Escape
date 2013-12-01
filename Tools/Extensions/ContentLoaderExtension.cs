@@ -38,28 +38,23 @@ namespace Tools.Extensions
         //------------------------------------------------------------------
         private static void LoadManual <T> (ContentManager contentManager, string contentFolder, Dictionary <string, T> result)
         {
-            string key = "";
+            List<string> keys = new List <string>
+            {
+                "Acceleration",
+                "Blinker",
+                "Brake",
+                "Car (Heavy)",
+                "Car (Light)",
+                "Car (Medium)",
+                "Explosion",
+                "Flasher",
+                "Player",
+                "Police",
+                "Road"
+            };
 
-            key = "Acceleration";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Blinker";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Brake";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Car (Heavy)";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Car (Light)";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Car (Medium)";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Explosion";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Player";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Police";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
-            key = "Road";
-            result[key] = contentManager.Load <T> (contentFolder + "/" + key);
+            foreach (var key in keys)
+                result[key] = contentManager.Load <T> (contentFolder + "/" + key);
         }
     }
 }
