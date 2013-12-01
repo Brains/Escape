@@ -50,7 +50,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void UpdateKeyboard ()
         {
-            int factor = 5;
+            const int factor = 5;
 
             if (IsKeyPressed (Keys.Right)) ChangeLane (player.Car.Lane.Right);
             if (IsKeyPressed (Keys.Left)) ChangeLane (player.Car.Lane.Left);
@@ -125,7 +125,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void ChangeLane (Lane lane)
         {
-            player.ChangeLane (lane, this, player.GetChangeLanesDuration () / 2.0f);
+            player.ChangeLane (lane, this, player.GetChangeLanesDuration ());
         }
     }
 }

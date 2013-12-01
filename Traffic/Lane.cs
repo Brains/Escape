@@ -108,7 +108,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void CreatePolice (Game game)
         {
-            var police = new Police (this, -200) {ID = carsCounter};
+            var police = new Police (this, -100) {ID = carsCounter};
             police.Setup ();
 
             Cars.Add (police);

@@ -14,7 +14,7 @@ namespace Traffic.Cars
         private Lane lane;
         private Vector2 origin;
         private Lights brakes;
-        public Lights Blinker { get; private set; }
+        public Blinker Blinker { get; private set; }
         private Lights boost;
         private Weight weight;
 
@@ -87,6 +87,9 @@ namespace Traffic.Cars
             origin = new Vector2 (Texture.Width / 2, Texture.Height / 2);
             Lenght = Texture.Height;
 
+            // Driver
+            Driver.Setup();
+
             // Bounding Box
             Bounds = new Bounds (this, GlobalPosition, origin);
             Bounds.Inflate (-5, -5);
@@ -101,10 +104,10 @@ namespace Traffic.Cars
             boost.Position = new Vector2 (0, -Texture.Height / 2 - 10);
             Add (boost);
 
-            Blinker = new Lights (this, "Blinker");
-            Blinker.Blink = true;
+            Blinker = new Blinker (this, "Blinker");
             Add (Blinker);
 
+            // Setup Components
             base.Setup ();
         }
 
@@ -236,8 +239,8 @@ namespace Traffic.Cars
         public virtual bool Intersect (Car car)
         {
             if (car == this) return false;
-            if (Bounds == null) return false;
-            if (car.Bounds == null) return false;
+            if (!IsIntersectActive()) return false;
+            if (!car.IsIntersectActive()) return false;
 
             return Bounds.Intersects (car.Bounds);
         }
@@ -264,6 +267,11 @@ namespace Traffic.Cars
             Components.Clear ();
         }
 
+        //------------------------------------------------------------------
+        public bool IsIntersectActive()
+        {
+            return Bounds != null;
+        }
 
         #endregion
 
