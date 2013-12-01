@@ -62,6 +62,7 @@
     <Compile Include="Actions\Overtake.cs" />
     <Compile Include="Actions\Shrink.cs" />
     <Compile Include="AnimatedTexture.cs" />
+    <Compile Include="Cars\Blinker.cs" />
     <Compile Include="Cars\Bounds.cs" />
     <Compile Include="Cars\Car.cs" />
     <Compile Include="Cars\Lights.cs" />
