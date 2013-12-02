@@ -9,24 +9,20 @@ using Traffic.Drivers;
 
 namespace Traffic.Actions
 {
-    internal class Shrink : Sequence
+    internal class Shrink : SequenceInitial
     {
         private readonly Driver driver;
         private Car closest; // Ahead
 
         //------------------------------------------------------------------
+        public Lane Desired { get; set; }
+
+        //------------------------------------------------------------------
         public Shrink (Driver driver)
         {
             this.driver = driver;
-            Name = "Shrink";
-
-            Add (new Generic (AnalyzeDistance));
-        }
-
-        //------------------------------------------------------------------
-        public override Base.Action Copy ()
-        {
-            return new Shrink (driver);
+            Desired = driver.Car.Lane.Left;
+            Initial = new Generic (AnalyzeDistance);
         }
 
         //------------------------------------------------------------------
@@ -55,7 +51,6 @@ namespace Traffic.Actions
             // There is a free way
             if (distance > safe)
             {
-                driver.Accelerate (this, 5);
                 driver.Car.DisableBlinker();
                 return;
             }
@@ -102,11 +97,16 @@ namespace Traffic.Actions
         {
             if (closest == null) return;
 
-            // Change Lane on Left
-            if (driver.TryChangeLane (this, driver.Car.Lane.Left, driver.GetChangeLanesDuration ())) 
+            // Change Lane on Desired
+            if (driver.TryChangeLane (this, Desired, driver.GetChangeLanesDuration ())) 
                 return;
 
-            if (driver.TryChangeLane (this, driver.Car.Lane.Right, driver.GetChangeLanesDuration ())) 
+            // Change Lane on other Lane
+            Lane left = driver.Car.Lane.Left;
+            Lane right = driver.Car.Lane.Right;
+            Lane other = (Desired == left) ? right : left;
+
+            if (driver.TryChangeLane (this, other, driver.GetChangeLanesDuration ())) 
                 return;
 
             // Brake if no free Lanes
@@ -128,13 +128,13 @@ namespace Traffic.Actions
         private void Debug ()
         {
             // Draw SafeZone
-//            var pos = driver.Car.GlobalPosition;
+//            var pos = driver.Car.Position;
 //            new Line (pos, pos - new Vector2 (0, driver.SafeZone), Color.IndianRed);
 
             // Mark closest car
-//            var pos = driver.Car.GlobalPosition;
+//            var pos = driver.Car.Position;
 //            if (closest is Cars.Player)
-//                new Line (pos, closest.GlobalPosition);
+//                new Line (pos, closest.Position);
         }
     }
 }
