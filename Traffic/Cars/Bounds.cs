@@ -11,8 +11,8 @@ namespace Traffic.Cars
         {
             get
             {
-                rectangle.X = (int) (GlobalPosition.X - rectangle.Width / 2);
-                rectangle.Y = (int) (GlobalPosition.Y - rectangle.Height / 2);
+                rectangle.X = (int) (Position.X - rectangle.Width / 2);
+                rectangle.Y = (int) (Position.Y - rectangle.Height / 2);
 
                 return rectangle;
             }

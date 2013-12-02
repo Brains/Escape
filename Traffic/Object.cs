@@ -7,22 +7,25 @@ namespace Traffic
 {
     public class Object
     {
-        public List <Object> Components { get; private set; }
-        public Vector2 Position { get; set; }
         public Object Root { get; set; }
+        public List<Object> Components { get; private set; }
+
+        public Vector2 LocalPosition { get; set; }
+
         public bool Deleted { get; set; }
         public bool Anchored { get; set; }
         public bool Active { get; set; }
         public bool Visible { get; set; }
 
         //------------------------------------------------------------------
-        public Vector2 GlobalPosition
+        public Vector2 Position
         {
             get
             {
-                if (!Anchored && Root != null)
-                    return Position + Root.GlobalPosition;
-                return Position;
+                if (Anchored) return LocalPosition;
+                if (Root == null) return LocalPosition;
+                    
+                return LocalPosition + Root.Position;
             }
         }
 
@@ -75,7 +78,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void Move (float shift)
         {
-            Position += new Vector2 (0, shift);
+            LocalPosition += new Vector2 (0, shift);
         }
 
     }

@@ -65,7 +65,7 @@ namespace Traffic.Cars
 
             if (!Visible) return;
 
-            spriteBatch.Draw (texture, GlobalPosition, null, Color, Rotation, origin, 1.0f, flip, 0.6f);
+            spriteBatch.Draw (texture, Position, null, Color, Rotation, origin, 1.0f, flip, 0.6f);
         }
 
 

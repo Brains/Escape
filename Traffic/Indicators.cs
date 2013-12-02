@@ -13,7 +13,7 @@ namespace Traffic
         public Indicators (Road road) : base (road)
         {
             this.road = road;
-            Position = new Vector2 (10);
+            LocalPosition = new Vector2 (10);
             Anchored = true;
         }
 
@@ -30,8 +30,8 @@ namespace Traffic
         {
             var offset = new Vector2 (0, 30);
 
-            spriteBatch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), GlobalPosition, Color.CadetBlue);
-            spriteBatch.DrawString (font, road.Player.Lives.ToString (), GlobalPosition + offset * 1, Color.DarkRed);
+            spriteBatch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), Position, Color.CadetBlue);
+            spriteBatch.DrawString (font, road.Player.Lives.ToString (), Position + offset * 1, Color.DarkRed);
         }
     }
 }
