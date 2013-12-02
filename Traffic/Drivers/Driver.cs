@@ -8,6 +8,7 @@ using Tools.Markers;
 using Traffic.Actions;
 using Traffic.Actions.Base;
 using Traffic.Cars;
+using Action = Traffic.Actions.Base.Action;
 
 namespace Traffic.Drivers
 {
@@ -15,18 +16,23 @@ namespace Traffic.Drivers
     {
         //------------------------------------------------------------------
         protected Loop Loop;
+        protected Sequence Sequence;
+
         protected float CheckLaneSafeZoneLower;
         protected float CheckLaneSafeZoneUpper;
+        protected float ChangeLaneSpeed;
 
         //------------------------------------------------------------------
         public Car Car { get; set; }
         public float Velocity { get; set; }
-        public float ChangeLaneSpeed { get; set; }
 
         //------------------------------------------------------------------
         protected Driver (Car car)
         {
             Loop = new Loop ();
+            Sequence = new Sequence();
+            AddInLoop (Sequence);
+
             Car = car;
 
             ChangeLaneSpeed = 1;
@@ -50,15 +56,15 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public void AddInLoop (Sequence action)
+        public void AddInLoop (Action action)
         {
-            Loop.AddLooped (action);
+            Loop.Add (action);
         }
 
         //------------------------------------------------------------------
-        public void AddInSequnce (Sequence action)
+        public void AddInSequnce (Action action)
         {
-            Loop.Add (action);
+            Sequence.Add (action);
         }
 
         //------------------------------------------------------------------
@@ -78,7 +84,7 @@ namespace Traffic.Drivers
             if (car == Car) return float.MaxValue;
             if (!car.IsIntersectActive()) return float.MaxValue;
 
-            var distance = Car.GlobalPosition - car.GlobalPosition;
+            var distance = Car.Position - car.Position;
 
             return Math.Abs (distance.Y);
         }
@@ -100,7 +106,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public bool IsAhead (Car car)
         {
-            return car.GlobalPosition.Y < Car.GlobalPosition.Y;
+            return car.Position.Y < Car.Position.Y;
         }
 
         //------------------------------------------------------------------
@@ -142,7 +148,7 @@ namespace Traffic.Drivers
         {
             const float scale = 0.7f;
 
-            return Car.Lenght + Car.Velocity * scale * factor;
+            return Car.Lenght + Car.Velocity * factor * scale;
         }
 
         #endregion
@@ -150,13 +156,13 @@ namespace Traffic.Drivers
         #region Car Controll
 
         //------------------------------------------------------------------
-        public void Brake (Composite action, int times)
+        public void Brake (Composite action, int times = 1)
         {
             action.Add (new Repeated (Car.Brake, times) {Name = "Brake"});
         }
 
         //------------------------------------------------------------------
-        public void Accelerate (Composite action, int times)
+        public void Accelerate (Composite action, int times = 1)
         {
             if (Car.Velocity < Car.Lane.Velocity)
                 action.Add (new Repeated (Car.Accelerate, times) {Name = "Accelerate"});
@@ -188,12 +194,12 @@ namespace Traffic.Drivers
 
             // Rotate
             Action <float> rotate = share => Car.Angle += share;
-            float finalAngle = MathHelper.ToRadians ((lane.GlobalPosition.X < Car.GlobalPosition.X) ? -10 : 10);
+            float finalAngle = MathHelper.ToRadians ((lane.Position.X < Car.Position.X) ? -10 : 10);
             action.Add (new Controller (rotate, finalAngle, duration * 0.3f));
 
             // Moving
-            Action <Vector2> move = shift => Car.Position += shift;
-            var diapason = new Vector2 (lane.GlobalPosition.X - Car.GlobalPosition.X, 0);
+            Action <Vector2> move = shift => Car.LocalPosition += shift;
+            var diapason = new Vector2 (lane.Position.X - Car.Position.X, 0);
             action.Add (new Controller (move, diapason, duration * 0.4f));
 
             // Inverse rotating
@@ -219,15 +225,15 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         private void DrawSafeZone()
         {
-            var pos = Car.GlobalPosition;
-            new Line (pos, pos - new Vector2 (0, GetSafeZone()), Color.IndianRed);
+            var pos = Car.Position;
+            new Line (pos, pos - new Vector2 (0, GetSafeZone(1.0f)), Color.IndianRed);
         }
 
         //------------------------------------------------------------------
         protected void DrawActions ()
         {
             var actionsNames = Loop.Actions.Aggregate ("\n", (current, action) => current + (action + "\n"));
-            new Text (actionsNames, Car.GlobalPosition, Color.SteelBlue, true);
+            new Text (actionsNames, Car.Position, Color.SteelBlue, true);
         }
 
         //------------------------------------------------------------------
@@ -242,8 +248,8 @@ namespace Traffic.Drivers
         {
             if (lane == null) return;
 
-            var pos = lane.GlobalPosition;
-            pos.Y = Car.GlobalPosition.Y;
+            var pos = lane.Position;
+            pos.Y = Car.Position.Y;
 
             new Line (pos, pos - new Vector2 (0, GetSafeZone () / 2), Color.IndianRed);
             new Line (pos, pos + new Vector2 (0, GetSafeZone () * 1.5f), Color.Orange);

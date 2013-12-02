@@ -38,6 +38,7 @@ namespace Traffic
             float elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
             Road.Update (elapsed);
+            director.Update (elapsed);
         }
 
         //------------------------------------------------------------------

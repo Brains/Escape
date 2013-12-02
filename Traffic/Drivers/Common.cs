@@ -11,6 +11,7 @@ namespace Traffic.Drivers
         public Common (Car car) : base(car)
         {
             AddInLoop (new Shrink (this));
+            AddInLoop (new SpeedControl(this));
         }
     }
 }

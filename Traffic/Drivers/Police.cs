@@ -8,19 +8,20 @@ namespace Traffic.Drivers
     internal class Police : Driver
     {
         //------------------------------------------------------------------
-        public Police (Cars.Police police) : base (police)
+        public Police (Cars.Car car) : base (car)
         {
-            Velocity = 450;
-            ChangeLaneSpeed = 1.5f;
+            Velocity = 400;
+            ChangeLaneSpeed = 2;
 
-            AddInLoop (new Shrink (this));
-            AddInLoop (new Overtake (this, Car.Lane.Road.Player));
+            var shrink = new Shrink (this);
+            AddInLoop (shrink);
+            AddInLoop (new Overtake (this, Car.Lane.Road.Player, shrink));
         }
 
-        //------------------------------------------------------------------
+        //-----------------------------------------------------------------
         public override void Setup()
         {
-            CheckLaneSafeZoneLower = GetSafeZone (0.5f);
+            CheckLaneSafeZoneLower = GetSafeZone (0.2f);
             CheckLaneSafeZoneUpper = GetSafeZone (1.0f);
         }
 
@@ -29,17 +30,16 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
-            Debug ();
+            Debug();
         }
 
         //------------------------------------------------------------------
-        private void Debug ()
+        private void Debug()
         {
 //            DrawActions ();
 
 //            // Lives
-//            new Text (Car.Lives.ToString (), Car.GlobalPosition, Color.Red);
-
+//            new Text (Car.Lives.ToString (), Car.Position, Color.Red);
         }
     }
 }
