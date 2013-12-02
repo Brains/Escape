@@ -3,21 +3,21 @@ using Traffic.Drivers;
 
 namespace Traffic.Actions
 {
-    public class TryChangeLane : SequenceInitial
+    public class ChangeLane : Sequence
     {
         private readonly Driver driver;
         private readonly Lane lane;
 
         //------------------------------------------------------------------
-        public TryChangeLane (Driver driver, Lane lane)
+        public ChangeLane (Driver driver, Lane lane)
         {
             this.driver = driver;
             this.lane = lane;
-            Initial = new Generic (ChangeLane);
+            Add(new Generic (Perform));
         }
 
         //------------------------------------------------------------------
-        private void ChangeLane()
+        private void Perform()
         {
             if (driver.TryChangeLane (this, lane, driver.GetChangeLanesDuration()))
                 driver.Car.EnableBlinker (lane);
