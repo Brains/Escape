@@ -14,18 +14,15 @@
         protected Action (float duration)
         {
             Duration = duration;
-            Name = GetType ().Name;
+            Name = GetType().Name;
         }
 
         //------------------------------------------------------------------
-        protected Action ()
+        protected Action()
         {
             Duration = 0;
-            Name = GetType ().Name;
+            Name = GetType().Name;
         }
-
-        //------------------------------------------------------------------
-        public abstract Action Copy ();
 
         //------------------------------------------------------------------
         public virtual void Update (float elapsed)
@@ -34,19 +31,20 @@
 
             if (Elapsed >= Duration)
             {
-                Finish ();
+                Finish();
                 Finished = true;
             }
         }
 
         //-----------------------------------------------------------------
-//        public void AddToManager ()
-//        {
-//            Manager.Add (this);
-//        }
+        public virtual void Reset()
+        {
+            Elapsed = 0;
+            Finished = false;
+        }
 
         //------------------------------------------------------------------
-        public override string ToString ()
+        public override string ToString()
         {
             return Name;
         }

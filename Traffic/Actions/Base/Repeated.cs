@@ -22,11 +22,5 @@
             if (counter >= times)
                 Finished = true;
         }
-
-        //------------------------------------------------------------------
-        public override Action Copy ()
-        {
-            return new Repeated (action, times);
-        }
     }
 }

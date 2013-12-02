@@ -3,7 +3,7 @@ using Traffic.Drivers;
 
 namespace Traffic.Actions
 {
-    public class TryChangeLane : Sequence
+    public class TryChangeLane : SequenceInitial
     {
         private readonly Driver driver;
         private readonly Lane lane;
@@ -13,15 +13,14 @@ namespace Traffic.Actions
         {
             this.driver = driver;
             this.lane = lane;
-            Name = "TryChangeLane";
-
-            Add (new Generic (() => this.driver.TryChangeLane (this, this.lane, this.driver.GetChangeLanesDuration ())));
+            Initial = new Generic (ChangeLane);
         }
 
         //------------------------------------------------------------------
-        public override Action Copy ()
+        private void ChangeLane()
         {
-            return new TryChangeLane (driver, lane);
+            if (driver.TryChangeLane (this, lane, driver.GetChangeLanesDuration()))
+                driver.Car.EnableBlinker (lane);
         }
     }
 }

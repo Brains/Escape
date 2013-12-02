@@ -11,7 +11,7 @@ using Action = Traffic.Actions.Base.Action;
 
 namespace Traffic.Actions
 {
-    internal class Input : Sequence
+    internal class Input : SequenceInitial
     {
         private Drivers.Player player;
         private static KeyboardState current;
@@ -21,14 +21,7 @@ namespace Traffic.Actions
         public Input (Drivers.Player player)
         {
             this.player = player;
-            Name = "Input";
-            Add (new Generic (CheckInput) {Name = "CheckInput"});
-        }
-
-        //------------------------------------------------------------------
-        public override Action Copy ()
-        {
-            return new Input (player);
+            Initial = new Generic (CheckInput);
         }
 
         //------------------------------------------------------------------

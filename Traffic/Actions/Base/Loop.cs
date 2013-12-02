@@ -6,44 +6,28 @@ namespace Traffic.Actions.Base
 {
     public class Loop : Sequence
     {
-        private readonly List <Action> looped;
-
-        //------------------------------------------------------------------
-        public Loop ()
-        {
-            looped = new List <Action> ();
-        }
-
-        //------------------------------------------------------------------
-        public override Action Copy ()
-        {
-            throw new NotImplementedException();
-        }
-
-        //-----------------------------------------------------------------
-        public void AddLooped (Action action)
-        {
-            looped.Add (action.Copy ());
-            Add (action);
-        }
+        private List<Action>.Enumerator enumerator;
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            if (Finished) 
-                Restart ();
-            
-            base.Update (elapsed);
+            if (enumerator.Current == null)
+                Reset();
+
+            // Update current Sequence
+            enumerator.Current.Update (elapsed);
+
+            if (enumerator.Current.Finished)
+                enumerator.MoveNext ();
         }
 
-
         //------------------------------------------------------------------
-        private void Restart ()
+        public override void Reset ()
         {
-            foreach (var action in looped)
-                Add (action.Copy ());
+            enumerator = Actions.GetEnumerator ();
+            enumerator.MoveNext ();
 
-            Finished = false;
+            Actions.ForEach (action => action.Reset());
         }
     }
 }

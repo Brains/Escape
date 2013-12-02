@@ -6,23 +6,15 @@ using Traffic.Drivers;
 
 namespace Traffic.Actions
 {
-    public class SpeedControl : Base.Sequence
+    public class SpeedControl : SequenceInitial
     {
         Driver driver;
         
         //------------------------------------------------------------------
-        public SpeedControl(Driver driver)
+        public SpeedControl (Driver driver)
         {
             this.driver = driver;
-            Name = "Speed Control";
-
-            Add (new Generic (Start));
-        }
-
-        //------------------------------------------------------------------
-        public override Base.Action Copy()
-        {
-            return new SpeedControl (driver);
+            Initial = new Generic (Start);
         }
 
         //------------------------------------------------------------------
