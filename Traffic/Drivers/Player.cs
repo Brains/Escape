@@ -14,7 +14,7 @@ namespace Traffic.Drivers
         public Player (Car car) : base (car)
         {
             Velocity = 300;
-            ChangeLaneSpeed = 1.5f;
+            ChangeLaneSpeed = 2;
 
             AddInLoop (new Input (this));
         }
@@ -24,7 +24,7 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
-            AdjustSpeed ();
+//            AdjustSpeed ();
 
             Debug ();
         }
@@ -35,7 +35,7 @@ namespace Traffic.Drivers
             float distance = GetMinimumDistance (Car.Lane.Cars.Where (IsAhead));
 
             // A point of the "factor" is to accelerate when (distance > Lenght * 3)
-            int factor = Math.Sign (distance / Car.Lenght - 3);
+            int factor = Math.Sign (distance / Car.Lenght - 2.5f);
 
 //            float factor = (distance / Car.Lenght - 3) / 9;
 //            if (factor > 1) factor = 1.0f;
@@ -62,14 +62,14 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public void Brake ()
         {
-            if (Car.Velocity > 100)
+//            if (Car.Velocity > 100)
                 Car.Brake ();
         }
 
         //-----------------------------------------------------------------
         private void Debug ()
         {
-//            new Text (Car.Velocity, Car.GlobalPosition, Color.DarkRed, true);
+//            new Text (Car.Velocity, Car.Position, Color.DarkRed, true);
 
             // Draw Closest car
 //            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));

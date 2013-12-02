@@ -52,7 +52,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public Car (Lane lane, int horizont) : base (lane)
         {
-            Position = new Vector2 (0, horizont);
+            LocalPosition = new Vector2 (0, horizont);
             InitialColor = Color.White;
             TextureName = "Car";
             Lane = lane;
@@ -91,17 +91,17 @@ namespace Traffic.Cars
             Driver.Setup();
 
             // Bounding Box
-            Bounds = new Bounds (this, GlobalPosition, origin);
+            Bounds = new Bounds (this, Position, origin);
             Bounds.Inflate (-5, -5);
             Add (Bounds);
 
             // Lights
             brakes = new Lights (this, "Brake");
-            brakes.Position = new Vector2 (0, Texture.Height / 2 + 10);
+            brakes.LocalPosition = new Vector2 (0, Texture.Height / 2 + 10);
             Add (brakes);
 
             boost = new Lights (this, "Acceleration");
-            boost.Position = new Vector2 (0, -Texture.Height / 2 - 10);
+            boost.LocalPosition = new Vector2 (0, -Texture.Height / 2 - 10);
             Add (boost);
 
             Blinker = new Blinker (this, "Blinker");
@@ -168,12 +168,12 @@ namespace Traffic.Cars
 
             if (newLane == Lane.Left)
             {
-                Blinker.Position = new Vector2 (-shift, 0);
+                Blinker.LocalPosition = new Vector2 (-shift, 0);
                 Blinker.Flip (false);
             }
             else if (newLane == Lane.Right)
             {
-                Blinker.Position = new Vector2 (shift, 0);
+                Blinker.LocalPosition = new Vector2 (shift, 0);
                 Blinker.Flip (true);
             }
 
@@ -280,7 +280,7 @@ namespace Traffic.Cars
         {
             base.Draw (spriteBatch);
 
-            spriteBatch.Draw (Texture, GlobalPosition, null, Color, Angle, origin, 1.0f, SpriteEffects, 0.5f);
+            spriteBatch.Draw (Texture, Position, null, Color, Angle, origin, 1.0f, SpriteEffects, 0.5f);
         }
 
         //------------------------------------------------------------------
@@ -292,11 +292,11 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         private void Debug ()
         {
-//            new Text (Velocity.ToString ("F0"), GlobalPosition, Color.DarkSeaGreen, true);
-//            new Text (Lives.ToString (), GlobalPosition, Color.Red);
+//            new Text (Velocity.ToString ("F0"), Position, Color.DarkSeaGreen, true);
+//            new Text (Lives.ToString (), Position, Color.Red);
 
             // SafeZone
-//            new Line (GlobalPosition, GlobalPosition - new Vector2 (0, Driver.SafeZone), Color.IndianRed);
+//            new Line (Position, Position - new Vector2 (0, Driver.SafeZone), Color.IndianRed);
         }
     }
 }

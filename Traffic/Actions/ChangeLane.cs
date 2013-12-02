@@ -13,7 +13,7 @@ namespace Traffic.Actions
         {
             this.driver = driver;
             this.lane = lane;
-            Add(new Generic (Perform));
+            Add (new Generic (Perform));
         }
 
         //------------------------------------------------------------------

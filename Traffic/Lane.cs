@@ -15,8 +15,8 @@ namespace Traffic
         private static int carsCounter;
 
         //------------------------------------------------------------------
-        public const int MinimumCars = 5;
-        public const int MaximumCars = 15;
+        public const int MinimumCars = 3;
+        public const int MaximumCars = 12;
 
         //------------------------------------------------------------------
         public readonly int ID;
@@ -65,14 +65,14 @@ namespace Traffic
             const int laneWidth = 40;
             int position = id * laneWidth + laneWidth / 2;
 
-            Position = new Vector2 (position, 0);
+            LocalPosition = new Vector2 (position, 0);
         }
 
         //------------------------------------------------------------------
         public override void Setup ()
         {
             height = Road.Game.GraphicsDevice.Viewport.Height;
-            border = 3000;
+            border = 2000;
 
             base.Setup ();
         }
@@ -106,15 +106,17 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public void CreatePolice (Game game)
+        public Police CreatePolice (Game game)
         {
-            var police = new Police (this, -100) {ID = carsCounter};
+            var police = new Police (this, -200) {ID = carsCounter};
             police.Setup ();
 
             Cars.Add (police);
             OwnCar (police);
 
             carsCounter++;
+
+            return police;
         }
 
         //------------------------------------------------------------------
@@ -151,7 +153,7 @@ namespace Traffic
 
                 if (!Cars.Any ()) break;
 
-                float minimum = Cars.Min (car => Math.Abs (car.GlobalPosition.Y - position));
+                float minimum = Cars.Min (car => Math.Abs (car.Position.Y - position));
 
                 if (minimum > 400) break;
             }
@@ -192,7 +194,7 @@ namespace Traffic
             // Remove Cars outside the screen
             Cars.RemoveAll (car =>
             {
-                int position = (int) car.GlobalPosition.Y;
+                int position = (int) car.Position.Y;
                 return position < -border || position > border;
             });
 
@@ -221,7 +223,7 @@ namespace Traffic
                 car.Lane.Cars.Remove (car);
 
             car.Lane = this;
-            car.Position = new Vector2 (0, car.GlobalPosition.Y);
+            car.LocalPosition = new Vector2 (0, car.Position.Y);
         }
 
         //------------------------------------------------------------------
@@ -241,14 +243,14 @@ namespace Traffic
         //------------------------------------------------------------------
         private void Debug ()
         {
-//            new Text (ToString () + ":" + Cars.Count, Position);
-//            new Text (Velocity.ToString ("F0"), Position);
-//            new Text (CarsQuantity.ToString (), Position);
+//            new Text (CarsQuantity.ToString(), LocalPosition);
+//            new Text (Velocity.ToString ("F0"), LocalPosition);
+//            new Text (CarsQuantity.ToString (), LocalPosition);
 
 //            // Particular Type counter
 //            int number = Cars.OfType <Player> ().Count ();
 //            if (number != 0) 
-//                new Text (number.ToString (""), Position);
+//                new Text (number.ToString (""), LocalPosition);
         }
     }
 }
