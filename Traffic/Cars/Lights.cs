@@ -10,7 +10,6 @@ namespace Traffic.Cars
     {
         private Texture2D texture;
         private readonly Car car;
-        private readonly string textureName;
         private Vector2 origin;
         private SpriteEffects flip;
 
@@ -22,15 +21,14 @@ namespace Traffic.Cars
         public Lights (Car car, string textureName) : base (car)
         {
             this.car = car;
-            this.textureName = textureName;
+
+            LoadTexture (textureName);
         }
 
         //------------------------------------------------------------------
-        public override void Setup ()
+        private void LoadTexture(string name)
         {
-            base.Setup ();
-
-            texture = car.Lane.Road.Images[textureName];
+            texture = car.Lane.Road.Images[name];
             origin = new Vector2 (texture.Width / 2, texture.Height / 2);
         }
 

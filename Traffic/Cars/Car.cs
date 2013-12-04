@@ -12,24 +12,22 @@ namespace Traffic.Cars
     {
         //-----------------------------------------------------------------
         private Lane lane;
+        private Driver driver;
         private Vector2 origin;
         private Lights brakes;
-        public Blinker Blinker { get; private set; }
+        private Blinker blinker;
         private Lights boost;
-        private Weight weight;
 
         //------------------------------------------------------------------
         protected Texture2D Texture;
         protected Color InitialColor;
-        protected string TextureName;
         protected internal Bounds Bounds;
 
         //------------------------------------------------------------------
-        public int ID;
+        public readonly int ID;
         public float Velocity { get; set; }
         public Color Color { get; set; }
         public int Lenght { get; set; }
-        public Driver Driver { get; set; }
         public int Lives { get; set; }
         public float Acceleration { get; set; }
         public float Deceleration { get; set; }
@@ -47,55 +45,59 @@ namespace Traffic.Cars
             }
         }
 
+        //------------------------------------------------------------------
+        public Driver Driver
+        {
+            get { return driver; }
+            set
+            {
+                Remove (driver);
+                driver = value;
+                Add (driver);
+            }
+        }
+
         #region Creation
 
         //------------------------------------------------------------------
-        public Car (Lane lane, int horizont) : base (lane)
+        public Car (Lane lane, int id, int position, Weight weight, string textureName) : base(lane)
         {
-            LocalPosition = new Vector2 (0, horizont);
+            LocalPosition = new Vector2 (0, position);
             InitialColor = Color.White;
-            TextureName = "Car";
             Lane = lane;
+            ID = id;
             
             Velocity = Lane.Velocity;
-            Acceleration = 0.2f;
-            Deceleration = 1.0f;
+            Lives = weight.Lives;
+            Acceleration = 0.2f;// * weight.Acceleration;
+            Deceleration = 1.0f;// * weight.Deceleration;
+
+            LoadTexture (textureName);
+            CreateBoundingBox ();
+            CreateLights ();
 
             Driver = new Common (this);
-
-            CreateWeight ();
         }
 
         //------------------------------------------------------------------
-        private void CreateWeight ()
+        private void LoadTexture(string textureName)
         {
-            if (Lane.ID >= 0 && Lane.ID < 4)
-                weight = new Light (this);
-            if (Lane.ID >= 4 && Lane.ID < 8)
-                weight = new Medium (this);
-            if (Lane.ID >= 8 && Lane.ID < 12)
-                weight = new Heavy (this);
-            
-            TextureName += weight.TextureSuffix;
-        }
-
-        //------------------------------------------------------------------
-        public override void Setup ()
-        {
-            // Load Texture
-            Texture = Lane.Road.Images[TextureName];
+            Texture = Lane.Road.Images[textureName];
             origin = new Vector2 (Texture.Width / 2, Texture.Height / 2);
             Lenght = Texture.Height;
+        }
 
-            // Driver
-            Driver.Setup();
-
-            // Bounding Box
+        //------------------------------------------------------------------
+        private void CreateBoundingBox ()
+        {
             Bounds = new Bounds (this, Position, origin);
             Bounds.Inflate (-5, -5);
             Add (Bounds);
+        }
 
-            // Lights
+        //------------------------------------------------------------------
+        private void CreateLights ()
+        {
             brakes = new Lights (this, "Brake");
             brakes.LocalPosition = new Vector2 (0, Texture.Height / 2 + 10);
             Add (brakes);
@@ -104,12 +106,11 @@ namespace Traffic.Cars
             boost.LocalPosition = new Vector2 (0, -Texture.Height / 2 - 10);
             Add (boost);
 
-            Blinker = new Blinker (this, "Blinker");
-            Add (Blinker);
-
-            // Setup Components
-            base.Setup ();
+            blinker = new Blinker (this, "Blinker");
+            Add (blinker);
         }
+
+
 
         #endregion
 
@@ -118,16 +119,14 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            base.Update (elapsed);
-
             Reset ();
+            
+            base.Update (elapsed);
 
             Move (-Velocity * elapsed);
 
             // Simulate Camera moving
             Move (Lane.Road.Player.Velocity * elapsed);
-
-            Driver.Update (elapsed);
 
             DetectCollisions ();
 
@@ -168,22 +167,28 @@ namespace Traffic.Cars
 
             if (newLane == Lane.Left)
             {
-                Blinker.LocalPosition = new Vector2 (-shift, 0);
-                Blinker.Flip (false);
+                blinker.LocalPosition = new Vector2 (-shift, 0);
+                blinker.Flip (false);
             }
             else if (newLane == Lane.Right)
             {
-                Blinker.LocalPosition = new Vector2 (shift, 0);
-                Blinker.Flip (true);
+                blinker.LocalPosition = new Vector2 (shift, 0);
+                blinker.Flip (true);
             }
 
-            Blinker.Enable ();
+            blinker.Enable ();
         }
 
         //------------------------------------------------------------------
         public void DisableBlinker ()
         {
-            Blinker.Disable ();
+            blinker.Disable ();
+        }
+
+        //------------------------------------------------------------------
+        public bool	 IsBlinkerEnable ()
+        {
+            return blinker.Visible;
         }
 
         //------------------------------------------------------------------

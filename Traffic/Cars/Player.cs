@@ -1,22 +1,21 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Traffic.Cars.Weights;
 
 namespace Traffic.Cars
 {
     public class Player : Car
     {
         //------------------------------------------------------------------
-        public Player (Lane lane, int insertPoint) : base (lane, insertPoint)
+        public Player (Lane lane, int id, int position, Weight weight, string textureName)
+            : base (lane, id, position, weight, textureName)
         {
-            Driver = new Drivers.Player (this);
             Lives = 99;
-
-            TextureName = "Player";
-            InitialColor = Color.White;
-
             Velocity = 100;
-            Acceleration = 0.3f;
-            Deceleration = 1.0f;
+            Acceleration = 1;//0.3f;
+            Deceleration = 2;//1.0f;
+
+            Driver = new Drivers.Player (this);
         }
     }
 }

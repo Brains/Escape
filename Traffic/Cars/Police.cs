@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Traffic.Cars.Weights;
 using Traffic.Drivers;
 
 namespace Traffic.Cars
@@ -8,27 +9,25 @@ namespace Traffic.Cars
         private Lights flasher;
 
         //------------------------------------------------------------------
-        public Police (Lane lane, int insertPoint) : base (lane, insertPoint)
+        public Police(Lane lane, int id, int position, Weight weight, string textureName) : 
+            base(lane, id, position, weight, textureName)
         {
-            Driver = new Drivers.Police (this);
-            InitialColor = Color.White;
-            TextureName = "Police";
-
             Lives = 20;
-
             Acceleration = 1.0f;
             Deceleration = 2.0f;
+
+            Driver = new Drivers.Police (this);
+
+            CreateFlasher();
         }
 
         //------------------------------------------------------------------
-        public override void Setup()
+        public void CreateFlasher ()
         {
             // Flasher
             flasher = new Lights(this, "Flasher");
             flasher.Enable();
             Add (flasher);
-
-            base.Setup ();
         }
 
         //------------------------------------------------------------------
