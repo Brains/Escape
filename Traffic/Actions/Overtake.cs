@@ -14,14 +14,12 @@ namespace Traffic.Actions
     {
         private Driver driver;
         private Car target;
-        private Shrink shrink;
 
         //------------------------------------------------------------------
-        public Overtake (Driver driver, Car target, Shrink shrink)
+        public Overtake (Driver driver, Car target)
         {
             this.driver = driver;
             this.target = target;
-            this.shrink = shrink;
             Initial = new Generic (Start);
         }
 
@@ -36,11 +34,12 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void Start()
         {
+            SetSafeZone();
+
             Catch();
 
             // Match Lane
-            const int visibility = 200;
-            bool visible = driver.Distance (target) < visibility;
+            bool visible = driver.Distance (target) < 200;
             bool overtake = Math.Abs (driver.Car.Velocity - target.Velocity) < 100;
 
             if (visible && overtake)
@@ -48,43 +47,61 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
+        private void SetSafeZone()
+        {
+            Car car = driver.Car;
+            Car closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsCarAhead));
+            if (closest == null) return;
+            float approach = Math.Abs (car.Velocity - closest.Velocity);
+
+            driver.SafeZone.Scale = approach / 100;
+        }
+
+        //------------------------------------------------------------------
         private void Catch()
         {
             const int force = 3;
 
-            if (driver.IsAhead (target))
+            if (IsCarAhead (target))
                 Accelerate (this, force);
             else
                 Brake (force);
         }
 
         //------------------------------------------------------------------
-        private void MatchLane()
+        private bool IsCarAhead(Car target)
         {
-            float current = driver.Car.Lane.Position.X;
-            float targetLane = target.Lane.Position.X;
-
-            if (Math.Abs (current - targetLane) < float.Epsilon)
-                return;
-            else if (current < targetLane)
-                TryChangeLane (driver.Car.Lane.Right);
-            else if (current > targetLane)
-                TryChangeLane (driver.Car.Lane.Left);
+            return driver.Car.Position.Y + 200 > target.Position.Y;
         }
 
         //------------------------------------------------------------------
-        private void TryChangeLane (Lane lane)
+        private void MatchLane()
         {
-            shrink.Desired = lane;
+            int currentID = driver.Car.Lane.ID;
+            int targetID = this.target.Lane.ID;
 
-            driver.TryChangeLane (this, lane, driver.GetChangeLanesDuration());
+            Lane right = driver.Car.Lane.Right;
+            Lane left = driver.Car.Lane.Left;
+
+            if (currentID == targetID)
+                ;
+            else if (currentID < targetID)
+            {
+                driver.TryChangeLane (this, right, driver.GetChangeLanesDuration());
+                driver.SetLanesPriority (right, left);
+            }
+            else if (currentID > targetID)
+            {
+                driver.TryChangeLane (this, left, driver.GetChangeLanesDuration());
+                driver.SetLanesPriority (left, right);
+            }
         }
 
         //------------------------------------------------------------------
         public void Accelerate (Composite action, int times = 1)
         {
             if (driver.Car.Velocity >= driver.Velocity) return;
-            
+
             foreach (var i in Enumerable.Range (0, times))
                 driver.Car.Accelerate();
         }
@@ -93,7 +110,7 @@ namespace Traffic.Actions
         private void Brake (int times)
         {
             foreach (var i in Enumerable.Range (0, times))
-                driver.Car.Brake ();
+                driver.Car.Brake();
         }
 
         //------------------------------------------------------------------
