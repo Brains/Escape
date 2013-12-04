@@ -228,7 +228,6 @@ namespace Tools.Markers
         /// <param name="thickness">The thickness of the lines</param>
         public static void DrawRectangle(this SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle rect, Color color, float thickness)
         {
-            // TODO: Handle rotations
             DrawLine (spriteBatch, new Vector2 (rect.X, rect.Y), new Vector2 (rect.Right, rect.Y), color, thickness); // top
             DrawLine (spriteBatch, new Vector2 (rect.X + 1f, rect.Y), new Vector2 (rect.X + 1f, rect.Bottom + thickness), color, thickness); // left
             DrawLine (spriteBatch, new Vector2 (rect.X, rect.Bottom), new Vector2 (rect.Right, rect.Bottom), color, thickness); // bottom

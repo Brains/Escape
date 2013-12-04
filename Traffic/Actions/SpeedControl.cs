@@ -20,9 +20,9 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public void Start ()
         {
-            Car closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsAhead));
+            Car closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsCarAhead));
 
-            if (driver.Distance (closest) > driver.GetSafeZone ())
+            if (driver.Distance (closest) > driver.SafeZone.LowDanger)
                 driver.Accelerate (this);
         }
     }
