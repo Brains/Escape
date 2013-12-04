@@ -15,13 +15,9 @@ namespace Traffic.Actions
         private Car closest; // Ahead
 
         //------------------------------------------------------------------
-        public Lane Desired { get; set; }
-
-        //------------------------------------------------------------------
         public Shrink (Driver driver)
         {
             this.driver = driver;
-            Desired = driver.Car.Lane.Left;
             Initial = new Generic (AnalyzeDistance);
         }
 
@@ -41,15 +37,14 @@ namespace Traffic.Actions
         private void AnalyzeDistance ()
         {
             float distance = driver.Distance (closest);
-            float safe = driver.GetSafeZone ();
-            
+
             // Define different dangerous zones
-            float high = driver.GetSafeZone (0.33f);
-            float medium = driver.GetSafeZone (0.66f);
-            float low = driver.GetSafeZone (1.0f);
+            float high = driver.SafeZone.HighDanger;
+            float medium = driver.SafeZone.MediumDanger;
+            float low = driver.SafeZone.LowDanger;
 
             // There is a free way
-            if (distance > safe)
+            if (distance > low)
             {
                 driver.Car.DisableBlinker();
                 return;
@@ -87,7 +82,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void FindClosestCar ()
         {
-            closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsAhead));
+            closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsCarAhead));
         }
 
         #endregion
@@ -98,15 +93,10 @@ namespace Traffic.Actions
             if (closest == null) return;
 
             // Change Lane on Desired
-            if (driver.TryChangeLane (this, Desired, driver.GetChangeLanesDuration ())) 
+            if (driver.TryChangeLane (this, driver.Primary, driver.GetChangeLanesDuration ())) 
                 return;
 
-            // Change Lane on other Lane
-            Lane left = driver.Car.Lane.Left;
-            Lane right = driver.Car.Lane.Right;
-            Lane other = (Desired == left) ? right : left;
-
-            if (driver.TryChangeLane (this, other, driver.GetChangeLanesDuration ())) 
+            if (driver.TryChangeLane (this, driver.Secondary, driver.GetChangeLanesDuration ())) 
                 return;
 
             // Brake if no free Lanes
@@ -116,7 +106,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void EnableBlinker ()
         {
-            if (driver.Car.Blinker.Visible) return;
+            if (driver.Car.IsBlinkerEnable()) return;
 
             if (driver.CheckLane (driver.Car.Lane.Left))
                 driver.Car.EnableBlinker (driver.Car.Lane.Left);
