@@ -25,6 +25,7 @@ namespace Tools.Markers
         public override void Draw (SpriteBatch spriteBatch)
         {
             spriteBatch.DrawLine (From, To, Color);
+            spriteBatch.DrawCircle (To, 2, 10, Color, 5);
         }
     }
 }
