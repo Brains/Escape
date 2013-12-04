@@ -3,17 +3,12 @@
     internal class Light : Weight
     {
         //------------------------------------------------------------------
-        public Light (Car car) : base (car)
+        public Light () : base ()
         {
-            this.car.Lives = 1;
-            this.car.Acceleration *= 2;
-            this.car.Deceleration *= 2;
-        }
-
-        //------------------------------------------------------------------
-        public override string TextureSuffix
-        {
-            get { return " (Light)"; }
+            Lives = 1;
+            Acceleration = 2;
+            Deceleration = 2;
+            TextureSuffix = "(Light)";
         }
     }
 }

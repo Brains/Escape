@@ -3,17 +3,12 @@
     internal class Heavy : Weight
     {
         //------------------------------------------------------------------
-        public Heavy (Car car) : base (car)
+        public Heavy () : base ()
         {
-            this.car.Lives = 3;
-            this.car.Acceleration *= 0.5f;
-            this.car.Deceleration *= 0.5f;
-        }
-
-        //------------------------------------------------------------------
-        public override string TextureSuffix
-        {
-            get { return " (Heavy)"; }
+            Lives = 3;
+            Acceleration = 0.5f;
+            Deceleration = 0.5f;
+            TextureSuffix = "(Heavy)";
         }
     }
 }

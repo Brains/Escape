@@ -3,17 +3,12 @@
     internal class Medium : Weight
     {
         //------------------------------------------------------------------
-        public Medium (Car car) : base (car)
+        public Medium () : base ()
         {
-            this.car.Lives = 2;
-            this.car.Acceleration *= 1;
-            this.car.Deceleration *= 1;
+            Lives = 2;
+            Acceleration = 1;
+            Deceleration = 1;
+            TextureSuffix = "(Medium)";
         }
-
-        //------------------------------------------------------------------
-        public override string TextureSuffix
-        {
-            get { return " (Medium)"; }
-        } 
     }
 }
