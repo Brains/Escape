@@ -1,8 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Tools.Markers;
 using Traffic.Actions;
 using Traffic.Cars;
+using Traffic.Drivers;
+using Police = Traffic.Cars.Police;
 
 namespace Traffic
 {
@@ -26,6 +30,7 @@ namespace Traffic
             Tools.Timers.Loop.Create (10, 0, ChangeMaximumCarsOnLaneEvent);
             Tools.Timers.Loop.Create (0.3f, 0, ChangeLaneForCarEvent);
             Tools.Timers.Loop.Create (0, 0, CreatePolice);
+            Tools.Timers.Loop.Create (5, 0, CreateBlock);
         }
 
         //-----------------------------------------------------------------
@@ -45,6 +50,20 @@ namespace Traffic
         {
             var lane = GetRandomLane();
             lane.CarsQuantity = Lane.Random.Next (Lane.MinimumCars, Lane.MaximumCars);
+        }
+
+        //------------------------------------------------------------------
+        private void CreateBlock()
+        {
+            Driver player = manager.Road.Player.Driver;
+            IEnumerable <Car> aheadCars = player.Car.Lane.Cars.Where (player.IsCarAhead);
+            Car closest = player.FindClosestCar (aheadCars);
+            if (closest == null) return;
+            if (player.Distance (closest) > 300) return;
+
+            var block = new Block (closest.Driver, player.Car);
+            if (!closest.Driver.IsInLoop (block))
+                closest.Driver.AddInLoop (block);
         }
 
         #endregion
