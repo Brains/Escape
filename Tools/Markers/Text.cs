@@ -33,6 +33,15 @@ namespace Tools.Markers
         }
 
         //------------------------------------------------------------------
+        public Text (string text, Vector2 position, Color color, float shift)
+            : this (text, position)
+        {
+            this.Color = color;
+
+            Position += new Vector2 (shift);
+        }
+
+        //------------------------------------------------------------------
         public override void Draw (SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString (font, String, Position, Color);

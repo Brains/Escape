@@ -12,7 +12,6 @@ namespace Traffic.Drivers
         {
             Velocity = 400;
             ChangeLaneSpeed = 2;
-//            SafeZone.Scale = 0.5f;
 
             AddInLoop (new Shrink (this));
             AddInLoop (new Overtake (this, Car.Lane.Road.Player));

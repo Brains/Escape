@@ -118,7 +118,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void ChangeLane (Lane lane)
         {
-            player.ChangeLane (lane, this, player.GetChangeLanesDuration ());
+            player.ChangeLane (this, lane, player.GetChangeLanesDuration ());
         }
     }
 }
