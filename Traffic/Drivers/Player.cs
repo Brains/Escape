@@ -13,7 +13,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public Player (Car car) : base (car)
         {
-            Velocity = 300;
+            Velocity = 500;
             ChangeLaneSpeed = 2;
 
             AddInLoop (new Input (this));
@@ -25,7 +25,7 @@ namespace Traffic.Drivers
         {
             base.Update (elapsed);
 
-//            AdjustSpeed ();
+            AdjustSpeed ();
 
             Debug ();
         }
@@ -33,6 +33,8 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         private void AdjustSpeed ()
         {
+            if (ControlCenter.NoPlayerAdjustSpeed) return;
+
             float distance = GetMinimumDistance (Car.Lane.Cars.Where (IsCarAhead));
 
             // A point of the "factor" is to accelerate when (distance > Lenght * 3)

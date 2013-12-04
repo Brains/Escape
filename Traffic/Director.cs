@@ -28,14 +28,16 @@ namespace Traffic
         public void Setup()
         {
             Tools.Timers.Loop.Create (10, 0, ChangeMaximumCarsOnLaneEvent);
-            Tools.Timers.Loop.Create (0.3f, 0, ChangeLaneForCarEvent);
+            Tools.Timers.Loop.Create (1, 0, ChangeLaneForCarEvent);
             Tools.Timers.Loop.Create (0, 0, CreatePolice);
-            Tools.Timers.Loop.Create (5, 0, CreateBlock);
+            Tools.Timers.Loop.Create (0, 0, CreateBlock);
         }
 
         //-----------------------------------------------------------------
         private void ChangeLaneForCarEvent()
         {
+            if (ControlCenter.NoCars) return;
+
             // To Left
             var car = GetRandomCar();
             car.Driver.AddInSequnce (new ChangeLane (car.Driver, car.Lane.Left));
@@ -55,6 +57,8 @@ namespace Traffic
         //------------------------------------------------------------------
         private void CreateBlock()
         {
+            if (ControlCenter.NoCars) return;
+
             Driver player = manager.Road.Player.Driver;
             IEnumerable <Car> aheadCars = player.Car.Lane.Cars.Where (player.IsCarAhead);
             Car closest = player.FindClosestCar (aheadCars);
@@ -115,6 +119,8 @@ namespace Traffic
         //-----------------------------------------------------------------
         private void CreatePolice()
         {
+            if (ControlCenter.NoPolice) return;
+
             if (polices.Count > 0) return;
 
             var car = GetRandomLane().CreatePolice (manager.Game);
