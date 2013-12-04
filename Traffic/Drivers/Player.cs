@@ -17,6 +17,7 @@ namespace Traffic.Drivers
             ChangeLaneSpeed = 2;
 
             AddInLoop (new Input (this));
+//            AddInLoop (new Shrink (this));
         }
 
         //------------------------------------------------------------------
@@ -32,7 +33,7 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         private void AdjustSpeed ()
         {
-            float distance = GetMinimumDistance (Car.Lane.Cars.Where (IsAhead));
+            float distance = GetMinimumDistance (Car.Lane.Cars.Where (IsCarAhead));
 
             // A point of the "factor" is to accelerate when (distance > Lenght * 3)
             int factor = Math.Sign (distance / Car.Lenght - 2.5f);
@@ -69,10 +70,10 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         private void Debug ()
         {
-//            new Text (Car.Velocity, Car.Position, Color.DarkRed, true);
+            new Text (Car.Lane.ToString(), Car.Position, Color.DarkRed, true);
 
             // Draw Closest car
-//            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsAhead));
+//            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsCarAhead));
 //            if (closestCar != null)
 //                closestCar.Color = Color.Red;
         }

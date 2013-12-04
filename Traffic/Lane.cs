@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
 using Traffic.Cars;
+using Traffic.Cars.Weights;
 
 namespace Traffic
 {
@@ -16,7 +17,7 @@ namespace Traffic
 
         //------------------------------------------------------------------
         public const int MinimumCars = 3;
-        public const int MaximumCars = 12;
+        public const int MaximumCars = 8;
 
         //------------------------------------------------------------------
         public readonly int ID;
@@ -72,7 +73,7 @@ namespace Traffic
         public override void Setup ()
         {
             height = Road.Game.GraphicsDevice.Viewport.Height;
-            border = 2000;
+            border = 800;
 
             base.Setup ();
         }
@@ -80,7 +81,10 @@ namespace Traffic
         //------------------------------------------------------------------
         protected virtual Car CreateCar ()
         {
-            var car = new Car (this, GetInsertionPosition ()) {ID = carsCounter};
+            var weight = GetWeight ();
+            var textureName = "Car " + weight.TextureSuffix;
+
+            var car = new Car (this, carsCounter, GetInsertionPosition (), weight, textureName);
             car.Setup ();
 
             Cars.Add (car);
@@ -92,9 +96,22 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
+        private Weight GetWeight ()
+        {
+            if (ID >= 0 && ID < 4)
+                return new Light ();
+            if (ID >= 4 && ID < 8)
+                return new Medium ();
+            if (ID >= 8 && ID < 12)
+                return new Heavy ();
+
+            return null;
+        }
+
+        //------------------------------------------------------------------
         public Player CreatePlayer (Game game)
         {
-            var player = new Player (this, 400) {ID = carsCounter};
+            var player = new Player (this, carsCounter, 400, GetWeight (), "Player");
             player.Setup ();
 
             Cars.Add (player);
@@ -108,7 +125,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public Police CreatePolice (Game game)
         {
-            var police = new Police (this, -200) {ID = carsCounter};
+            var police = new Police (this, carsCounter, -200, GetWeight (), "Police");
             police.Setup ();
 
             Cars.Add (police);
@@ -135,18 +152,10 @@ namespace Traffic
         private int GetFreePosition (int sign)
         {
             int position = 0;
-            int lower = 1000 * sign;
-            int upper = border * sign;
+            int lower = 0 + sign * border;
+            int upper = height + sign * border;
 
-            // Swap borders if needed
-            if (lower > upper)
-            {
-                var temp = lower;
-                lower = upper;
-                upper = temp;
-            }
-
-            // Get free position
+            // Get free position for 20 iterations
             foreach (var index in Enumerable.Range (0, 20))
             {
                 position = Random.Next (lower, upper);
@@ -155,7 +164,7 @@ namespace Traffic
 
                 float minimum = Cars.Min (car => Math.Abs (car.Position.Y - position));
 
-                if (minimum > 400) break;
+                if (minimum > 300) break;
             }
 
             return position;
@@ -195,7 +204,7 @@ namespace Traffic
             Cars.RemoveAll (car =>
             {
                 int position = (int) car.Position.Y;
-                return position < -border || position > border;
+                return position < -border || position > height + border;
             });
 
             // Remove all dead Cars
@@ -222,8 +231,8 @@ namespace Traffic
             if (car.Lane != this)
                 car.Lane.Cars.Remove (car);
 
+            car.LocalPosition = new Vector2 (car.Position.X - Position.X, car.Position.Y);
             car.Lane = this;
-            car.LocalPosition = new Vector2 (0, car.Position.Y);
         }
 
         //------------------------------------------------------------------
@@ -243,7 +252,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void Debug ()
         {
-//            new Text (CarsQuantity.ToString(), LocalPosition);
+            new Text (ToString(), LocalPosition, Color.Orange);
 //            new Text (Velocity.ToString ("F0"), LocalPosition);
 //            new Text (CarsQuantity.ToString (), LocalPosition);
 

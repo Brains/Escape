@@ -12,22 +12,26 @@ using Action = Traffic.Actions.Base.Action;
 
 namespace Traffic.Drivers
 {
-    public abstract class Driver
+    public abstract class Driver : Object
     {
         //------------------------------------------------------------------
+        // Actions
         protected Loop Loop;
         protected Sequence Sequence;
 
-        protected float CheckLaneSafeZoneLower;
-        protected float CheckLaneSafeZoneUpper;
+        // Parameters
         protected float ChangeLaneSpeed;
+        public Lane Primary { get; private set; }
+        public Lane Secondary { get; private set; }
 
         //------------------------------------------------------------------
         public Car Car { get; set; }
         public float Velocity { get; set; }
 
+        public SafeZone SafeZone { get; private set; }
+
         //------------------------------------------------------------------
-        protected Driver (Car car)
+        protected Driver (Car car) : base(car)
         {
             Loop = new Loop ();
             Sequence = new Sequence();
@@ -36,19 +40,15 @@ namespace Traffic.Drivers
             Car = car;
 
             ChangeLaneSpeed = 1;
-        }
-
-        //-----------------------------------------------------------------
-        public virtual void Setup ()
-        {
-            CheckLaneSafeZoneLower = GetSafeZone (0.5f);
-            CheckLaneSafeZoneUpper = GetSafeZone (1.5f);
+            SafeZone = new SafeZone (this, 1);
+            Primary = Car.Lane.Left;
+            Secondary = Car.Lane.Right;
         }
 
         #region Actions
 
         //-----------------------------------------------------------------
-        public virtual void Update (float elapsed)
+        public override void Update (float elapsed)
         {
             Loop.Update (elapsed);
 
@@ -68,10 +68,10 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-//        private bool IsInLoop (Sequence newAction)
-//        {
-//            return Loop.Actions.Any (action => action.GetType () == newAction.GetType ());
-//        }
+        public bool IsInLoop (Sequence newAction)
+        {
+            return Loop.Actions.Any (action => action.GetType () == newAction.GetType ());
+        }
 
         #endregion
 
@@ -104,7 +104,7 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public bool IsAhead (Car car)
+        public bool IsCarAhead (Car car)
         {
             return car.Position.Y < Car.Position.Y;
         }
@@ -119,15 +119,15 @@ namespace Traffic.Drivers
             float distance = Distance (closest);
 
             // If closest Car is outside the special zone
-            if (distance < CheckLaneSafeZoneLower)
+            if (distance < SafeZone.MediumDanger)
                 return false;
-            if (distance > CheckLaneSafeZoneUpper)
+            if (distance > SafeZone.LowDanger)
                 return true;
 
             // Analyze Velocity
-            if (IsAhead (closest) && closest.Velocity < Car.Velocity)
+            if (IsCarAhead (closest) && closest.Velocity < Car.Velocity)
                 return false;
-            if (!IsAhead (closest) && closest.Velocity > Car.Velocity)
+            if (!IsCarAhead (closest) && closest.Velocity > Car.Velocity)
                 return false;
 
             return true;
@@ -143,12 +143,11 @@ namespace Traffic.Drivers
             return duration < limit ? duration : limit;
         }
 
-        //------------------------------------------------------------------
-        public float GetSafeZone (float factor = 1.0f)
+        //-----------------------------------------------------------------
+        public void SetLanesPriority (Lane primary, Lane secondary)
         {
-            const float scale = 0.7f;
-
-            return Car.Lenght + Car.Velocity * factor * scale;
+            Primary = primary;
+            Secondary = secondary;
         }
 
         #endregion
@@ -189,6 +188,9 @@ namespace Traffic.Drivers
         {
             if (lane == null) return;
 
+            // Add to new Lane
+            action.Add (new Generic (() => lane.Add (Car)));
+
             // No Lane changing when car doesn't move
             if (Car.Velocity < 10) return;
 
@@ -206,8 +208,8 @@ namespace Traffic.Drivers
             var inverseRotating = new Controller (rotate, -finalAngle, duration * 0.3f);
             action.Add (inverseRotating);
 
-            // Add to new Lane
-            action.Add (new Generic (() => lane.Add (Car)));
+            // Fix accuracy error in Car's Position
+            action.Add (new Generic (() => Car.LocalPosition = new Vector2 (0, Car.Position.Y)));
         }
 
         #endregion
@@ -220,13 +222,17 @@ namespace Traffic.Drivers
 //            DrawSafeZone ();
 //            DrawActions ();
 //            DrawCheckLane (Car.Lane);
+
+//            new Text (SafeZone.Scale.ToString(), Position, Color.Orange, true);
         }
 
         //------------------------------------------------------------------
-        private void DrawSafeZone()
+        public void DrawSafeZone()
         {
             var pos = Car.Position;
-            new Line (pos, pos - new Vector2 (0, GetSafeZone(1.0f)), Color.IndianRed);
+            float lenght = SafeZone.LowDanger - Car.Lenght / 2;
+
+            new Line (pos, pos - new Vector2 (0, lenght), Color.Maroon);
         }
 
         //------------------------------------------------------------------
@@ -244,16 +250,16 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        private void DrawCheckLane (Lane lane)
-        {
-            if (lane == null) return;
-
-            var pos = lane.Position;
-            pos.Y = Car.Position.Y;
-
-            new Line (pos, pos - new Vector2 (0, GetSafeZone () / 2), Color.IndianRed);
-            new Line (pos, pos + new Vector2 (0, GetSafeZone () * 1.5f), Color.Orange);
-        }
+//        private void DrawCheckLane (Lane lane)
+//        {
+//            if (lane == null) return;
+//
+//            var pos = lane.Position;
+//            pos.Y = Car.Position.Y;
+//
+//            new Line (pos, pos - new Vector2 (0, SafeZone.Calculate () / 2), Color.IndianRed);
+//            new Line (pos, pos + new Vector2 (0, SafeZone.Calculate () * 1.5f), Color.Orange);
+//        }
 
         #endregion
 

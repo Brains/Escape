@@ -12,17 +12,11 @@ namespace Traffic.Drivers
         {
             Velocity = 400;
             ChangeLaneSpeed = 2;
+//            SafeZone.Scale = 0.5f;
 
-            var shrink = new Shrink (this);
-            AddInLoop (shrink);
-            AddInLoop (new Overtake (this, Car.Lane.Road.Player, shrink));
-        }
-
-        //-----------------------------------------------------------------
-        public override void Setup()
-        {
-            CheckLaneSafeZoneLower = GetSafeZone (0.2f);
-            CheckLaneSafeZoneUpper = GetSafeZone (1.0f);
+            AddInLoop (new Shrink (this));
+            AddInLoop (new Overtake (this, Car.Lane.Road.Player));
+            AddInLoop (new Block (this, Car.Lane.Road.Player));
         }
 
         //------------------------------------------------------------------
@@ -36,10 +30,12 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         private void Debug()
         {
+            DrawSafeZone ();
+
 //            DrawActions ();
 
 //            // Lives
-//            new Text (Car.Lives.ToString (), Car.Position, Color.Red);
+            new Text (Car.Lane.ToString (), Car.Position, Color.Red, true);
         }
     }
 }
