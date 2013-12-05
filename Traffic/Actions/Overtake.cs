@@ -52,9 +52,16 @@ namespace Traffic.Actions
             Car car = driver.Car;
             Car closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsCarAhead));
             if (closest == null) return;
-            float approach = Math.Abs (car.Velocity - closest.Velocity);
 
-            driver.SafeZone.Scale = approach / 100;
+            float approachSpeed = car.Velocity - closest.Velocity;
+            float distance = driver.Distance (closest);
+
+            driver.SafeZone.Scale = approachSpeed / 100;// * distance / 100;
+
+            if (driver.SafeZone.Scale > 1.0f)
+                driver.SafeZone.Scale = 1.0f;
+            else if (driver.SafeZone.Scale < 0.1f)
+                driver.SafeZone.Scale = 0.1f;
         }
 
         //------------------------------------------------------------------
@@ -88,12 +95,13 @@ namespace Traffic.Actions
             else if (currentID < targetID)
             {
                 driver.TryChangeLane (this, right, driver.GetChangeLanesDuration());
-                driver.SetLanesPriority (right, left);
+                driver.Primary = Driver.Direction.Right;
+
             }
             else if (currentID > targetID)
             {
                 driver.TryChangeLane (this, left, driver.GetChangeLanesDuration());
-                driver.SetLanesPriority (left, right);
+                driver.Primary = Driver.Direction.Left;
             }
         }
 
