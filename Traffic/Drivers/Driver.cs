@@ -14,15 +14,20 @@ namespace Traffic.Drivers
 {
     public abstract class Driver : Object
     {
+        public enum Direction
+        {
+            Left,
+            Right
+        }
+
         //------------------------------------------------------------------
         // Actions
         protected Loop Loop;
         protected Sequence Sequence;
 
         // Parameters
-        protected float ChangeLaneSpeed;
-        public Lane Primary { get; private set; }
-        public Lane Secondary { get; private set; }
+        public float ChangeLaneSpeed { get; set; }
+        public Direction Primary { get; set; }
 
         //------------------------------------------------------------------
         public Car Car { get; set; }
@@ -31,9 +36,9 @@ namespace Traffic.Drivers
         public SafeZone SafeZone { get; private set; }
 
         //------------------------------------------------------------------
-        protected Driver (Car car) : base(car)
+        protected Driver (Car car) : base (car)
         {
-            Loop = new Loop ();
+            Loop = new Loop();
             Sequence = new Sequence();
             AddInLoop (Sequence);
 
@@ -41,8 +46,7 @@ namespace Traffic.Drivers
 
             ChangeLaneSpeed = 1;
             SafeZone = new SafeZone (this, 1);
-            Primary = Car.Lane.Left;
-            Secondary = Car.Lane.Right;
+            Primary = Direction.Left;
         }
 
         #region Actions
@@ -52,7 +56,7 @@ namespace Traffic.Drivers
         {
             Loop.Update (elapsed);
 
-            Debug ();
+            Debug();
         }
 
         //------------------------------------------------------------------
@@ -70,7 +74,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public bool IsInLoop (Sequence newAction)
         {
-            return Loop.Actions.Any (action => action.GetType () == newAction.GetType ());
+            return Loop.Actions.Any (action => action.GetType() == newAction.GetType());
         }
 
         #endregion
@@ -98,7 +102,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         protected float GetMinimumDistance (IEnumerable <Car> cars)
         {
-            if (!cars.Any ()) return float.MaxValue;
+            if (!cars.Any()) return float.MaxValue;
 
             return cars.Min <Car, float> (Distance);
         }
@@ -110,10 +114,10 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        public bool  CheckLane (Lane lane)
+        public bool CheckLane (Lane lane)
         {
             if (lane == null) return false;
-            
+
             var closest = FindClosestCar (lane.Cars);
             if (closest == null) return true;
             float distance = Distance (closest);
@@ -134,20 +138,13 @@ namespace Traffic.Drivers
         }
 
         //-----------------------------------------------------------------
-        public float GetChangeLanesDuration ()
+        public float GetChangeLanesDuration()
         {
             var duration = 200 / Car.Velocity;
             duration /= ChangeLaneSpeed;
             const int limit = 4; // In seconds
 
             return duration < limit ? duration : limit;
-        }
-
-        //-----------------------------------------------------------------
-        public void SetLanesPriority (Lane primary, Lane secondary)
-        {
-            Primary = primary;
-            Secondary = secondary;
         }
 
         #endregion
@@ -178,21 +175,29 @@ namespace Traffic.Drivers
             if (!CheckLane (lane)) return false;
 
             // Change Lane
-            ChangeLane (lane, action, duration);
+            ChangeLane (action, lane, duration);
 
             return true;
         }
 
         //------------------------------------------------------------------
-        public void ChangeLane (Lane lane, Sequence action, float duration)
+        public void ChangeLane (Sequence action, Lane lane, float duration)
         {
             if (lane == null) return;
+
+            // No Lane changing when car doesn't move
+            if (Car.Velocity < 10) return;
 
             // Add to new Lane
             action.Add (new Generic (() => lane.Add (Car)));
 
-            // No Lane changing when car doesn't move
-            if (Car.Velocity < 10) return;
+            #region Debug
+            if (ControlCenter.NoChangeLaneAnimation)
+            {
+                action.Add (new Generic (DockToLane));
+                return;
+            }
+            #endregion
 
             // Rotate
             Action <float> rotate = share => Car.Angle += share;
@@ -209,7 +214,13 @@ namespace Traffic.Drivers
             action.Add (inverseRotating);
 
             // Fix accuracy error in Car's Position
-            action.Add (new Generic (() => Car.LocalPosition = new Vector2 (0, Car.Position.Y)));
+            action.Add (new Generic (DockToLane));
+        }
+
+        //------------------------------------------------------------------
+        private void DockToLane()
+        {
+            Car.LocalPosition = new Vector2 (0, Car.Position.Y);
         }
 
         #endregion
@@ -217,7 +228,7 @@ namespace Traffic.Drivers
         #region Debug
 
         //-----------------------------------------------------------------
-        private void Debug ()
+        private void Debug()
         {
 //            DrawSafeZone ();
 //            DrawActions ();
@@ -230,20 +241,21 @@ namespace Traffic.Drivers
         public void DrawSafeZone()
         {
             var pos = Car.Position;
-            float lenght = SafeZone.LowDanger - Car.Lenght / 2;
+            float lenght = SafeZone.Calculate (1) - Car.Lenght / 2;
 
             new Line (pos, pos - new Vector2 (0, lenght), Color.Maroon);
+            new Text (SafeZone.Scale.ToString(), Position, Color.SteelBlue, 20);
         }
 
         //------------------------------------------------------------------
-        protected void DrawActions ()
+        protected void DrawActions()
         {
             var actionsNames = Loop.Actions.Aggregate ("\n", (current, action) => current + (action + "\n"));
             new Text (actionsNames, Car.Position, Color.SteelBlue, true);
         }
 
         //------------------------------------------------------------------
-        protected void WriteActions ()
+        protected void WriteActions()
         {
             var actionsNames = Loop.Actions.Aggregate ("", (current, action) => current + (action + "\n"));
             Console.WriteLine (actionsNames);
@@ -262,6 +274,5 @@ namespace Traffic.Drivers
 //        }
 
         #endregion
-
     }
 }

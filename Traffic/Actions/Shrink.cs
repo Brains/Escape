@@ -24,17 +24,17 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            FindClosestCar ();
+            FindClosestCar();
 
             base.Update (elapsed);
 
-            Debug ();
+            Debug();
         }
 
         #region Analysis
 
         //------------------------------------------------------------------
-        private void AnalyzeDistance ()
+        private void AnalyzeDistance()
         {
             float distance = driver.Distance (closest);
 
@@ -70,33 +70,52 @@ namespace Traffic.Actions
             if (distance < high)
                 driver.Brake (this, 50); // Strong braking
 
-            // Bypass the closest Car
+                // Bypass the closest Car
             else if (distance < medium)
                 TryChangeLanes();
 
-            // Enable Blinker
+                // Enable Blinker
             else if (distance < low)
                 EnableBlinker();
+
+            DrawZone (distance, high, medium, low);
         }
 
         //------------------------------------------------------------------
-        private void FindClosestCar ()
+        private void FindClosestCar()
         {
             closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsCarAhead));
+        }
+
+        //------------------------------------------------------------------
+        private Lane GetPrimaryLane()
+        {
+            if (driver.Primary == Driver.Direction.Left)
+                return driver.Car.Lane.Left;
+            else
+                return driver.Car.Lane.Right;
+        }
+
+        //------------------------------------------------------------------
+        private Lane GetSecondaryLane()
+        {
+            if (driver.Primary == Driver.Direction.Left)
+                return driver.Car.Lane.Right;
+            else
+                return driver.Car.Lane.Left;
         }
 
         #endregion
 
         //------------------------------------------------------------------
-        private void TryChangeLanes ()
+        private void TryChangeLanes()
         {
             if (closest == null) return;
 
-            // Change Lane on Desired
-            if (driver.TryChangeLane (this, driver.Primary, driver.GetChangeLanesDuration ())) 
+            if (driver.TryChangeLane (this, GetPrimaryLane(), driver.GetChangeLanesDuration()))
                 return;
 
-            if (driver.TryChangeLane (this, driver.Secondary, driver.GetChangeLanesDuration ())) 
+            if (driver.TryChangeLane (this, GetSecondaryLane(), driver.GetChangeLanesDuration()))
                 return;
 
             // Brake if no free Lanes
@@ -104,18 +123,21 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
-        private void EnableBlinker ()
+        private void EnableBlinker()
         {
-            if (driver.Car.IsBlinkerEnable()) return;
+//            if (driver.Car.IsBlinkerEnable()) return;
 
-            if (driver.CheckLane (driver.Car.Lane.Left))
-                driver.Car.EnableBlinker (driver.Car.Lane.Left);
-            else if (driver.CheckLane (driver.Car.Lane.Right))
-                driver.Car.EnableBlinker (driver.Car.Lane.Right);
+            Lane primary = GetPrimaryLane();
+            Lane secondary = GetSecondaryLane();
+
+            if (driver.CheckLane (primary))
+                driver.Car.EnableBlinker (primary);
+            else if (driver.CheckLane (secondary))
+                driver.Car.EnableBlinker (secondary);
         }
 
         //------------------------------------------------------------------
-        private void Debug ()
+        private void Debug()
         {
             // Draw SafeZone
 //            var pos = driver.Car.Position;
@@ -125,6 +147,27 @@ namespace Traffic.Actions
 //            var pos = driver.Car.Position;
 //            if (closest is Cars.Player)
 //                new Line (pos, closest.Position);
+        }
+
+        //-----------------------------------------------------------------
+        private void DrawZone (float distance, float high, float medium, float low)
+        {
+//            string text = "";
+//
+//            if (distance < high)
+//                text = "High";
+//            else if (distance < medium)
+//                text = "Medium";
+//            else if (distance < low)
+//                text = "Low";
+//
+//            var shift = new Vector2 (30, 0);
+//            if (driver.Primary == Driver.Direction.Left)
+//                new Line (driver.Position, driver.Position - shift, Color.Orange);
+//            else
+//                new Line (driver.Position, driver.Position + shift, Color.Orange);
+
+//            Console.WriteLine ("{0} : {1} {2} {3}", text, GetPrimaryLane(), driver.Car.Lane, GetSecondaryLane());
         }
     }
 }
