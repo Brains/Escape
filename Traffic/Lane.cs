@@ -125,7 +125,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public Police CreatePolice (Game game)
         {
-            var police = new Police (this, carsCounter, 0, GetWeight (), "Police");
+            var police = new Police (this, carsCounter, ControlCenter.PoliceStartPosition, GetWeight (), "Police");
             police.Setup ();
 
             Cars.Add (police);
@@ -158,13 +158,15 @@ namespace Traffic
             // Get free position for 20 iterations
             foreach (var index in Enumerable.Range (0, 20))
             {
+//                if (index == 19) Console.WriteLine ("No Space");
+                    
                 position = Random.Next (lower, upper);
 
                 if (!Cars.Any ()) break;
 
                 float minimum = Cars.Min (car => Math.Abs (car.Position.Y - position));
 
-                if (minimum > 300) break;
+                if (minimum > 150) break;
             }
 
             return position;
@@ -254,7 +256,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void Debug ()
         {
-            new Text (ToString(), LocalPosition, Color.Orange);
+//            new Text (ToString(), LocalPosition, Color.Orange);
 //            new Text (Velocity.ToString ("F0"), LocalPosition);
 //            new Text (CarsQuantity.ToString (), LocalPosition);
 

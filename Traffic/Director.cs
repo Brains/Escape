@@ -58,6 +58,7 @@ namespace Traffic
         private void CreateBlock()
         {
             if (ControlCenter.NoCars) return;
+            if (ControlCenter.NoBlocks) return;
 
             Driver player = manager.Road.Player.Driver;
             IEnumerable <Car> aheadCars = player.Car.Lane.Cars.Where (player.IsCarAhead);

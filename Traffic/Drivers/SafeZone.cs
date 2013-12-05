@@ -33,7 +33,7 @@ namespace Traffic.Drivers
         }
 
         //------------------------------------------------------------------
-        private float Calculate (float fraction)
+        public float Calculate (float fraction)
         {
             const float normalize = 0.7f;
             float velocity = driver.Car.Velocity * normalize ;

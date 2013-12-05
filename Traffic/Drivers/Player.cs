@@ -72,7 +72,7 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         private void Debug ()
         {
-            new Text (Car.Lane.ToString(), Car.Position, Color.DarkRed, true);
+//            new Text (Car.Lane.ToString(), Car.Position, Color.DarkRed, true);
 
             // Draw Closest car
 //            Car closestCar = FindClosestCar (Car.Lane.Cars.Where (IsCarAhead));

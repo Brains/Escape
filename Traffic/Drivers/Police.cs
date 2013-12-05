@@ -30,11 +30,9 @@ namespace Traffic.Drivers
         private void Debug()
         {
             DrawSafeZone ();
-
 //            DrawActions ();
 
-//            // Lives
-            new Text (Car.Lane.ToString (), Car.Position, Color.Red, true);
+//            new Text (Car.Lane.ToString (), Car.Position, Color.Red, true);
         }
     }
 }
