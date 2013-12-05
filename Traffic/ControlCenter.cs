@@ -9,20 +9,24 @@
         public const int MaximumCarsOnLane = 8;
         public const int PoliceStartPosition = 600;
 
-        // Cars
-        public static bool NoChangeLaneAnimation;
-
         // Player
         public static bool NoPlayerAdjustSpeed;
+
+        //Traffic
+        public static float TimeScale = 1.0f;
+//        public static float TimeScale = 0.2f;
+        public static bool NoChangeLaneAnimation;
+        public static bool NoChangeLaneEvents;
 
         //------------------------------------------------------------------
         static ControlCenter()
         {
-            NoCars = true;
+//            NoCars = true;
 //            NoPolice = true;
             NoBlocks = true;
 
 //            NoChangeLaneAnimation = true;
+            NoChangeLaneEvents = true;
 
             NoPlayerAdjustSpeed = true;
         }

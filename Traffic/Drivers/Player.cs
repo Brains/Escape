@@ -8,7 +8,7 @@ using Tools.Markers;
 
 namespace Traffic.Drivers
 {
-    internal class Player : Driver
+    public class Player : Driver
     {
         //------------------------------------------------------------------
         public Player (Car car) : base (car)
@@ -79,6 +79,8 @@ namespace Traffic.Drivers
 //            if (closestCar != null)
 //                closestCar.Color = Color.Red;
         }
+
+
 
     }
 }

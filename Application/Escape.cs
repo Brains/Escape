@@ -2,7 +2,6 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Traffic.Actions.Base;
 
 #endregion
 
@@ -23,7 +22,7 @@ namespace Application
 
             Window.SetPosition (new Point (600, 125));
 
-            Components.Add (new Manager (this));
+            Components.Add (new Traffic.Actions.Base.Manager (this));
             Components.Add (new Tools.Timers.Manager (this));
             Components.Add (new Traffic.Manager (this));
             Components.Add (new Tools.Markers.Manager (this));
@@ -40,8 +39,21 @@ namespace Application
         {
             if (GamePad.GetState (PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState ().IsKeyDown (Keys.Escape))
                 Exit ();
+
+            ControlTimeScale();
             
             base.Update (gameTime);
+        }
+
+        //------------------------------------------------------------------
+        private void ControlTimeScale()
+        {
+            float scale = 0.05f;
+
+            if (Traffic.Actions.Input.IsKeyPressed (Keys.D1))
+                Traffic.ControlCenter.TimeScale -= scale;
+            if (Traffic.Actions.Input.IsKeyPressed (Keys.D2))
+                Traffic.ControlCenter.TimeScale += scale;
         }
 
         //------------------------------------------------------------------

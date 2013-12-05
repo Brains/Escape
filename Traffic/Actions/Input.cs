@@ -11,7 +11,7 @@ using Action = Traffic.Actions.Base.Action;
 
 namespace Traffic.Actions
 {
-    internal class Input : SequenceInitial
+    public class Input : SequenceInitial
     {
         private Drivers.Player player;
         private static KeyboardState current;
