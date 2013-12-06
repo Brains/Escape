@@ -61,18 +61,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\Content\Fonts\Segoe %28Markers%29.xnb" />
+    <AndroidAsset Include="Assets\Content\Fonts\Segoe %28UI%29.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Explosion.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Flasher.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Player.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Police.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Road.xnb" />
     <AndroidAsset Include="Assets\Content\Images\Road\Acceleration.xnb" />
     <AndroidAsset Include="Assets\Content\Images\Road\Blinker.xnb" />
     <AndroidAsset Include="Assets\Content\Images\Road\Brake.xnb" />
     <AndroidAsset Include="Assets\Content\Images\Road\Car %28Heavy%29.xnb" />
     <AndroidAsset Include="Assets\Content\Images\Road\Car %28Light%29.xnb" />
     <AndroidAsset Include="Assets\Content\Images\Road\Car %28Medium%29.xnb" />
-    <AndroidAsset Include="Assets\Content\Images\Road\Explosion.xnb" />
-    <AndroidAsset Include="Assets\Content\Images\Road\Player.xnb" />
-    <AndroidAsset Include="Assets\Content\Images\Road\Police.xnb" />
-    <AndroidAsset Include="Assets\Content\Images\Road\Road.xnb" />
-    <AndroidAsset Include="Assets\Content\Fonts\Segoe %28Markers%29.xnb" />
-    <AndroidAsset Include="Assets\Content\Fonts\Segoe %28UI%29.xnb" />
     <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
   <ItemGroup>
