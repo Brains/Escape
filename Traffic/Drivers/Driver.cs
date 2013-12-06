@@ -118,22 +118,33 @@ namespace Traffic.Drivers
         {
             if (lane == null) return false;
 
-            var closest = FindClosestCar (lane.Cars);
-            if (closest == null) return true;
-            float distance = Distance (closest);
+            var closestAhead = FindClosestCar (lane.Cars.Where (IsCarAhead));
+            var closestBehind = FindClosestCar (lane.Cars.Where (car => !IsCarAhead (car)));
+            
+            return CheckCar (closestAhead) && CheckCar (closestBehind);
+        }
 
-            // If closest Car is outside the special zone
-            if (distance < SafeZone.MediumDanger)
+        //-----------------------------------------------------------------
+        private bool CheckCar (Car car)
+        {
+            if (car == null) return true;
+
+            float distance = Distance (car);
+
+            // If Car is too close
+            if (distance < SafeZone.HighDanger)
                 return false;
-            if (distance > SafeZone.LowDanger)
+            // If Car is far enough it's Ok
+            if (distance > SafeZone.LowDanger) //Calculate (1.5f)
                 return true;
 
             // Analyze Velocity
-            if (IsCarAhead (closest) && closest.Velocity < Car.Velocity)
+            if (IsCarAhead (car) && car.Velocity < Car.Velocity)
                 return false;
-            if (!IsCarAhead (closest) && closest.Velocity > Car.Velocity)
+            if (!IsCarAhead (car) && car.Velocity > Car.Velocity)
                 return false;
 
+            // Ok. The Car isn't dangerous
             return true;
         }
 
@@ -188,6 +199,13 @@ namespace Traffic.Drivers
             // No Lane changing when car doesn't move
             if (Car.Velocity < 10) return;
 
+            // Debug
+            if (this is Police) 
+            {
+//                duration *= 5;
+//                Debugger.Break();
+            }
+
             // Add to new Lane
             action.Add (new Generic (() => lane.Add (Car)));
 
@@ -241,10 +259,26 @@ namespace Traffic.Drivers
         public void DrawSafeZone()
         {
             var pos = Car.Position;
-            float lenght = SafeZone.Calculate (1) - Car.Lenght / 2;
+            float lenght = SafeZone.Calculate (1);// - Car.Lenght / 2;
 
-            new Line (pos, pos - new Vector2 (0, lenght), Color.Maroon);
-            new Text (SafeZone.Scale.ToString(), Position, Color.SteelBlue, 20);
+            new Line (pos, pos - new Vector2 (0, SafeZone.LowDanger), Color.Maroon);
+            new Line (pos, pos + new Vector2 (0, SafeZone.LowDanger), Color.Maroon);
+            new Line (pos, pos - new Vector2 (0, SafeZone.HighDanger), Color.Orange);
+            new Line (pos, pos + new Vector2 (0, SafeZone.HighDanger), Color.Orange);
+//            new Text (SafeZone.Scale.ToString(), Position, Color.SteelBlue, 20);
+        }
+
+        //-----------------------------------------------------------------
+        public void DrawCheckLane (Lane lane)
+        {
+            if (lane == null) return;
+
+            var shift = new Vector2 ((Car.Position - lane.Position).X + 20, 0);
+
+            if (CheckLane (lane))
+                new Text ("Free", Car.Position - shift, Color.ForestGreen);
+            else
+                new Text ("Danger", Car.Position - shift, Color.Maroon);
         }
 
         //------------------------------------------------------------------
