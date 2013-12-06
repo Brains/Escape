@@ -30,6 +30,9 @@ namespace Traffic.Drivers
         private void Debug()
         {
             DrawSafeZone ();
+            DrawCheckLane (Car.Lane.Left);
+            DrawCheckLane (Car.Lane.Right);
+
 //            DrawActions ();
 
 //            new Text (Car.Lane.ToString (), Car.Position, Color.Red, true);

@@ -37,6 +37,7 @@ namespace Traffic
         private void ChangeLaneForCarEvent()
         {
             if (ControlCenter.NoCars) return;
+            if (ControlCenter.NoChangeLaneEvents) return;
 
             // To Left
             var car = GetRandomCar();

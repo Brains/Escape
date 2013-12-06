@@ -34,12 +34,13 @@ namespace Traffic.Actions.Base
         {
             if (enumerator.Current == null)
                 Reset();
-
+            
             // Update current Sequence
             enumerator.Current.Update (elapsed);
 
             if (enumerator.Current.Finished)
-                enumerator.MoveNext ();
+                if (!enumerator.MoveNext ())
+                    Reset ();
         }
 
         //------------------------------------------------------------------

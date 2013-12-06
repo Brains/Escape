@@ -30,18 +30,18 @@ namespace Traffic.Actions
             base.Update (elapsed);
 
             previous = current;
-            current = Keyboard.GetState ();
+            current = Keyboard.GetState();
         }
 
         //------------------------------------------------------------------
-        public void CheckInput ()
+        public void CheckInput()
         {
-            UpdateTouch ();
-            UpdateKeyboard ();
+            UpdateTouch();
+            UpdateKeyboard();
         }
 
         //------------------------------------------------------------------
-        private void UpdateKeyboard ()
+        private void UpdateKeyboard()
         {
             const int factor = 5;
 
@@ -50,11 +50,11 @@ namespace Traffic.Actions
 
             if (IsKeyDown (Keys.Down))
                 foreach (var index in Enumerable.Range (0, factor))
-                    player.Brake ();
+                    player.Brake();
 
             if (IsKeyDown (Keys.Up))
                 foreach (var index in Enumerable.Range (0, factor))
-                    player.Accelerate ();
+                    player.Accelerate();
         }
 
         //------------------------------------------------------------------
@@ -70,19 +70,19 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
-        public void UpdateTouch ()
+        public void UpdateTouch()
         {
             //Get the state of the touch panel
-            TouchCollection touches = TouchPanel.GetState ();
+            TouchCollection touches = TouchPanel.GetState();
 
             // ToDo: Only first Touch?
             // Handle only first Touch
-            if (!touches.Any ()) return;
+            if (!touches.Any()) return;
 
-            var first = touches.First ();
+            var first = touches.First();
 
-            if (first.State == TouchLocationState.Pressed) 
-                        HandleTouch (first.Position);
+            if (first.State == TouchLocationState.Pressed)
+                HandleTouch (first.Position);
 
 //            // Process touch locations
 //            foreach (TouchLocation location in curTouches)
@@ -110,7 +110,7 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
-        protected void ForceAccelerate ()
+        protected void ForceAccelerate()
         {
             player.Car.Velocity += player.Car.Acceleration;
         }
@@ -118,7 +118,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void ChangeLane (Lane lane)
         {
-            player.ChangeLane (this, lane, player.GetChangeLanesDuration ());
+            player.ChangeLane (this, lane, player.GetChangeLanesDuration());
         }
     }
 }
