@@ -28,7 +28,7 @@
 //            NoChangeLaneAnimation = true;
             NoChangeLaneEvents = true;
 
-//            NoPlayerAdjustSpeed = true;
+            NoPlayerAdjustSpeed = true;
         }
     }
 }

@@ -21,16 +21,16 @@ namespace Application
             Content.RootDirectory = "Content";
 
             Window.SetPosition (new Point (600, 125));
-
-            Components.Add (new Traffic.Actions.Base.Manager (this));
-            Components.Add (new Tools.Timers.Manager (this));
-            Components.Add (new Traffic.Manager (this));
-            Components.Add (new Tools.Markers.Manager (this));
         }
 
         //------------------------------------------------------------------
         protected override void Initialize ( )
         {
+            Components.Add (new Traffic.Actions.Base.Manager (this));
+            Components.Add (new Tools.Timers.Manager (this));
+            Components.Add (new Traffic.Manager (this));
+            Components.Add (new Tools.Markers.Manager (this));
+
             base.Initialize ();
         }
 
