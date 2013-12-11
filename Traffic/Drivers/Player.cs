@@ -33,7 +33,7 @@ namespace Traffic.Drivers
         //-----------------------------------------------------------------
         private void AdjustSpeed ()
         {
-            if (ControlCenter.NoPlayerAdjustSpeed) return;
+            if (Settings.NoPlayerAdjustSpeed) return;
 
             float distance = GetMinimumDistance (Car.Lane.Cars.Where (IsCarAhead));
 

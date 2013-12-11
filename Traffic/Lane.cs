@@ -11,13 +11,21 @@ namespace Traffic
 {
     public class Lane : Object
     {
+        public enum Weight
+        {
+            Light,
+            Medium,
+            Heavy
+        }
+
+        //------------------------------------------------------------------
         private int height;
-        private readonly List <Car> carsToAdd;
+        private readonly List <Car> newCars;
         private static int carsCounter;
 
         //------------------------------------------------------------------
         public const int MinimumCars = 3;
-        public const int MaximumCars = ControlCenter.MaximumCarsOnLane;
+        public const int MaximumCars = Settings.MaximumCarsOnLane;
 
         //------------------------------------------------------------------
         public readonly int ID;
@@ -45,26 +53,26 @@ namespace Traffic
             Road = road;
             Anchored = true;
 
-            CalculatePosition (ID);
-            CalculateVelocity (ID);
+            CalculatePosition ();
+            CalculateVelocity ();
 
             Cars = new List <Car> ();
-            carsToAdd = new List <Car> ();
+            newCars = new List <Car> ();
         }
 
         //------------------------------------------------------------------
-        private void CalculateVelocity (int id)
+        private void CalculateVelocity ()
         {
             const int maximumVelocity = 240;
             const int step = 20;
-            Velocity = maximumVelocity - id * step;
+            Velocity = maximumVelocity - ID * step;
         }
 
         //------------------------------------------------------------------
-        private void CalculatePosition (int id)
+        private void CalculatePosition ()
         {
             const int laneWidth = 40;
-            int position = id * laneWidth + laneWidth / 2;
+            int position = ID * laneWidth + laneWidth / 2;
 
             LocalPosition = new Vector2 (position, 0);
         }
@@ -73,7 +81,7 @@ namespace Traffic
         public override void Setup ()
         {
             height = Road.Game.GraphicsDevice.Viewport.Height;
-            border = 800;
+            border = height;
 
             base.Setup ();
         }
@@ -81,10 +89,7 @@ namespace Traffic
         //------------------------------------------------------------------
         protected virtual Car CreateCar ()
         {
-            var weight = GetWeight ();
-            var textureName = "Car " + weight.TextureSuffix;
-
-            var car = new Car (this, carsCounter, GetInsertionPosition (), weight, textureName);
+            var car = new Car (this, carsCounter, GetInsertionPosition ());
             car.Setup ();
 
             Cars.Add (car);
@@ -96,22 +101,22 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private Weight GetWeight ()
+        public Weight GetWeight ()
         {
-            if (ID >= 0 && ID < 4)
-                return new Light ();
-            if (ID >= 4 && ID < 8)
-                return new Medium ();
-            if (ID >= 8 && ID < 12)
-                return new Heavy ();
+            if (ID < Road.LanesQuantity / 3) 
+                return Weight.Light;
+            if (ID < Road.LanesQuantity * 2 / 3)
+                return Weight.Medium;
+            if (ID < Road.LanesQuantity)
+                return Weight.Heavy;
 
-            return null;
+            throw new NotSupportedException();
         }
 
         //------------------------------------------------------------------
         public Player CreatePlayer (Game game)
         {
-            var player = new Player (this, carsCounter, 400, GetWeight (), "Player");
+            var player = new Player (this, carsCounter, 400);
             player.Setup ();
 
             Cars.Add (player);
@@ -125,13 +130,13 @@ namespace Traffic
         //------------------------------------------------------------------
         public Police CreatePolice (Game game)
         {
-            var police = new Police (this, carsCounter, ControlCenter.PoliceStartPosition, GetWeight (), "Police");
+            var police = new Police (this, carsCounter, Settings.PoliceStartPosition);
             police.Setup ();
 
+            // ToDo: Merge this methods into Add
             Cars.Add (police);
             OwnCar (police);
-
-            carsCounter++;
+            carsCounter++; // Merge it too
 
             return police;
         }
@@ -179,11 +184,12 @@ namespace Traffic
         {
             base.Update (elapsed);
 
-            AddQueuedCars ();
+            AddNewCars ();
 
             CleanUp ();
             AppendCars ();
 
+            // ToDo: Replace to Add and Remove in corresponds methods
             Components.Clear ();
             Components.AddRange (Cars);
 
@@ -195,7 +201,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AppendCars ()
         {
-            if (ControlCenter.NoCars) return;
+            if (Settings.NoCars) return;
 
             if (Cars.Count < CarsQuantity)
                 CreateCar ();
@@ -216,17 +222,17 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private void AddQueuedCars ()
+        private void AddNewCars ()
         {
-            Cars.AddRange (carsToAdd);
-            carsToAdd.ForEach (OwnCar);
-            carsToAdd.Clear ();
+            Cars.AddRange (newCars);
+            newCars.ForEach (OwnCar);
+            newCars.Clear ();
         }
 
         //------------------------------------------------------------------
         public void Add (Car car)
         {
-            carsToAdd.Add (car);
+            newCars.Add (car);
         }
 
         //------------------------------------------------------------------
@@ -250,6 +256,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public override string ToString ()
         {
+            return ID.ToString();
             return string.Format ("{0}", ID);
         }
 

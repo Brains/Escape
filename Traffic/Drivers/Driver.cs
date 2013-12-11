@@ -210,15 +210,15 @@ namespace Traffic.Drivers
             action.Add (new Generic (() => lane.Add (Car)));
 
             #region Debug
-            if (ControlCenter.NoChangeLaneAnimation)
+            if (Settings.NoChangeLaneAnimation)
             {
-                action.Add (new Generic (DockToLane));
+                action.Add (new Generic (() => Car.DockToLane()));
                 return;
             }
             #endregion
 
             // Rotate
-            Action <float> rotate = share => Car.Angle += share;
+            Action <float> rotate = share => Car.Rotation += share;
             float finalAngle = MathHelper.ToRadians ((lane.Position.X < Car.Position.X) ? -10 : 10);
             action.Add (new Controller (rotate, finalAngle, duration * 0.3f));
 
@@ -232,13 +232,7 @@ namespace Traffic.Drivers
             action.Add (inverseRotating);
 
             // Fix accuracy error in Car's Position
-            action.Add (new Generic (DockToLane));
-        }
-
-        //------------------------------------------------------------------
-        private void DockToLane()
-        {
-            Car.LocalPosition = new Vector2 (0, Car.Position.Y);
+            action.Add (new Generic (() => Car.DockToLane()));
         }
 
         #endregion

@@ -9,8 +9,8 @@ namespace Traffic.Cars
         private Lights flasher;
 
         //------------------------------------------------------------------
-        public Police(Lane lane, int id, int position, Weight weight, string textureName) : 
-            base(lane, id, position, weight, textureName)
+        public Police(Lane lane, int id, int position) : 
+            base(lane, id, position)
         {
             Lives = 20;
             Acceleration = 1.0f;

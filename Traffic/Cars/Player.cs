@@ -7,8 +7,8 @@ namespace Traffic.Cars
     public class Player : Car
     {
         //------------------------------------------------------------------
-        public Player (Lane lane, int id, int position, Weight weight, string textureName)
-            : base (lane, id, position, weight, textureName)
+        public Player (Lane lane, int id, int position)
+            : base (lane, id, position)
         {
             Lives = 99;
             Velocity = 300;

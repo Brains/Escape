@@ -69,7 +69,7 @@ namespace Traffic
             base.Update (elapsed);
 
             // Camera movement simulation
-            MoveCamera (Player.Velocity * elapsed * 2);
+            MoveCamera (Player.Velocity * elapsed * 2); // 2 - ratio for simulate very high speed
         }
 
         //------------------------------------------------------------------
@@ -79,8 +79,8 @@ namespace Traffic
             Move (shift);
 
             // Infinite loop for Road Texture
-            if (LocalPosition.Y > 800)
-                LocalPosition = new Vector2 (LocalPosition.X, 0);
+            if (LocalPosition.Y > Game.GraphicsDevice.Viewport.Height)
+                LocalPosition = Vector2.Zero; //new Vector2 (LocalPosition.X, 0);
         }
 
         //------------------------------------------------------------------

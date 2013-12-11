@@ -7,15 +7,18 @@ namespace Traffic
 {
     public class Object
     {
+        // Nodes
         public Object Root { get; set; }
         public List<Object> Components { get; private set; }
 
+        // Properties
         public Vector2 LocalPosition { get; set; }
 
-        public bool Deleted { get; set; }
-        public bool Anchored { get; set; }
         public bool Active { get; set; }
-        public bool Visible { get; set; }
+        // ToDo: Can replace Anchored?
+        public bool Anchored { get; set; }
+        // ToDo: Delete Deleted?
+        public bool Deleted { get; set; }
 
         //------------------------------------------------------------------
         public Vector2 Position
@@ -40,7 +43,8 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public virtual void Setup ()
+        // ToDo: Delete? Lane.Setup?
+        public virtual void SetupDelete ()
         {
             Components.ForEach (item => item.Setup ());
         }
@@ -48,17 +52,13 @@ namespace Traffic
         //------------------------------------------------------------------
         public virtual void Update (float elapsed)
         {
-            Components.ForEach (item => item.Update (elapsed));
-        }
-
-        //------------------------------------------------------------------
-        public virtual void Draw (SpriteBatch spriteBatch)
-        {
-            Components.ForEach (item => item.Draw (spriteBatch));
+            foreach (var component in Components)
+                if (component.Active)
+                    component.Update (elapsed);
         }
 
         //-----------------------------------------------------------------
-        protected void Add (Object item)
+        protected virtual void Add (Object item)
         {
             Components.Add (item);
         }

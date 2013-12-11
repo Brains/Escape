@@ -36,8 +36,8 @@ namespace Traffic
         //-----------------------------------------------------------------
         private void ChangeLaneForCarEvent()
         {
-            if (ControlCenter.NoCars) return;
-            if (ControlCenter.NoChangeLaneEvents) return;
+            if (Settings.NoCars) return;
+            if (Settings.NoChangeLaneEvents) return;
 
             // To Left
             var car = GetRandomCar();
@@ -58,8 +58,8 @@ namespace Traffic
         //------------------------------------------------------------------
         private void CreateBlock()
         {
-            if (ControlCenter.NoCars) return;
-            if (ControlCenter.NoBlocks) return;
+            if (Settings.NoCars) return;
+            if (Settings.NoBlocks) return;
 
             Driver player = manager.Road.Player.Driver;
             IEnumerable <Car> aheadCars = player.Car.Lane.Cars.Where (player.IsCarAhead);
@@ -121,7 +121,7 @@ namespace Traffic
         //-----------------------------------------------------------------
         private void CreatePolice()
         {
-            if (ControlCenter.NoPolice) return;
+            if (Settings.NoPolice) return;
 
             if (polices.Count > 0) return;
 

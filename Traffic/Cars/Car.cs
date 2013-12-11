@@ -31,7 +31,7 @@ namespace Traffic.Cars
         public int Lives { get; set; }
         public float Acceleration { get; set; }
         public float Deceleration { get; set; }
-        public float Angle { get; set; }
+        public float Rotation { get; set; }
         public SpriteEffects SpriteEffects { get; set; }
 
         //------------------------------------------------------------------
@@ -60,7 +60,7 @@ namespace Traffic.Cars
         #region Creation
 
         //------------------------------------------------------------------
-        public Car (Lane lane, int id, int position, Weight weight, string textureName) : base(lane)
+        public Car (Lane lane, int id, int position) : base(lane)
         {
             LocalPosition = new Vector2 (0, position);
             InitialColor = Color.White;
@@ -68,11 +68,11 @@ namespace Traffic.Cars
             ID = id;
             
             Velocity = Lane.Velocity;
-            Lives = weight.Lives;
-            Acceleration = 0.2f;// * weight.Acceleration;
-            Deceleration = 1.0f;// * weight.Deceleration;
+            Lives = GeLives();
+            Acceleration = 0.2f;
+            Deceleration = 1.0f;
 
-            LoadTexture (textureName);
+            LoadTexture ("Car");
             CreateBoundingBox ();
             CreateLights ();
 
@@ -80,11 +80,40 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        private void LoadTexture(string textureName)
+        private int GeLives()
         {
-            Texture = Lane.Road.Images[textureName];
-            origin = new Vector2 (Texture.Width / 2, Texture.Height / 2);
+            var weight = Lane.GetWeight();
+            
+            if (weight == Lane.Weight.Light) 
+                return 1;
+            if (weight == Lane.Weight.Medium) 
+                return 2;
+            if (weight == Lane.Weight.Heavy) 
+                return 3;
+
+            throw new NotSupportedException ();
+        }
+
+        //------------------------------------------------------------------
+        private void LoadTexture(string name)
+        {
+            Texture = Lane.Road.Images[name + GetTextureNameSuffix()];
+            origin = new Vector2 (Texture.Width / 2.0f, Texture.Height / 2.0f);
             Lenght = Texture.Height;
+        }
+
+        private string GetTextureNameSuffix()
+        {
+            var weight = Lane.GetWeight ();
+
+            if (weight == Lane.Weight.Light)
+                return "(Light)";
+            if (weight == Lane.Weight.Medium)
+                return "(Medium)";
+            if (weight == Lane.Weight.Heavy)
+                return "(Heavy)";
+
+            throw new NotSupportedException ();
         }
 
         //------------------------------------------------------------------
@@ -285,7 +314,7 @@ namespace Traffic.Cars
         {
             base.Draw (spriteBatch);
 
-            spriteBatch.Draw (Texture, Position, null, Color, Angle, origin, 1.0f, SpriteEffects, 0.5f);
+            spriteBatch.Draw (Texture, Position, null, Color, Rotation, origin, 1.0f, SpriteEffects, 0.5f);
         }
 
         //------------------------------------------------------------------
@@ -302,6 +331,11 @@ namespace Traffic.Cars
 
             // SafeZone
 //            new Line (Position, Position - new Vector2 (0, Driver.SafeZone), Color.IndianRed);
+        }
+
+        public void DockToLane()
+        {
+            LocalPosition = new Vector2 (0, Position.Y);
         }
     }
 }

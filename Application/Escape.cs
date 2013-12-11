@@ -51,9 +51,9 @@ namespace Application
             float scale = 0.05f;
 
             if (Traffic.Actions.Input.IsKeyPressed (Keys.D1))
-                Traffic.ControlCenter.TimeScale -= scale;
+                Traffic.Settings.TimeScale -= scale;
             if (Traffic.Actions.Input.IsKeyPressed (Keys.D2))
-                Traffic.ControlCenter.TimeScale += scale;
+                Traffic.Settings.TimeScale += scale;
         }
 
         //------------------------------------------------------------------

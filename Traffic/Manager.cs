@@ -37,7 +37,7 @@ namespace Traffic
         {
             float elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-            elapsed *= ControlCenter.TimeScale;
+            elapsed *= Settings.TimeScale;
 
             Road.Update (elapsed);
             director.Update (elapsed);
