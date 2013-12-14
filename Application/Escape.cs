@@ -1,9 +1,6 @@
-﻿#region Using Statements
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-#endregion
 
 namespace Application
 {
@@ -18,6 +15,10 @@ namespace Application
             graphics.PreferredBackBufferHeight = 800;
             graphics.SupportedOrientations = DisplayOrientation.Portrait;
             
+            // Disable fixed framerate
+            graphics.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = false;
+            
             Content.RootDirectory = "Content";
 
             Window.SetPosition (new Point (600, 125));
@@ -30,6 +31,8 @@ namespace Application
             Components.Add (new Tools.Timers.Manager (this));
             Components.Add (new Traffic.Manager (this));
             Components.Add (new Tools.Markers.Manager (this));
+            Components.Add (new Fluid.Perfomance (this));
+            Components.Add (new Fluid.Simulation (this));
 
             base.Initialize ();
         }

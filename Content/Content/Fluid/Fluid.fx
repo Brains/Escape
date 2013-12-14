@@ -119,6 +119,7 @@ DoubleOutput PSAddSources(float2 TexCoords : TEXCOORD0)
 	Output.Den = tex2D(Density, TexCoords - float2(.5f/FluidSize, .5f/FluidSize)) + (tex2D(DensitySources, TexCoords - float2(.5f/FluidSize, .5f/FluidSize))/8.0f);	
 	Output.Vel.w = 1.0f;
 	Output.Den.w = 1.0f;
+
 	return Output;
 }
 
@@ -131,6 +132,7 @@ DoubleOutput PSSetBoundsDouble(float2 TexCoords : TEXCOORD0)
     Pos = SetBounds(Pos);
 	Output.Vel = -tex2D(Velocity, Pos);
 	Output.Den = tex2D(Density, Pos);
+
 	return Output;
 }
 
@@ -151,7 +153,8 @@ DoubleOutput PSAdvection(float2 TexCoords : TEXCOORD0)
 	float2 Pos = TexCoords - float2(.5f/FluidSize, .5f/FluidSize);	
     Pos -= tex2D(Velocity, Pos) / FluidSize;	
 	Output.Vel = VelocityDiffusion*QuadLerp(Velocity, Pos);
-	Output.Den = DensityDiffusion*QuadLerp(Density, Pos);    
+	Output.Den = DensityDiffusion*QuadLerp(Density, Pos);  
+
     return Output;
 }
 
@@ -165,6 +168,7 @@ float4 PSDivergence(float2 TexCoords : TEXCOORD0) : COLOR0
 	float4 right  = tex2D(buffer, float2(Pos.x + Offset, Pos.y));
 	float4 top    = tex2D(buffer, float2(Pos.x, Pos.y - Offset));
 	float4 bottom = tex2D(buffer, float2(Pos.x, Pos.y + Offset));
+
 	return .5f * ((right.x - left.x) + (bottom.y - top.y));
 }
 
@@ -179,6 +183,7 @@ float4 PSJacobi(float2 TexCoords : TEXCOORD0) : COLOR0
 	float4 right  = tex2D(buffer, float2(Pos.x + Offset, Pos.y));
 	float4 top    = tex2D(buffer, float2(Pos.x, Pos.y - Offset));
 	float4 bottom = tex2D(buffer, float2(Pos.x, Pos.y + Offset));
+
 	return ((left + right + bottom + top) - center) * .25f;
 }
 
@@ -196,6 +201,7 @@ float4 PSSubtract(float2 TexCoords : TEXCOORD0) : COLOR0
 	float2 grad = float2(right-left, bottom-top) * .5f;
 	float4 v = tex2D(buffer, Pos);
 	v.xy -= grad;
+
 	return v;
 }
 
@@ -305,8 +311,11 @@ float4 PSArbitraryPressureBoundary (float2 TexCoords : TEXCOORD0) : COLOR0
 //----------------------------------------------------------------------------
 float4 PSFinal(float2 TexCoords : TEXCOORD0) : COLOR0
 {
-	return DisplayVector (buffer, TexCoords, 0.5, 0.5);
+	//return DisplayVector (buffer, TexCoords, 0.5, 0.5);
 	//return QuadLerp(buffer, TexCoords - float2(.5f/FluidSize, .5f/FluidSize));
+	float4 output = QuadLerp(buffer, TexCoords - float2(.5f/FluidSize, .5f/FluidSize));
+	output.w = 0.5f;
+	return output;
 }
 
 

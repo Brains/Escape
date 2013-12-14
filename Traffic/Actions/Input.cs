@@ -72,6 +72,8 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         public void UpdateTouch()
         {
+            UpdateMouse();
+
             //Get the state of the touch panel
             TouchCollection touches = TouchPanel.GetState();
 
@@ -98,6 +100,13 @@ namespace Traffic.Actions
 //                        break;
 //                }
 //            }
+        }
+
+        //------------------------------------------------------------------
+        private void UpdateMouse()
+        {
+            var mouse = Mouse.GetState ();
+            var position = new Vector2 (mouse.X, mouse.Y);
         }
 
         //------------------------------------------------------------------

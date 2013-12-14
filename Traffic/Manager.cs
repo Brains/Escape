@@ -12,6 +12,7 @@ namespace Traffic
     {
         private SpriteBatch spriteBatch;
         private readonly Director director;
+        public static RenderTarget2D Scene;
 
         //------------------------------------------------------------------
         public Road Road { get; private set; }
@@ -21,6 +22,8 @@ namespace Traffic
         {
             Road = new Road (Game);
             director = new Director (this);
+            DrawOrder = 2;
+            Scene = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
         }
 
         //------------------------------------------------------------------
@@ -46,6 +49,8 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget (Scene);
+
             spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
             Road.Draw (spriteBatch);

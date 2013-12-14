@@ -71,6 +71,10 @@
       <Project>{9f3bab87-62bc-4b95-a1e5-3a2b53a071db}</Project>
       <Name>Adapter %28Content%29</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fluid\Fluid.csproj">
+      <Project>{9c4dd35b-08d6-4294-8025-494426d90e8a}</Project>
+      <Name>Fluid</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{9e4ff996-10da-47c7-8008-1a4392f32ea5}</Project>
       <Name>Tools</Name>

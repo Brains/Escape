@@ -1,31 +1,26 @@
-﻿/*
-    Fluid.cs - HLSL fluid shader handler class
-    Copyright (C) 2013 Michael Stone (Neoaikon)
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Fluid
 {
-    public class Simulation
+    public class Simulation : DrawableGameComponent
     {
-        GraphicsDevice graphicsDevice;
-        SpriteBatch spriteBatch;
+        //------------------------------------------------------------------
+        private static class Parameters
+        {
+            public const int Iterations = 20;
+            public const int Size = 256;
+            public const float Dt = 1.0f;
+            public const float VelocityDiffusion = 1.0f; //0.99f;
+            public const float DensityDiffusion = 1.0f; //0.9999f;
+            public const float VorticityScale = 0.20f;
+        }
+
+        //------------------------------------------------------------------
+        private readonly SpriteBatch spriteBatch;
 
         // Render Targets
         public RenderTarget2D InputVelocities, InputDensities;
@@ -39,18 +34,18 @@ namespace Fluid
         // Spritebatch settings
         public SpriteSortMode SortMode = SpriteSortMode.Immediate;
         public BlendState Blending = BlendState.Opaque;
-        public SamplerState Sampling = new SamplerState ();
+        public SamplerState Sampling = new SamplerState();
         public SurfaceFormat ColorFormat = SurfaceFormat.HdrBlendable;
-        public DepthFormat ZFormat = DepthFormat.None;        
-        
+        public DepthFormat ZFormat = DepthFormat.None;
+
         // Fluid shader and parameteres
         public Effect Shader;
-        FluidParams Params;
 
         // Effect Parameters        
-        EffectParameter pVelocitySrc;
-        EffectParameter pDensitySrc;        
-        EffectParameter pSplatColor;
+        private EffectParameter pVelocitySrc;
+        private EffectParameter pDensitySrc;
+        private EffectParameter pSplatColor;
+        private Texture2D brush;
 
 
         // Color splatted for the current sprite during the VelocitySplat pass        
@@ -58,67 +53,69 @@ namespace Fluid
         public Vector4 SplatColor
         {
             get { return pSplatColor.GetValueVector4(); }
-            set { pSplatColor.SetValue(value); }
+            set { pSplatColor.SetValue (value); }
         }
 
         //------------------------------------------------------------------
-        public Simulation (ContentManager content, GraphicsDevice graphics, SpriteBatch batch, FluidParams parameters)
+        public Simulation (Game game) : base (game)
         {
             // Get the content manager and graphics device from the creating entity
-            Shader               = content.Load<Effect>("Fluid");
-            graphicsDevice       = graphics;
-            spriteBatch          = batch;
+            Shader = Game.Content.Load <Effect> ("Fluid/Fluid");
+            spriteBatch = new SpriteBatch (GraphicsDevice);
+            DrawOrder = 3;
 
             // Setup EffectParameters
-            pSplatColor          = Shader.Parameters["VelocityColor"];
-            pVelocitySrc         = Shader.Parameters["VelocitySrc"];
-            pDensitySrc          = Shader.Parameters["DensitySrc"];            
+            pSplatColor = Shader.Parameters["VelocityColor"];
+            pVelocitySrc = Shader.Parameters["VelocitySrc"];
+            pDensitySrc = Shader.Parameters["DensitySrc"];
 
             // Setup SamplerStates
             Sampling.AddressU = TextureAddressMode.Clamp;
             Sampling.AddressV = TextureAddressMode.Clamp;
             Sampling.AddressW = TextureAddressMode.Clamp;
             Sampling.Filter = TextureFilter.Point;
-            for(int i = 0; i < 16; i++)
-                graphicsDevice.SamplerStates[i] = Sampling;
+            for (int i = 0; i < 16; i++)
+                GraphicsDevice.SamplerStates[i] = Sampling;
 
             // Setup fluid parameters
-            Params = parameters;
-            Shader.Parameters["FluidSize"].SetValue((float)Params.GridSize);
-            Shader.Parameters["VelocityDiffusion"].SetValue(Params.VelocityDiffusion);
-            Shader.Parameters["DensityDiffusion"].SetValue(Params.DensityDiffusion);
-            Shader.Parameters["VorticityScale"].SetValue (Params.VorticityScale);
-            Shader.Parameters["dT"].SetValue (1.0f);
+            Shader.Parameters["FluidSize"].SetValue ((float) Parameters.Size);
+            Shader.Parameters["VelocityDiffusion"].SetValue (Parameters.VelocityDiffusion);
+            Shader.Parameters["DensityDiffusion"].SetValue (Parameters.DensityDiffusion);
+            Shader.Parameters["VorticityScale"].SetValue (Parameters.VorticityScale);
+            Shader.Parameters["dT"].SetValue (Parameters.Dt);
             Shader.Parameters["HalfCellSize"].SetValue (0.5f);
 
-
-
             // Setup RenderTarget2D's
-            InputVelocities = new RenderTarget2D(graphicsDevice, (int)Params.ScreenSize.X, (int)Params.ScreenSize.Y, false, ColorFormat, ZFormat);
-            InputDensities  = new RenderTarget2D(graphicsDevice, (int)Params.ScreenSize.X, (int)Params.ScreenSize.Y, false, ColorFormat, ZFormat);
-            
-            Velocity        = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Density         = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Vorticity       = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Pressure        = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Divergence      = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            
-            Temporary       = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            TemporaryHelper = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            
-            FinalRender     = new RenderTarget2D(graphicsDevice, (int)Params.ScreenSize.X, (int)Params.ScreenSize.Y, false, ColorFormat, ZFormat);
+            Viewport viewport = GraphicsDevice.Viewport;
 
-            Boundaries = content.Load <Texture2D> ("Boundaries");
-            VelocityOffsets = new RenderTarget2D (graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            PressureOffsets = new RenderTarget2D (graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            CreateOffsetTables (graphics);
+            InputVelocities = new RenderTarget2D (GraphicsDevice, (int) viewport.Width, (int) viewport.Height, false, ColorFormat, ZFormat);
+            InputDensities = new RenderTarget2D (GraphicsDevice, (int) viewport.Width, (int) viewport.Height, false, ColorFormat, ZFormat);
 
+            Velocity = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+            Density = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+            Vorticity = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+            Pressure = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+            Divergence = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+
+            Temporary = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+            TemporaryHelper = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+
+            FinalRender = new RenderTarget2D (GraphicsDevice, viewport.Width, viewport.Height, false, ColorFormat, ZFormat);
+
+            Boundaries = Game.Content.Load <Texture2D> ("Fluid/Boundaries");
+            VelocityOffsets = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false,
+                ColorFormat, ZFormat);
+            PressureOffsets = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false,
+                ColorFormat, ZFormat);
+            CreateOffsetTables (GraphicsDevice);
             Shader.Parameters["VelocityOffsets"].SetValue (VelocityOffsets);
             Shader.Parameters["PressureOffsets"].SetValue (PressureOffsets);
+
+            brush = Game.Content.Load <Texture2D> ("Fluid/brush");
         }
 
         //------------------------------------------------------------------
-        private void CreateOffsetTables(GraphicsDevice graphics)
+        private void CreateOffsetTables (GraphicsDevice graphics)
         {
             float[] velocityData = new float[136]
             {
@@ -160,7 +157,7 @@ namespace Fluid
                 0, 0, 0, 0 // Unused
             };
 
-            VelocityOffsetsTable = new Texture2D (graphicsDevice, 34, 1, false, SurfaceFormat.Vector4);
+            VelocityOffsetsTable = new Texture2D (GraphicsDevice, 34, 1, false, SurfaceFormat.Vector4);
             VelocityOffsetsTable.SetData (velocityData);
 
 
@@ -204,131 +201,134 @@ namespace Fluid
                 0, 0, 0, 0 // Unused
             };
 
-            PressureOffsetsTable = new Texture2D (graphicsDevice, 34, 1, false, SurfaceFormat.Vector4);
+            PressureOffsetsTable = new Texture2D (GraphicsDevice, 34, 1, false, SurfaceFormat.Vector4);
             PressureOffsetsTable.SetData (pressureData);
         }
 
-        // Starts the VelocitySplat pass
         //------------------------------------------------------------------
-        public void BeginVelocityPass ()
+        public void AddVelocity()
         {
+            var mouse = Mouse.GetState ();
+            var position = new Vector2 (mouse.X, mouse.Y);
+
             Shader.CurrentTechnique = Shader.Techniques["VelocityColorize"];
-            graphicsDevice.SetRenderTarget(InputVelocities);
-            graphicsDevice.Clear(Color.Black);
-            spriteBatch.Begin(SortMode, BlendState.AlphaBlend, Sampling, null, null, Shader);
-        }
-
-        // Starts the DensitySplat pass
-        //------------------------------------------------------------------
-        public void BeginDensityPass ()
-        {
-            graphicsDevice.SetRenderTarget(InputDensities);
-            graphicsDevice.Clear(Color.Black);
-            spriteBatch.Begin(SortMode, BlendState.AlphaBlend, Sampling, null, null);
-        }
-
-        // Ends either the VelocitySplat or DensitySplat passes
-        //------------------------------------------------------------------
-        public void EndPass ()
-        {
+            GraphicsDevice.SetRenderTarget (InputVelocities);
+            GraphicsDevice.Clear (Color.Black);
+            spriteBatch.Begin (SortMode, BlendState.AlphaBlend, Sampling, null, null, Shader);
+            spriteBatch.Draw (brush, position, null, Color.White, 0.0f, new Vector2 (32.0f, 32.0f), 1, SpriteEffects.None, 0.0f);
             spriteBatch.End();
         }
 
-        // Render the fluid to the screen
         //------------------------------------------------------------------
-        public void Update ()
+        public void AddDensity()
         {
-            AddSplats ();
-            UpdateOffsets ();
+            var mouse = Mouse.GetState ();
+            var position = new Vector2 (mouse.X, mouse.Y);
+            SplatColor = new Vector4 (350, 0, 0, 1);
+
+            GraphicsDevice.SetRenderTarget (InputDensities);
+            GraphicsDevice.Clear (Color.Black);
+            spriteBatch.Begin (SortMode, BlendState.AlphaBlend, Sampling, null, null);
+            spriteBatch.Draw (brush, position, null, Color.White, 0.0f, new Vector2 (32.0f, 32.0f), 1, SpriteEffects.None, 0.0f);
+            spriteBatch.End();
+        }
+
+        //------------------------------------------------------------------
+        public void Update()
+        {
+            AddSplats();
+            UpdateOffsets();
 
             DoAdvect();
             DoDivergence();
             DoPressure();
             DoSubstract();
-            DoVorticity ();
+            DoVorticity();
 
             Render();
         }
 
         //------------------------------------------------------------------
-        private void AddSplats ()
+        private void AddSplats()
         {
+            AddVelocity();
+            AddDensity();
+
             // Add the velocity and density splats into the fluid
             Shader.CurrentTechnique = Shader.Techniques["DoAddSources"];
-            graphicsDevice.SetRenderTargets (Temporary, TemporaryHelper);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTargets (Temporary, TemporaryHelper);
+            GraphicsDevice.Clear (Color.Black);
             Shader.Parameters["Velocity"].SetValue (Velocity);
             Shader.Parameters["Density"].SetValue (Density);
             Shader.Parameters["VelocitySources"].SetValue (InputVelocities);
-            Shader.Parameters["DensitySources"].SetValue (InputDensities); 
-            
-            Draw(Velocity);
+            Shader.Parameters["DensitySources"].SetValue (InputDensities);
+
+            Draw (Velocity);
             Copy (Temporary, Velocity);
             Copy (TemporaryHelper, Density);
 
-            DoVelocityBoundaries ();
+            DoVelocityBoundaries();
         }
 
         //------------------------------------------------------------------
-        private void DoAdvect ()
+        private void DoAdvect()
         {
             // Advect the velocity and density
             // Other quantities can be advected too
             Shader.CurrentTechnique = Shader.Techniques["DoAdvection"];
-            graphicsDevice.SetRenderTargets (Temporary, TemporaryHelper);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTargets (Temporary, TemporaryHelper);
+            GraphicsDevice.Clear (Color.Black);
             Shader.Parameters["Velocity"].SetValue (Velocity);
             Shader.Parameters["Density"].SetValue (Density);
-            
+
             Draw (Velocity);
             Copy (Temporary, Velocity);
             Copy (TemporaryHelper, Density);
 
-            DoVelocityBoundaries ();
-
+            DoVelocityBoundaries();
         }
 
         //------------------------------------------------------------------
-        private void DoDivergence ()
+        private void DoDivergence()
         {
             // Calculate the divergence of the velocity
             Shader.CurrentTechnique = Shader.Techniques["DoDivergence"];
-            graphicsDevice.SetRenderTarget (Divergence);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (Divergence);
+            GraphicsDevice.Clear (Color.Black);
             Draw (Velocity);
 
             // Update the shaders copy of the divergence
-            graphicsDevice.SetRenderTarget (null);
+            GraphicsDevice.SetRenderTarget (null);
             Shader.Parameters["Divergence"].SetValue (Divergence);
         }
 
         //------------------------------------------------------------------
-        private void DoPressure ()
+        private void DoPressure()
         {
             // Iterate over the grid calculating the pressure
             Shader.CurrentTechnique = Shader.Techniques["DoJacobi"];
 
             // Clear Temp
-            graphicsDevice.SetRenderTarget (Temporary);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (Temporary);
+            GraphicsDevice.Clear (Color.Black);
 
-            for (int i = 0; i < Params.Iterations; i++)
+            for (int i = 0; i < Parameters.Iterations; i++)
             {
-                graphicsDevice.SetRenderTarget (Pressure);
-                graphicsDevice.Clear (Color.Black);
+                GraphicsDevice.SetRenderTarget (Pressure);
+                GraphicsDevice.Clear (Color.Black);
                 Draw (Temporary);
 
                 DoPressureBoundaries (Pressure);
 
-                graphicsDevice.SetRenderTarget (Temporary);
-                graphicsDevice.Clear (Color.Black);
+                GraphicsDevice.SetRenderTarget (Temporary);
+                GraphicsDevice.Clear (Color.Black);
                 Draw (Pressure);
             }
 
             Copy (Temporary, Pressure);
 
             // Update the shaders copy of the pressure
-            graphicsDevice.SetRenderTarget (null);
+            GraphicsDevice.SetRenderTarget (null);
             Shader.Parameters["Pressure"].SetValue (Pressure);
         }
 
@@ -337,8 +337,8 @@ namespace Fluid
         {
             // Subtract the pressure from the velocity
             Shader.CurrentTechnique = Shader.Techniques["Subtract"];
-            graphicsDevice.SetRenderTarget (Temporary);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (Temporary);
+            GraphicsDevice.Clear (Color.Black);
             Draw (Velocity);
             Copy (Temporary, Velocity);
         }
@@ -348,27 +348,27 @@ namespace Fluid
         {
             // Calculate Vorticity
             Shader.CurrentTechnique = Shader.Techniques["DoVorticity"];
-            graphicsDevice.SetRenderTarget (Vorticity);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (Vorticity);
+            GraphicsDevice.Clear (Color.Black);
             Draw (Velocity);
 
             // Apply Force to Vorticity
             Shader.CurrentTechnique = Shader.Techniques["DoVorticityForce"];
-            graphicsDevice.SetRenderTarget (Temporary);
-            Shader.Parameters["Vorticity"].SetValue (Vorticity); 
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (Temporary);
+            Shader.Parameters["Vorticity"].SetValue (Vorticity);
+            GraphicsDevice.Clear (Color.Black);
             Draw (Vorticity);
-            Copy (Temporary, Velocity); 
+            Copy (Temporary, Velocity);
         }
 
         //-----------------------------------------------------------------
-        private void DoVelocityBoundaries ()
+        private void DoVelocityBoundaries()
         {
             Shader.CurrentTechnique = Shader.Techniques["ArbitraryVelocityBoundary"];
 
             // Update Velocity Offsets
-            graphicsDevice.SetRenderTarget (Temporary);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (Temporary);
+            GraphicsDevice.Clear (Color.Black);
             Draw (Velocity);
             Copy (Temporary, Velocity);
         }
@@ -380,8 +380,8 @@ namespace Fluid
             Shader.CurrentTechnique = Shader.Techniques["ArbitraryPressureBoundary"];
 
             // Update Velocity Offsets
-            graphicsDevice.SetRenderTarget (TemporaryHelper);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (TemporaryHelper);
+            GraphicsDevice.Clear (Color.Black);
             Draw (pressure);
             Copy (TemporaryHelper, pressure);
 
@@ -395,43 +395,45 @@ namespace Fluid
             Shader.CurrentTechnique = Shader.Techniques["UpdateOffsets"];
 
             // Update Velocity Offsets
-            graphicsDevice.SetRenderTarget (VelocityOffsets);
+            GraphicsDevice.SetRenderTarget (VelocityOffsets);
             Shader.Parameters["OffsetTable"].SetValue (VelocityOffsetsTable);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.Clear (Color.Black);
             Draw (Boundaries);
 
             // Update Pressure Offsets
-            graphicsDevice.SetRenderTarget (PressureOffsets);
+            GraphicsDevice.SetRenderTarget (PressureOffsets);
             Shader.Parameters["OffsetTable"].SetValue (PressureOffsetsTable);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.Clear (Color.Black);
             Draw (Boundaries);
         }
 
         //------------------------------------------------------------------
         private void Render()
         {
+            Viewport viewport = GraphicsDevice.Viewport;
+
             // Smooth and render the fluid to the screen            
             Shader.CurrentTechnique = Shader.Techniques["Final"];
-            graphicsDevice.SetRenderTarget (FinalRender);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (FinalRender);
+            GraphicsDevice.Clear (Color.Black);
             spriteBatch.Begin (SortMode, Blending, Sampling, null, null, Shader);
-            spriteBatch.Draw (Velocity, new Rectangle (0, 0, (int) Params.ScreenSize.X, (int) Params.ScreenSize.Y), Color.White);
+            spriteBatch.Draw (Density, new Rectangle (0, 0, viewport.Width, viewport.Height), Color.White);
             spriteBatch.End();
 
-            graphicsDevice.SetRenderTarget (null);
+            GraphicsDevice.SetRenderTarget (null);
         }
 
         //------------------------------------------------------------------
         private void Copy (RenderTarget2D source, RenderTarget2D destination)
         {
-            graphicsDevice.SetRenderTarget (destination);
-            graphicsDevice.Clear (Color.Black);
+            GraphicsDevice.SetRenderTarget (destination);
+            GraphicsDevice.Clear (Color.Black);
 
             spriteBatch.Begin (SortMode, Blending, Sampling, null, null);
             spriteBatch.Draw (source, Vector2.Zero, Color.White);
             spriteBatch.End();
 
-            graphicsDevice.SetRenderTarget (null);
+            GraphicsDevice.SetRenderTarget (null);
         }
 
         //------------------------------------------------------------------
@@ -443,43 +445,19 @@ namespace Fluid
         }
 
         //------------------------------------------------------------------
-        public void Draw (Vector2 offset)
+        public override void Draw (GameTime gameTime)
         {
+            // Compute Shaders
+            Update();
+
+            // Draw Final image
+            GraphicsDevice.Clear (Color.Black);
+            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, null, null);
+            spriteBatch.Draw (Traffic.Manager.Scene, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
             spriteBatch.Draw (FinalRender, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.0f);
-        }
-    }
+            spriteBatch.End();
 
-
-
-
-
-
-    //------------------------------------------------------------------
-    public class FluidParams
-    {
-        // Iterations to perform
-        public int Iterations;
-        // Size of the fluid grid  
-        public int GridSize;
-        // Size of the screen the fluid is to be rendered on
-        public Vector2 ScreenSize;
-        // Delta time, MARKED FOR REMOVAL
-        public float dT;
-        // Diffusion rate of velocity
-        public float VelocityDiffusion;
-        // Diffusion rate for density
-        public float DensityDiffusion;
-        public float VorticityScale;
-
-        public FluidParams()
-        {
-            Iterations = 20;
-            GridSize = 256;
-            ScreenSize = new Vector2(1024, 768);
-            dT = 1.0f;
-            VelocityDiffusion = 1.0f;
-            DensityDiffusion = 1.0f;
-            VorticityScale = 0.20f;
+            base.Draw (gameTime);
         }
     }
 }
