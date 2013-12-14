@@ -50,6 +50,7 @@ namespace Traffic
         public override void Draw (GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget (Scene);
+            GraphicsDevice.Clear (Color.Transparent);
 
             spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 

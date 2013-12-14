@@ -254,6 +254,23 @@ float4 PSVorticityForce (float2 TexCoords : TEXCOORD0) : COLOR0
 } 
 
 //----------------------------------------------------------------------------
+float4 PSShapeObstacles (float2 TexCoords : TEXCOORD0) : COLOR0
+{
+	float2 Pos = TexCoords - float2(.5f/FluidSize, .5f/FluidSize);	
+	float4 color = tex2D (buffer, Pos);
+
+	float opacity = color.w;
+	//color *= color.w * 10;
+
+	if (opacity > 0.0f)
+	{
+		color = float4(1, 1, 1, 1);
+	}
+
+	return color;
+}
+
+//----------------------------------------------------------------------------
 float4 PSUpdateOffsets (float2 TexCoords : TEXCOORD0) : COLOR0
 {
 	float2 Pos = TexCoords - float2(.5f/FluidSize, .5f/FluidSize);	
@@ -313,7 +330,7 @@ float4 PSFinal(float2 TexCoords : TEXCOORD0) : COLOR0
 {
 	//return DisplayVector (buffer, TexCoords, 0.5, 0.5);
 	//return QuadLerp(buffer, TexCoords - float2(.5f/FluidSize, .5f/FluidSize));
-	float4 output = QuadLerp(buffer, TexCoords - float2(.5f/FluidSize, .5f/FluidSize));
+	float4 output = DisplayVector(buffer, TexCoords, 0.5, 0.5);
 	output.w = 0.5f;
 	return output;
 }
@@ -399,6 +416,14 @@ Technique DoVorticityForce
 	pass DoVorticityForce
 	{
 		PixelShader = compile ps_2_0 PSVorticityForce();
+	}
+}
+
+Technique ShapeObstacles
+{
+	pass ShapeObstacles
+	{
+		PixelShader = compile ps_2_0 PSShapeObstacles();
 	}
 }
 

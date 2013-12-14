@@ -78,7 +78,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public void Move (float shift)
         {
-            LocalPosition += new Vector2 (0, shift);
+            LocalPosition += new Vector2 (0, shift * 0.3f);
         }
 
     }

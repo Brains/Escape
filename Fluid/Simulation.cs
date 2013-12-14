@@ -28,8 +28,8 @@ namespace Fluid
         public RenderTarget2D Divergence, Pressure;
         public RenderTarget2D Temporary, TemporaryHelper;
         public RenderTarget2D FinalRender;
-        public Texture2D Boundaries, VelocityOffsetsTable, PressureOffsetsTable;
-        public RenderTarget2D VelocityOffsets, PressureOffsets;
+        public Texture2D VelocityOffsetsTable, PressureOffsetsTable;
+        public RenderTarget2D Boundaries, VelocityOffsets, PressureOffsets;
 
         // Spritebatch settings
         public SpriteSortMode SortMode = SpriteSortMode.Immediate;
@@ -102,11 +102,9 @@ namespace Fluid
 
             FinalRender = new RenderTarget2D (GraphicsDevice, viewport.Width, viewport.Height, false, ColorFormat, ZFormat);
 
-            Boundaries = Game.Content.Load <Texture2D> ("Fluid/Boundaries");
-            VelocityOffsets = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false,
-                ColorFormat, ZFormat);
-            PressureOffsets = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false,
-                ColorFormat, ZFormat);
+            Boundaries = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+            VelocityOffsets = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
+            PressureOffsets = new RenderTarget2D (GraphicsDevice, Parameters.Size, Parameters.Size, false, ColorFormat, ZFormat);
             CreateOffsetTables (GraphicsDevice);
             Shader.Parameters["VelocityOffsets"].SetValue (VelocityOffsets);
             Shader.Parameters["PressureOffsets"].SetValue (PressureOffsets);
@@ -210,12 +208,13 @@ namespace Fluid
         {
             var mouse = Mouse.GetState ();
             var position = new Vector2 (mouse.X, mouse.Y);
+            SplatColor = new Vector4 (0, -800, 0, 1);
 
             Shader.CurrentTechnique = Shader.Techniques["VelocityColorize"];
             GraphicsDevice.SetRenderTarget (InputVelocities);
             GraphicsDevice.Clear (Color.Black);
             spriteBatch.Begin (SortMode, BlendState.AlphaBlend, Sampling, null, null, Shader);
-            spriteBatch.Draw (brush, position, null, Color.White, 0.0f, new Vector2 (32.0f, 32.0f), 1, SpriteEffects.None, 0.0f);
+            spriteBatch.Draw (brush, position, null, Color.White, 0.0f, Vector2.Zero, new Vector2 (15, 3), SpriteEffects.None, 0.0f);
             spriteBatch.End();
         }
 
@@ -224,7 +223,6 @@ namespace Fluid
         {
             var mouse = Mouse.GetState ();
             var position = new Vector2 (mouse.X, mouse.Y);
-            SplatColor = new Vector4 (350, 0, 0, 1);
 
             GraphicsDevice.SetRenderTarget (InputDensities);
             GraphicsDevice.Clear (Color.Black);
@@ -392,6 +390,8 @@ namespace Fluid
         //------------------------------------------------------------------
         private void UpdateOffsets()
         {
+            ShapeObstacles();
+
             Shader.CurrentTechnique = Shader.Techniques["UpdateOffsets"];
 
             // Update Velocity Offsets
@@ -408,6 +408,23 @@ namespace Fluid
         }
 
         //------------------------------------------------------------------
+        private void ShapeObstacles()
+        {
+            RenderTarget2D scene = Traffic.Manager.Scene;
+            Vector2 scale = new Vector2 ((float) Parameters.Size / scene.Width, (float) Parameters.Size / scene.Height);
+
+            Shader.CurrentTechnique = Shader.Techniques["ShapeObstacles"];
+            GraphicsDevice.SetRenderTarget (Boundaries);
+            GraphicsDevice.Clear (Color.Black);
+
+            spriteBatch.Begin (SortMode, Blending, Sampling, null, null, Shader);
+            spriteBatch.Draw (scene, Vector2.Zero, null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            spriteBatch.End ();
+
+            GraphicsDevice.SetRenderTarget (null);
+        }
+
+        //------------------------------------------------------------------
         private void Render()
         {
             Viewport viewport = GraphicsDevice.Viewport;
@@ -417,7 +434,7 @@ namespace Fluid
             GraphicsDevice.SetRenderTarget (FinalRender);
             GraphicsDevice.Clear (Color.Black);
             spriteBatch.Begin (SortMode, Blending, Sampling, null, null, Shader);
-            spriteBatch.Draw (Density, new Rectangle (0, 0, viewport.Width, viewport.Height), Color.White);
+            spriteBatch.Draw (Velocity, new Rectangle (0, 0, viewport.Width, viewport.Height), Color.White);
             spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget (null);

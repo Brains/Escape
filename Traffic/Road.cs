@@ -88,9 +88,9 @@ namespace Traffic
         {
             base.Draw (spriteBatch);
 
-            spriteBatch.Draw (texture, Position, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-            spriteBatch.Draw (texture, Position - new Vector2 (0, texture.Height), null, 
-                Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+//            spriteBatch.Draw (texture, Position, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+//            spriteBatch.Draw (texture, Position - new Vector2 (0, texture.Height), null, 
+//                Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
         }
     }
 }
