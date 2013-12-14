@@ -67,9 +67,9 @@
     <Content Include="Content\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Content %28Adapter%29\Content %28Adapter%29.csproj">
-      <Project>{910f3eeb-ed49-43f5-8872-357daf4b0ef0}</Project>
-      <Name>Content %28Adapter%29</Name>
+    <ProjectReference Include="..\Content\Adapter\Adapter %28Content%29.csproj">
+      <Project>{9f3bab87-62bc-4b95-a1e5-3a2b53a071db}</Project>
+      <Name>Adapter %28Content%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{9e4ff996-10da-47c7-8008-1a4392f32ea5}</Project>
