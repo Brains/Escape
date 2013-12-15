@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.ContentPipeline.targets" />
   <PropertyGroup>
-    <ProjectGuid>{9F3BAB87-62BC-4B95-A1E5-3A2B53A071DB}</ProjectGuid>
+    <ProjectGuid>{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Windows</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -16,7 +16,7 @@
     <OutputPath>bin\$(Configuration)</OutputPath>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>HiDef</XnaProfile>
-    <XnaCrossPlatformGroupID>05549753-edc2-4f34-b657-d4a8d861949e</XnaCrossPlatformGroupID>
+    <XnaCrossPlatformGroupID>4dfd09b5-96fd-45e7-aa36-7d52d6753818</XnaCrossPlatformGroupID>
     <XnaOutputType>Library</XnaOutputType>
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -47,9 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Content\Escape.contentproj">
+      <Project>{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}</Project>
       <Name>Escape %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
-      <Project>{50BCAF0C-D218-43CA-AC9B-45FF74531173}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

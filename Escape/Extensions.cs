@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
-
-namespace Application
+namespace Escape
 {
     public static class WindowExtensions
     {
@@ -23,7 +19,7 @@ namespace Application
         //------------------------------------------------------------------
         public static OpenTK.GameWindow GetForm (this GameWindow gameWindow)
         {
-            Type type = typeof (OpenTKGameWindow);
+            Type type = typeof (OpenTK.GameWindow);
             System.Reflection.FieldInfo field = type.GetField ("window",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (field != null)

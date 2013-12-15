@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <ProjectGuid>{50BCAF0C-D218-43CA-AC9B-45FF74531173}</ProjectGuid>
+    <ProjectGuid>{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}</ProjectGuid>
     <ProjectTypeGuids>{96E2B04D-8817-42c6-938A-82C39BA4D311};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Windows</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ContentContentContent</RootNamespace>
+    <RootNamespace>AdapterContentContent</RootNamespace>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <MonoGamePlatform>Windows</MonoGamePlatform>
@@ -48,18 +48,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fonts\Segoe %28Markers%29.spritefont">
-      <Name>Segoe %28Markers%29</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
+    <Compile Include="Fluid\Boundaries.png">
+      <Name>Boundaries</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Fonts\Segoe %28UI%29.spritefont">
-      <Name>Segoe %28UI%29</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
+    <Compile Include="Fluid\Brush.png">
+      <Name>Brush</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Fluid\Fluid.fx">
+      <Name>Fluid</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>MGEffectProcessor</Processor>
+    </Compile>
     <Compile Include="Images\Road\Acceleration.png">
       <Name>Acceleration</Name>
       <Importer>TextureImporter</Importer>
@@ -122,22 +125,15 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Fluid\Boundaries.png">
-      <Name>Boundaries</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="Fonts\Segoe %28Markers%29.spritefont">
+      <Name>Segoe %28Markers%29</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-    <Compile Include="Fluid\brush.png">
-      <Name>brush</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Fluid\Fluid.fx">
-      <Name>Fluid</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>MGEffectProcessor</Processor>
+    <Compile Include="Fonts\Segoe %28UI%29.spritefont">
+      <Name>Segoe %28UI%29</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 #endregion
 
-namespace Application
+namespace Escape
 {
 #if WINDOWS || LINUX
     /// <summary>
@@ -18,7 +18,7 @@ namespace Application
         [STAThread]
         static void Main()
         {
-            using (var game = new Escape())
+            using (var game = new Game())
                 game.Run();
         }
     }

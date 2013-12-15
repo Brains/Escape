@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C625F0B2-3D44-48DB-8B15-1055FFC4F528}</ProjectGuid>
+    <ProjectGuid>{576C862E-988C-4BA6-A54A-BCFFF31646F6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Application</RootNamespace>
+    <RootNamespace>Escape</RootNamespace>
     <AssemblyName>Escape</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -35,8 +35,8 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Escape.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,7 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\Program Files %28x86%29\MonoGame\v3.0\Assemblies\WindowsGL\SDL.dll">
+    <Content Include="..\..\..\Program Files %28x86%29\MonoGame\v3.0\Assemblies\WindowsGL\SDL.dll">
       <Link>SDL.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -67,12 +67,12 @@
     <Folder Include="Content\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Content\Adapter\Adapter %28Content%29.csproj">
-      <Project>{9f3bab87-62bc-4b95-a1e5-3a2b53a071db}</Project>
-      <Name>Adapter %28Content%29</Name>
+    <ProjectReference Include="..\Content\Adapter\Adapter.csproj">
+      <Project>{0779ec8e-46be-4e24-8db1-8ddd25f06bcf}</Project>
+      <Name>Adapter</Name>
     </ProjectReference>
     <ProjectReference Include="..\Fluid\Fluid.csproj">
-      <Project>{9c4dd35b-08d6-4294-8025-494426d90e8a}</Project>
+      <Project>{2e5e3b33-8073-4a96-8fdb-21bcac71d756}</Project>
       <Name>Fluid</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tools\Tools.csproj">

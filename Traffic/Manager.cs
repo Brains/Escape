@@ -12,10 +12,10 @@ namespace Traffic
     {
         private SpriteBatch spriteBatch;
         private readonly Director director;
-        public static RenderTarget2D Scene;
 
         //------------------------------------------------------------------
         public Road Road { get; private set; }
+        public RenderTarget2D Scene { get; set; }
 
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
