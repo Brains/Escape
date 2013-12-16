@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -64,10 +66,11 @@ namespace Fluid
             graphicsDevice.SetRenderTarget (Output);
             graphicsDevice.Clear (Color.Black);
 
-            batch.Begin (simulation.SortMode, simulation.Blending, simulation.Sampling, null, null, simulation.Shader);
-            var rectangle = new Rectangle (0, 0, 64 / 256, 64 / 256);
-            batch.Draw (simulation.Pressure, Vector2.Zero, rectangle, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-            batch.End();
+            throw new NotImplementedException(); 
+//            batch.Begin (simulation.SortMode, simulation.Blending, simulation.Sampling, null, null, simulation.Shader);
+//            var rectangle = new Rectangle (0, 0, 64 / 256, 64 / 256);
+//            batch.Draw (simulation.Pressure, Vector2.Zero, rectangle, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+//            batch.End();
 
             graphicsDevice.SetRenderTarget (null);
             graphicsDevice.Clear (Color.Orange);

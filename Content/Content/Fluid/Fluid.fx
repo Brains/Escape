@@ -1,21 +1,3 @@
-/*
-    Fluid.fx - An efficient HLSL fluid shader
-    Copyright (C) 2013 Michael Stone (Neoaikon)
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 //----------------------------------------------------------------------------
 // Samplers, from DrawFluid
 sampler2D buffer : register(s0);
@@ -29,6 +11,7 @@ sampler2D Vorticity : register(s7);
 sampler2D OffsetTable : register(s8);
 sampler2D VelocityOffsets : register(s9);
 sampler2D PressureOffsets : register(s10);
+sampler2D Boundaries : register(s11);
 
 //----------------------------------------------------------------------------
 // Dimensions of the textures making up the fluid stages
@@ -36,7 +19,7 @@ float FluidSize = 256.0f;
 float dT = 1.0f; // Delta time
 float VelocityDiffusion = 1.0f;
 float DensityDiffusion = 1.0f;
-float4 VelocityColor;
+float4 Impulse;
 float HalfCellSize = 0.5f;
 float VorticityScale = 0.25f;
 
@@ -106,7 +89,7 @@ float2 SetBounds(float2 v)
 //----------------------------------------------------------------------------
 float4 PSVelocityColorize(float2 TexCoords : TEXCOORD0) : COLOR0
 {
-	return (tex2D(buffer, TexCoords) * -VelocityColor) * FluidSize;
+	return (tex2D(buffer, TexCoords) * -Impulse) * FluidSize;
 }
 
 //----------------------------------------------------------------------------
@@ -114,9 +97,10 @@ float4 PSVelocityColorize(float2 TexCoords : TEXCOORD0) : COLOR0
 DoubleOutput PSAddSources(float2 TexCoords : TEXCOORD0)
 {
 	DoubleOutput Output;	
-	float4 uv = tex2D(VelocitySources, TexCoords - float2(.5f/FluidSize, .5f/FluidSize));	
-	Output.Vel = max(-.8f, min(.8f, tex2D(Velocity, TexCoords - float2(.5f/FluidSize, .5f/FluidSize)) + uv));
-	Output.Den = tex2D(Density, TexCoords - float2(.5f/FluidSize, .5f/FluidSize)) + (tex2D(DensitySources, TexCoords - float2(.5f/FluidSize, .5f/FluidSize))/8.0f);	
+	float2 Pos = TexCoords - float2(.5f/FluidSize, .5f/FluidSize);
+	float4 uv = tex2D(VelocitySources, Pos);	
+	Output.Vel = max(-.8f, min(.8f, tex2D(Velocity, Pos) + uv));
+	Output.Den = tex2D(Density, Pos) + (tex2D(DensitySources, Pos)/8.0f);	
 	Output.Vel.w = 1.0f;
 	Output.Den.w = 1.0f;
 
@@ -314,6 +298,20 @@ float4 PSArbitraryVelocityBoundary (float2 TexCoords : TEXCOORD0) : COLOR0
 }
 
 //----------------------------------------------------------------------------
+float4 PSArbitraryDensityBoundary (float2 TexCoords : TEXCOORD0) : COLOR0
+{
+	float2 Pos = TexCoords - float2(.5f/FluidSize, .5f/FluidSize);	
+
+	// Invert Obstacles color
+	float4 obstacles = 1.0 - tex2D (Boundaries, Pos);
+
+	// Remove Density inside obstacles
+	float4 color = tex2D (buffer, Pos) * obstacles;
+
+	return color;
+}
+
+//----------------------------------------------------------------------------
 float4 PSArbitraryPressureBoundary (float2 TexCoords : TEXCOORD0) : COLOR0
 {
 	float2 Pos = TexCoords - float2(.5f/FluidSize, .5f/FluidSize);	
@@ -328,10 +326,16 @@ float4 PSArbitraryPressureBoundary (float2 TexCoords : TEXCOORD0) : COLOR0
 //----------------------------------------------------------------------------
 float4 PSFinal(float2 TexCoords : TEXCOORD0) : COLOR0
 {
+	float2 Pos = TexCoords - float2(.5f/FluidSize, .5f/FluidSize);	
+	
 	//return DisplayVector (buffer, TexCoords, 0.5, 0.5);
 	//return QuadLerp(buffer, TexCoords - float2(.5f/FluidSize, .5f/FluidSize));
-	float4 output = DisplayVector(buffer, TexCoords, 0.5, 0.5);
-	output.w = 0.5f;
+	float4 output = QuadLerp(buffer, Pos);
+	//float4 output = DisplayVector(buffer, Pos, 0.5, 0.5);
+	
+	//if (output.x > 0.1f)
+	//output.w += max (output.x, max (output.y, output.z));
+	output.w = 1;
 	return output;
 }
 
@@ -440,6 +444,14 @@ Technique ArbitraryVelocityBoundary
 	pass ArbitraryVelocityBoundary
 	{
 		PixelShader = compile ps_2_0 PSArbitraryVelocityBoundary();
+	}
+}
+
+Technique ArbitraryDensityBoundary
+{
+	pass ArbitraryDensityBoundary
+	{
+		PixelShader = compile ps_2_0 PSArbitraryDensityBoundary();
 	}
 }
 

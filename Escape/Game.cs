@@ -1,50 +1,52 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-
-namespace Application
+namespace Escape
 {
-    public class Escape : Game
+    public class Game : Microsoft.Xna.Framework.Game
     {
+        private Traffic.Manager traffic;
+        private Fluid.Simulation fluid;
+
         //------------------------------------------------------------------
-        public Escape ( )
+        public Game()
         {
             GraphicsDeviceManager graphics = new GraphicsDeviceManager (this);
-//            graphics.IsFullScreen = true;
+            //            graphics.IsFullScreen = true;
             graphics.PreferredBackBufferWidth = 480;
             graphics.PreferredBackBufferHeight = 800;
             graphics.SupportedOrientations = DisplayOrientation.Portrait;
-            
+
             // Disable fixed framerate
             graphics.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = false;
-            
+
             Content.RootDirectory = "Content";
 
             Window.SetPosition (new Point (600, 125));
         }
 
         //------------------------------------------------------------------
-        protected override void Initialize ( )
+        protected override void Initialize()
         {
             Components.Add (new Traffic.Actions.Base.Manager (this));
             Components.Add (new Tools.Timers.Manager (this));
-            Components.Add (new Traffic.Manager (this));
+            Components.Add (traffic = new Traffic.Manager (this));
             Components.Add (new Tools.Markers.Manager (this));
             Components.Add (new Fluid.Perfomance (this));
-            Components.Add (new Fluid.Simulation (this));
+            Components.Add (fluid = new Fluid.Simulation (this));
 
-            base.Initialize ();
+            base.Initialize();
         }
 
         //------------------------------------------------------------------
         protected override void Update (GameTime gameTime)
         {
-            if (GamePad.GetState (PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState ().IsKeyDown (Keys.Escape))
-                Exit ();
+            if (GamePad.GetState (PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown (Keys.Escape))
+                Exit();
 
             ControlTimeScale();
-            
+
             base.Update (gameTime);
         }
 
@@ -62,7 +64,9 @@ namespace Application
         //------------------------------------------------------------------
         protected override void Draw (GameTime gameTime)
         {
-            GraphicsDevice.Clear (Color.White);
+            GraphicsDevice.Clear (Color.HotPink);
+
+            fluid.Scene = traffic.Scene;
 
             base.Draw (gameTime);
         }
