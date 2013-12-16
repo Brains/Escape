@@ -1,6 +1,6 @@
 ﻿namespace Traffic
 {
-    public static class ControlCenter
+    public static class Settings
     {
         // Cars Generation
         public static bool NoCars;
@@ -19,7 +19,7 @@
         public static bool NoChangeLaneEvents;
 
         //------------------------------------------------------------------
-        static ControlCenter()
+        static Settings()
         {
 //            NoCars = true;
 //            NoPolice = true;
