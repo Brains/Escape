@@ -54,6 +54,7 @@
     <Compile Include="Markers\Primitives.cs" />
     <Compile Include="Markers\Rectangle.cs" />
     <Compile Include="Markers\Text.cs" />
+    <Compile Include="Perfomance.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timers\Loop.cs" />
