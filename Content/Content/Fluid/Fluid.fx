@@ -100,7 +100,7 @@ DoubleOutput PSAddSources(float2 TexCoords : TEXCOORD0)
 	float2 Pos = TexCoords - float2(.5f/FluidSize, .5f/FluidSize);
 	float4 uv = tex2D(VelocitySources, Pos);	
 	Output.Vel = max(-.8f, min(.8f, tex2D(Velocity, Pos) + uv));
-	Output.Den = tex2D(Density, Pos) + (tex2D(DensitySources, Pos)/8.0f);	
+	Output.Den = tex2D(Density, Pos) + (tex2D(DensitySources, Pos) / 16);	
 	Output.Vel.w = 1.0f;
 	Output.Den.w = 1.0f;
 
@@ -246,7 +246,7 @@ float4 PSShapeObstacles (float2 TexCoords : TEXCOORD0) : COLOR0
 	float opacity = color.w;
 	//color *= color.w * 10;
 
-	if (opacity > 0.0f)
+	if (opacity > 0.2f)
 	{
 		color = float4(1, 1, 1, 1);
 	}
@@ -333,9 +333,9 @@ float4 PSFinal(float2 TexCoords : TEXCOORD0) : COLOR0
 	float4 output = QuadLerp(buffer, Pos);
 	//float4 output = DisplayVector(buffer, Pos, 0.5, 0.5);
 	
-	//if (output.x > 0.1f)
-	//output.w += max (output.x, max (output.y, output.z));
-	output.w = 1;
+	output.w *= max (output.x, max (output.y, output.z));
+	//output.w = 1;
+
 	return output;
 }
 

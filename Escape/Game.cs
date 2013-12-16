@@ -1,13 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Escape
 {
     public class Game : Microsoft.Xna.Framework.Game
     {
-        private Traffic.Manager traffic;
-        private Fluid.Simulation fluid;
-
         //------------------------------------------------------------------
         public Game()
         {
@@ -23,6 +22,8 @@ namespace Escape
 
             Content.RootDirectory = "Content";
 
+            IsMouseVisible = true;
+
             Window.SetPosition (new Point (600, 125));
         }
 
@@ -31,10 +32,9 @@ namespace Escape
         {
             Components.Add (new Traffic.Actions.Base.Manager (this));
             Components.Add (new Tools.Timers.Manager (this));
-            Components.Add (traffic = new Traffic.Manager (this));
+            Components.Add (new Traffic.Manager (this));
             Components.Add (new Tools.Markers.Manager (this));
-            Components.Add (new Fluid.Perfomance (this));
-            Components.Add (fluid = new Fluid.Simulation (this));
+            Components.Add (new Tools.Perfomance (this));
 
             base.Initialize();
         }
@@ -65,8 +65,6 @@ namespace Escape
         protected override void Draw (GameTime gameTime)
         {
             GraphicsDevice.Clear (Color.HotPink);
-
-            fluid.Scene = traffic.Scene;
 
             base.Draw (gameTime);
         }

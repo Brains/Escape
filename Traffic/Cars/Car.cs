@@ -13,13 +13,12 @@ namespace Traffic.Cars
         //-----------------------------------------------------------------
         private Lane lane;
         private Driver driver;
-        private Vector2 origin;
+        public Vector2 origin;
         private Lights brakes;
         private Blinker blinker;
         private Lights boost;
 
         //------------------------------------------------------------------
-        protected Texture2D Texture;
         protected Color InitialColor;
         protected internal Bounds Bounds;
 
@@ -33,6 +32,7 @@ namespace Traffic.Cars
         public float Deceleration { get; set; }
         public float Angle { get; set; }
         public SpriteEffects SpriteEffects { get; set; }
+        public Texture2D Texture { get; set; }
 
         //------------------------------------------------------------------
         public Lane Lane
