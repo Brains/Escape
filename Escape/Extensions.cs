@@ -19,7 +19,7 @@ namespace Escape
         //------------------------------------------------------------------
         public static OpenTK.GameWindow GetForm (this GameWindow gameWindow)
         {
-            Type type = typeof (OpenTK.GameWindow);
+            Type type = typeof (OpenTKGameWindow);
             System.Reflection.FieldInfo field = type.GetField ("window",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (field != null)
