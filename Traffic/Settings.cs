@@ -18,17 +18,23 @@
         public static bool NoChangeLaneAnimation;
         public static bool NoChangeLaneEvents;
 
+        // Debug
+        public static bool NoMarkersClear;
+
+
         //------------------------------------------------------------------
         static Settings()
         {
 //            NoCars = true;
-//            NoPolice = true;
+            NoPolice = true;
             NoBlocks = true;
 
 //            NoChangeLaneAnimation = true;
             NoChangeLaneEvents = true;
 
             NoPlayerAdjustSpeed = true;
+
+            NoMarkersClear = true;
         }
     }
 }

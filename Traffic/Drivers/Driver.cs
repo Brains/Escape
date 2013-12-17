@@ -210,7 +210,7 @@ namespace Traffic.Drivers
             action.Add (new Generic (() => lane.Add (Car)));
 
             #region Debug
-            if (ControlCenter.NoChangeLaneAnimation)
+            if (Settings.NoChangeLaneAnimation)
             {
                 action.Add (new Generic (DockToLane));
                 return;

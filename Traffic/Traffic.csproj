@@ -75,7 +75,7 @@
     <Compile Include="Cars\Weights\Light.cs" />
     <Compile Include="Cars\Weights\Medium.cs" />
     <Compile Include="Cars\Weights\Weight.cs" />
-    <Compile Include="ControlCenter.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Director.cs" />
     <Compile Include="Drivers\Common.cs" />
     <Compile Include="Drivers\Driver.cs" />

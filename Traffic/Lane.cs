@@ -17,7 +17,7 @@ namespace Traffic
 
         //------------------------------------------------------------------
         public const int MinimumCars = 3;
-        public const int MaximumCars = ControlCenter.MaximumCarsOnLane;
+        public const int MaximumCars = Settings.MaximumCarsOnLane;
 
         //------------------------------------------------------------------
         public readonly int ID;
@@ -125,7 +125,7 @@ namespace Traffic
         //------------------------------------------------------------------
         public Police CreatePolice (Game game)
         {
-            var police = new Police (this, carsCounter, ControlCenter.PoliceStartPosition, GetWeight (), "Police");
+            var police = new Police (this, carsCounter, Settings.PoliceStartPosition, GetWeight (), "Police");
             police.Setup ();
 
             Cars.Add (police);
@@ -195,7 +195,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AppendCars ()
         {
-            if (ControlCenter.NoCars) return;
+            if (Settings.NoCars) return;
 
             if (Cars.Count < CarsQuantity)
                 CreateCar ();
