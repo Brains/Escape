@@ -16,14 +16,15 @@ namespace Traffic
 
         //------------------------------------------------------------------
         public Road Road { get; private set; }
-        public Simulation Fluid { get; private set; }
+        public Computation Fluid { get; private set; }
 
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
         {
             Road = new Road (Game);
             director = new Director (this);
-            Fluid = new Simulation (Game);
+            Fluid = new Computation (Game);
+            Road.Fluid = Fluid;
         }
 
         //------------------------------------------------------------------
@@ -40,22 +41,25 @@ namespace Traffic
         {
             float elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-            elapsed *= ControlCenter.TimeScale;
+            elapsed *= Settings.TimeScale;
 
             Road.Update (elapsed);
             director.Update (elapsed);
+
+            Tools.Markers.Manager.Clear = !Settings.NoMarkersClear;
         }
 
         //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
             Road.GenerateFluidObstacles (spriteBatch);
-            Fluid.Obstacles = Road.Obstacles;
-            Fluid.Compute();
+            Fluid.SetScene (Road.Obstacles);
+            Fluid.Update();
             
-            Road.DrawRoad (spriteBatch);
-            Fluid.Draw ();
+//            Road.DrawRoad (spriteBatch);
+            Fluid.Render();
             Road.Draw (spriteBatch);
+
         }
     }
 }

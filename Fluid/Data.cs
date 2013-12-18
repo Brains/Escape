@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.NetworkInformation;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
+using Tools.Markers;
+using Point = Microsoft.Xna.Framework.Point;
+
+namespace Fluid
+{
+    public class Data : Unit
+    {
+        private new const int Size = 32;
+
+        private readonly RenderTarget2D input;
+        private readonly HalfVector4[] data;
+
+        //------------------------------------------------------------------
+        public RenderTarget2D Input { get; set; }
+
+        //------------------------------------------------------------------
+        public Data (Game game) : base(game, "Data")
+        {
+            input = new RenderTarget2D (Device, Size, Size, false, Surface, ZFormat);
+            data = new HalfVector4[Size * Size];
+        }
+
+        //-----------------------------------------------------------------
+        public override void Update()
+        {
+            CopyInput (Input, input);
+            input.GetData (data);
+
+            Draw();
+            Debug();
+        }
+
+        //------------------------------------------------------------------
+        private void CopyInput (RenderTarget2D source, RenderTarget2D destination)
+        {
+            Shader.CurrentTechnique = Shader.Techniques["Interpolation"];
+            Device.SetRenderTarget (destination);
+            Device.Clear (Color.Black);
+
+            Batch.Begin (Sorting, Blending, SamplerState.AnisotropicClamp, null, null, Shader);
+
+            var scale = new Vector2 ((float) Size / Unit.Size, (float) Size / Unit.Size);
+            Batch.Draw (source, Vector2.Zero, null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+
+            Batch.End ();
+
+            Device.SetRenderTarget (null);
+        }
+
+        //------------------------------------------------------------------
+        public Vector3 GetData (Vector2 screen)
+        {
+            Point position = GetTextureCoordinates (screen);
+
+
+
+            // ToDo: Interpolation
+            Vector4 value = data[GetIndex (position.X, position.Y)].ToVector4 ();
+
+            int offset = 3;
+            Vector4 value1 = data[GetIndex (position.X + offset, position.Y)].ToVector4 ();
+            Vector4 value2 = data[GetIndex (position.X - offset, position.Y)].ToVector4 ();
+            Vector4 value3 = data[GetIndex (position.X, position.Y + offset)].ToVector4 ();
+            Vector4 value4 = data[GetIndex (position.X, position.Y - offset)].ToVector4 ();
+                                                                            
+            var lerp1 = Vector4.Lerp (value1, value2, 0.5f);
+            var lerp2 = Vector4.Lerp (value3, value4, 0.5f);
+            var lerp3 = Vector4.Lerp (lerp1, lerp2, 0.5f);
+
+            float torque1 = value1.Y;
+            float torque2 = value2.Y;
+            float torque3 = value3.X;
+            float torque4 = value4.X;
+
+            float torque = torque1 + torque2 + torque3 + torque4;
+
+//            return new Vector2 (value.X, value.Y);
+            return new Vector3 (lerp3.X, lerp3.Y, torque);
+        }
+
+        //------------------------------------------------------------------
+        private int GetIndex (int x, int y)
+        {
+            return y * Size + x;
+        }
+
+        //------------------------------------------------------------------
+        private Point GetTextureCoordinates (Vector2 screen)
+        {
+            Vector2 screenSize = new Vector2 (Device.Viewport.Width, Device.Viewport.Height);
+
+            var textureCoordinatesFactor = new Vector2 (Size / screenSize.X, Size / screenSize.Y);
+            Vector2 position = screen * textureCoordinatesFactor;
+
+            return new Point ((int) position.X, (int) position.Y);
+        }
+
+        //------------------------------------------------------------------
+        private void Draw ()
+        {
+            Device.SetRenderTarget (null);
+            //            Device.Clear (Color.Orange);
+            Batch.Begin (SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, null, null);
+            
+            Vector2 scale = new Vector2 ((float) 480 / Size, (float) 800 / Size);
+            Batch.Draw (input, new Vector2 (0, 0), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            
+            scale = new Vector2 ((float) 480 / 256, (float) 800 / 256);
+//            Batch.Draw (Input, new Vector2 (0, 0), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            
+            Batch.End();
+        }
+
+        //------------------------------------------------------------------
+        public void Debug ()
+        {
+            List <HalfVector4> list = data.ToList();
+            float min = list.Max (vector4 => vector4.ToVector4().X);
+
+            Batch.Begin();
+//            Batch.DrawString (font, min.ToString ("F3"), new Vector2 (50), Color.Maroon);
+
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    var value = data[i * Size + j].ToVector4();
+
+                    if (value.Length() > 1.0f)
+                    {
+                        Vector2 screen = new Vector2(j * 480.0f / Size, i * 800.0f / Size);
+                        Vector2 velocity = new Vector2 (value.X, value.Y);
+
+                        new Line (screen, screen + velocity * 10, Color.White);
+                    }
+                }
+            }
+
+            Batch.End();
+        }
+    }
+}
