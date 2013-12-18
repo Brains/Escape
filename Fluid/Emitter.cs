@@ -104,7 +104,7 @@ namespace Fluid
         //------------------------------------------------------------------
         private void AddImpulses()
         {
-            if (Debug.LeftMouse ()) AddImpulse (new Vector2 (0, -0.015f), Debug.Mouse());
+            if (Debug.LeftMouse ()) AddImpulse (Debug.Direction(), Debug.Mouse());
 
             foreach (var pair in Impulses)
             {
@@ -115,7 +115,7 @@ namespace Fluid
                 impulse.SetValue (new Vector4 (force.X, force.Y, 0, 0));
 
                 Batch.Begin (Sorting, blend, Sampling, null, null, Shader);
-                Batch.Draw (brush, position, null, Color.White, 0.0f, new Vector2 (32), 1, SpriteEffects.None, 0.0f);
+                Batch.Draw (brush, position, null, Color.White, 0.0f, new Vector2 (32), 0.3f, SpriteEffects.None, 0.0f);
                 Batch.End();
             }
 

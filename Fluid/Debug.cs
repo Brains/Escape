@@ -57,6 +57,8 @@ namespace Fluid
 //                
 //            if (Keyboard.GetState ().IsKeyDown (Keys.D))
 //                Variable += step;
+
+            previous = Mouse();
         }
 
     }

@@ -71,10 +71,9 @@ namespace Fluid
             ComputeDivergence ();
             ComputePressure ();
             ComputeSubstract ();
-            ComputeVorticity ();
+//            ComputeVorticity ();
 
-            Data.Input = Velocity;
-            Data.Update();
+            Data.Process(Velocity);
 
             Debug.Update();
         }
