@@ -17,8 +17,8 @@ namespace Escape
             graphics.SupportedOrientations = DisplayOrientation.Portrait;
 
             // Disable fixed framerate
-            graphics.SynchronizeWithVerticalRetrace = false;
-            IsFixedTimeStep = false;
+//            graphics.SynchronizeWithVerticalRetrace = false;
+//            IsFixedTimeStep = false;
 
             Content.RootDirectory = "Content";
 

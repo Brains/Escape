@@ -58,8 +58,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Fluid\Computation.fx">
-      <Name>Computation</Name>
+    <Compile Include="Fluid\Solver.fx">
+      <Name>Solver</Name>
       <Importer>EffectImporter</Importer>
       <Processor>MGEffectProcessor</Processor>
     </Compile>

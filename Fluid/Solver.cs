@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Fluid
 {
-    public class Computation : Unit
+    public class Solver : Unit
     {
         public const int Iterations = 20;
         public const float DT = 1.0f;
@@ -34,8 +34,8 @@ namespace Fluid
         public Data Data { get; private set; }
 
         //------------------------------------------------------------------
-        public Computation (Game game)
-            : base (game, "Computation")
+        public Solver (Game game)
+            : base (game, "Solver")
         {
             Shader.Parameters["VelocityDiffusion"].SetValue (VelocityDiffusion);
             Shader.Parameters["DensityDiffusion"].SetValue (DensityDiffusion);

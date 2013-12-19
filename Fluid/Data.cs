@@ -78,18 +78,20 @@ namespace Fluid
             float torque1 = value1.Y * 1; // 1 is the moment arm
             float torque2 = value2.Y * 1;
             float ratio = (float) 800 / 480;
-            float torque3 = value3.X * ratio; // Fluid is a qued but screen isn't. So moment arm on it is higher (800 vs 480)
+            float torque3 = value3.X * ratio; // Fluid is square but the screen isn't. So moment arm on it is higher
             float torque4 = value4.X * ratio; 
 
             float torque = torque1 + torque2 + torque3 + torque4;
 
-//            return new Vector2 (value.X, value.Y);
             return new Vector3 (interpolated.X, interpolated.Y, torque);
         }
 
         //------------------------------------------------------------------
         private int GetIndex (int x, int y)
         {
+            x = MathHelper.Clamp (x, 0, Size - 1);
+            y = MathHelper.Clamp (y, 0, Size - 1);
+
             return y * Size + x;
         }
 

@@ -16,14 +16,14 @@ namespace Traffic
 
         //------------------------------------------------------------------
         public Road Road { get; private set; }
-        public Computation Fluid { get; private set; }
+        public Solver Fluid { get; private set; }
 
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
         {
             Road = new Road (Game);
             director = new Director (this);
-            Fluid = new Computation (Game);
+            Fluid = new Solver (Game);
             Road.Fluid = Fluid;
         }
 
