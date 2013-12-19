@@ -60,11 +60,11 @@ float4 PSGradient (float2 TexCoords : TEXCOORD0) : COLOR0
 	float value = tex2D (Current, Pos).x;
 	
 	// Scaling
-	value = value * 1.0 + 0.0;
+	value = value * 4.0 + 0.0;
 	
 	float4 color = tex2D (Map, float2 (value, 0));
 	color *= tex2D (Stencil, Pos);
-	color.w = GetOpacity (color, 2);
+	color.w = GetOpacity (color, 1);
 
 	return color;
 }

@@ -54,6 +54,8 @@ namespace Traffic
         {
             Road.GenerateFluidObstacles (spriteBatch);
             Fluid.SetScene (Road.Obstacles);
+            Fluid.SetSpeed (Road.Player.Velocity); // * elapsed
+
             Fluid.Update();
             
 //            Road.DrawRoad (spriteBatch);

@@ -13,6 +13,7 @@ float Size;
 float2 Shift;
 
 float DT;
+float PermanentVelocity;
 float VelocityDiffusion;
 float DensityDiffusion;
 float HalfCellSize;
@@ -49,9 +50,30 @@ float4 QuadLerp(sampler2D samp, float2 s)
   return lerp(l1, l2, fy);
 }
 
+//----------------------------------------------------------------------------
+float4 LinearVerticalInterpolation (sampler2D field, float2 position)
+{
+	float y1 = floor (position.y * Size);
+	float y2 = y1 + 1.0f;
 
+	float4 tex1 = tex2D (field, float2 (position.x, y1 / Size)); 
+	float4 tex2 = tex2D (field, float2 (position.x, y2 / Size));
 
+	float rate = ((position.y * Size) - y1);
 
+	return lerp (tex1, tex2, rate);
+}
+
+//----------------------------------------------------------------------------
+// Adds the sources to Density and Velocity
+float4 PSPermanentAdvection (float2 TexCoords : TEXCOORD0) : COLOR0
+{
+	float2 Pos = TexCoords - Shift;
+
+    Pos -= float2 (0, PermanentVelocity) / Size;
+
+	return LinearVerticalInterpolation (Current, Pos);
+}
 
 //----------------------------------------------------------------------------
 // Advects Velocity and Density
@@ -169,7 +191,14 @@ float4 PSVorticityForce (float2 TexCoords : TEXCOORD0) : COLOR0
 
 
 
-
+//----------------------------------------------------------------------------
+technique PermanentAdvection
+{
+	pass PermanentAdvection
+	{
+		PixelShader = compile ps_2_0 PSPermanentAdvection();
+	}
+}
 
 //----------------------------------------------------------------------------
 technique DoAdvection

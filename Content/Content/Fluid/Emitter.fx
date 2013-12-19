@@ -33,12 +33,14 @@ DoubleOutput PSAddSources(float2 TexCoords : TEXCOORD0)
 	DoubleOutput Output;	
 	float2 Pos = TexCoords - Shift;
 	
-	float4 source = tex2D (NewVelocities, Pos);// + float4 (0, 0.005,0,0);	
-	
+	// Velocity
 	float limit = 1.5f;
+	float4 source = tex2D (NewVelocities, Pos);
 	Output.Vel = max (-limit, min (limit, tex2D (Velocity, Pos) + source));
+	Output.Vel += float4 (0,  0.005f, 0, 0);
 	//Output.Vel = tex2D(Velocity, Pos) + source;
-
+	
+	// Density
 	Output.Den = tex2D (Density, Pos) + (tex2D (NewDensities, Pos) / Fraction);
 
 	Output.Vel.w = 1.0f;
@@ -52,8 +54,6 @@ float4 PSVelocityColorize(float2 TexCoords : TEXCOORD0) : COLOR0
 {
 	return (tex2D (Current, TexCoords) * -Impulse) * Size;
 }
-
-
 
 
 
@@ -83,3 +83,4 @@ technique DoAddSources
 	//	PixelShader = compile ps_2_0 PSSetBoundsDouble();
 	//}
 }
+

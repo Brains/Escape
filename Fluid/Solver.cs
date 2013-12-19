@@ -29,6 +29,8 @@ namespace Fluid
         private readonly Obstacles obstacles;
         private readonly Render render;
 
+        private readonly EffectParameter permanentVelocity;
+
         //------------------------------------------------------------------
         public Data Data { get; private set; }
         public Emitter Emitter { get; private set; }
@@ -55,6 +57,8 @@ namespace Fluid
             obstacles = new Obstacles(Game);
             render = new Render(Game);
             Data = new Data(Game);
+
+            permanentVelocity = Shader.Parameters["PermanentVelocity"];
         }
 
         //------------------------------------------------------------------
@@ -66,8 +70,14 @@ namespace Fluid
             obstacles.ComputeVelocity (Velocity);
             obstacles.ComputeDensity (Density);
 
+            ComputePermanentAdvection ();
+            obstacles.ComputeVelocity (Velocity);
+            obstacles.ComputeDensity (Density);
+
             ComputeAdvect ();
             obstacles.ComputeVelocity (Velocity);
+            obstacles.ComputeDensity (Density);
+
             ComputeDivergence ();
             ComputePressure ();
             ComputeSubstract ();
@@ -79,6 +89,28 @@ namespace Fluid
         }
 
         #region Computations
+
+        //------------------------------------------------------------------
+        // Using to simulate Camera moving
+        // Actually this Advection just parallely move all particles in a field to the bottom
+        private void ComputePermanentAdvection()
+        {
+            Shader.CurrentTechnique = Shader.Techniques["PermanentAdvection"];
+
+            // Velocity
+            Device.SetRenderTarget (Temporary);
+            Device.Clear (Color.Black);
+            Compute (Velocity);
+            Copy (Temporary, Velocity);
+
+            // Density
+            Device.SetRenderTarget (Temporary);
+            Device.Clear (Color.Black);
+            Compute (Density);
+            Copy (Temporary, Density);
+        }
+
+
 
         //------------------------------------------------------------------
         private void ComputeAdvect ()
@@ -175,8 +207,8 @@ namespace Fluid
         //-----------------------------------------------------------------
         public void Render ()
         {
-            render.DrawInterpolated (Density);
-//            render.DrawField (Velocity);
+//            render.DrawInterpolated (Density);
+            render.DrawField (Velocity);
 //            render.DrawGradient (Pressure, Density);
             render.DrawOnScreen ();
         }
@@ -185,6 +217,12 @@ namespace Fluid
         public void SetScene (RenderTarget2D scene)
         {
             obstacles.Scene = scene;
+        }
+
+        //------------------------------------------------------------------
+        public void SetSpeed (float velocity)
+        {
+            permanentVelocity.SetValue (velocity * 0.005f);
         }
     }
 }

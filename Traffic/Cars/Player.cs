@@ -12,7 +12,7 @@ namespace Traffic.Cars
             : base (lane, id, position, weight, textureName)
         {
             Lives = 99;
-            Velocity = 300;
+            Velocity = 0;
             Acceleration = 1; //0.3f;
             Deceleration = 2; //1.0f;
 

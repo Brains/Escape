@@ -22,7 +22,7 @@ namespace Fluid
         private readonly EffectParameter newDensities;
         private readonly EffectParameter impulse;
         private readonly EffectParameter fraction;
-        
+
         private readonly BlendState blend = BlendState.AlphaBlend;
 
         //------------------------------------------------------------------
@@ -85,7 +85,7 @@ namespace Fluid
             Device.SetRenderTarget (NewVelocities);
             Device.Clear (Color.Black);
 
-            AddGeneralFlow();
+//            AddGeneralFlow();
             AddImpulses();
         }
 
@@ -97,7 +97,7 @@ namespace Fluid
 
             Batch.Begin (Sorting, blend, Sampling, null, null, Shader);
             Batch.Draw (brush, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
-            Batch.Draw (brush, new Vector2 (0, 400), null, Color.White, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
+//            Batch.Draw (brush, new Vector2 (0, 400), null, Color.White, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
             Batch.End();
         }
 
@@ -152,14 +152,16 @@ namespace Fluid
         //------------------------------------------------------------------
         private void AddParticles ()
         {
-            fraction.SetValue (1.0f);
+//            fraction.SetValue (1.0f);
+            fraction.SetValue (4.0f);
 
             if (Debug.LeftMouse ()) AddParticle (brush, Debug.Mouse ());
 
             foreach (var particle in Particles)
             {
                 Batch.Begin (Sorting, blend, Sampling, null, null);
-                Batch.Draw (particle.Key, particle.Value, null, Color.Orange, 0.0f, Vector2.Zero, 1, SpriteEffects.None, 0.0f);
+                //Color.Orange
+                Batch.Draw (particle.Key, particle.Value, null, Color.White, 0.0f, Vector2.Zero, 1, SpriteEffects.None, 0.0f);
                 Batch.End();
             }
 

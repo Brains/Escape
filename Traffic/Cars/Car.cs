@@ -265,7 +265,7 @@ namespace Traffic.Cars
 
             System.Action addImpulse = () => emitter.AddImpulse ((impulse), Position + impulse * scale);
             addImpulse();
-            killer.driver.AddInSequnce (new Repeated (addImpulse, 15));
+            killer.driver.AddInSequnce (new Repeated (addImpulse, 10));
 
             // Particle
             System.Action addParticle = () => emitter.AddParticle (Texture, Position - origin + impulse * scale);
