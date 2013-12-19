@@ -40,7 +40,7 @@ namespace Tools
             totalFrames++;
 
             spriteBatch.Begin();
-            spriteBatch.DrawString (font, string.Format ("{0}", fps), new Vector2 (420.0f, 20.0f), Color.Gray);
+            spriteBatch.DrawString (font, string.Format ("{0}", fps), new Vector2 (420.0f, 20.0f), Color.SlateBlue);
             spriteBatch.End();
         }
     }

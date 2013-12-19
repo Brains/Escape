@@ -25,13 +25,15 @@ namespace Traffic
         public Dictionary <string, Texture2D> Images { get; set; }
 
         //------------------------------------------------------------------
+        public Solver Fluid { get; set; }
+
+        //------------------------------------------------------------------
         public Road (Game game) : base (null)
         {
             Game = game;
             CreateLanes ();
             Add (new Indicators (this));
 
-            // Fluid
             Obstacles = new RenderTarget2D (Game.GraphicsDevice, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height);
         }
 
@@ -41,7 +43,7 @@ namespace Traffic
             Images = Game.Content.LoadContentFolder <Texture2D> ("Images/Road");
             texture = Images["Road"];
 
-            Player = ((Lane) Components.First()).CreatePlayer (Game);
+            Player = ((Lane) Components[6]).CreatePlayer (Game);
 
             base.Setup();
         }
@@ -78,6 +80,7 @@ namespace Traffic
 
             // Camera movement simulation
             MoveCamera (Player.Velocity * elapsed * 2);
+
         }
 
         //------------------------------------------------------------------
@@ -121,9 +124,11 @@ namespace Traffic
             Game.GraphicsDevice.Clear (Color.Transparent);
 
             spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+
             foreach (var lane in lanes)
                 foreach (var car in lane.Cars)
-                    spriteBatch.Draw (car.Texture, car.Position, null, Color.White, 0, car.origin, 1.0f, SpriteEffects.None, 1.0f);
+                    spriteBatch.Draw (car.Texture, car.Position, null, Color.White, car.Angle, car.origin, 1.0f, SpriteEffects.None, 1.0f);
+
             spriteBatch.End ();
 
             Game.GraphicsDevice.SetRenderTarget (null);

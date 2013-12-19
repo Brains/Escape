@@ -42,13 +42,11 @@ float4 DisplayVector (sampler2D input, float2 position, float scale, float bias)
 } 
 
 //----------------------------------------------------------------------------
-float GetOpacity (float4 color)
+float GetOpacity (float4 color, float factor)
 {
 	float opacity;
 	
-	opacity = color.w * max (color.x, max (color.y, color.z)) * 2;
-	//opacity = 0.5;
-	//opacity = 1;
+	opacity = color.w * max (color.x, max (color.y, color.z)) * factor;
 
 	return opacity;
 }
@@ -66,7 +64,7 @@ float4 PSGradient (float2 TexCoords : TEXCOORD0) : COLOR0
 	
 	float4 color = tex2D (Map, float2 (value, 0));
 	color *= tex2D (Stencil, Pos);
-	color.w = GetOpacity (color);
+	color.w = GetOpacity (color, 2);
 
 	return color;
 }
@@ -77,7 +75,7 @@ float4 PSInterpolation (float2 TexCoords : TEXCOORD0) : COLOR0
 	float2 Pos = TexCoords - Shift;	
 	
 	float4 color = QuadLerp (Current, Pos);
-	color.w = GetOpacity (color);
+	color.w = GetOpacity (color, 1);
 
 	return color;
 }
@@ -91,7 +89,8 @@ float4 PSDisplay(float2 TexCoords : TEXCOORD0) : COLOR0
 	color = DisplayVector (Current, TexCoords, 0.5, 0.5);
 	//color = DisplayScalar (Current, TexCoords, 5, 0.5);
 
-	color.w = GetOpacity (color);
+	color.w = GetOpacity (color, 2);
+	color.w = GetOpacity (color, 20);
 
 	return color;
 }

@@ -26,12 +26,12 @@ namespace Fluid
         private readonly RenderTarget2D helper;
         #endregion
 
-        private readonly Emitter emitter;
         private readonly Obstacles obstacles;
         private readonly Render render;
 
         //------------------------------------------------------------------
         public Data Data { get; private set; }
+        public Emitter Emitter { get; private set; }
 
         //------------------------------------------------------------------
         public Solver (Game game)
@@ -51,7 +51,7 @@ namespace Fluid
 
             helper = CreateDefaultRenderTarget();
 
-            emitter = new Emitter(Game);
+            Emitter = new Emitter(Game);
             obstacles = new Obstacles(Game);
             render = new Render(Game);
             Data = new Data(Game);
@@ -62,7 +62,7 @@ namespace Fluid
         public override void Update()
         {
             obstacles.Update();
-            emitter.AddSplats (Velocity, Density);
+            Emitter.AddSplats (Velocity, Density);
             obstacles.ComputeVelocity (Velocity);
             obstacles.ComputeDensity (Density);
 
@@ -71,7 +71,7 @@ namespace Fluid
             ComputeDivergence ();
             ComputePressure ();
             ComputeSubstract ();
-//            ComputeVorticity ();
+            ComputeVorticity ();
 
             Data.Process(Velocity);
 
@@ -175,8 +175,8 @@ namespace Fluid
         //-----------------------------------------------------------------
         public void Render ()
         {
-//            render.DrawInterpolated (Density);
-            render.DrawField (Velocity);
+            render.DrawInterpolated (Density);
+//            render.DrawField (Velocity);
 //            render.DrawGradient (Pressure, Density);
             render.DrawOnScreen ();
         }

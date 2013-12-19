@@ -109,7 +109,7 @@ namespace Fluid
             foreach (var pair in Impulses)
             {
                 // Must Invert, don't know why
-                var force = pair.Key * -0.1f;
+                var force = pair.Key * -1;
                 var position = pair.Value;
 
                 impulse.SetValue (new Vector4 (force.X, force.Y, 0, 0));
@@ -152,14 +152,14 @@ namespace Fluid
         //------------------------------------------------------------------
         private void AddParticles ()
         {
-            fraction.SetValue (4.0f);
+            fraction.SetValue (1.0f);
 
             if (Debug.LeftMouse ()) AddParticle (brush, Debug.Mouse ());
 
             foreach (var particle in Particles)
             {
                 Batch.Begin (Sorting, blend, Sampling, null, null);
-                Batch.Draw (particle.Key, particle.Value, null, Color, 0.0f, Vector2.Zero, 1, SpriteEffects.None, 0.0f);
+                Batch.Draw (particle.Key, particle.Value, null, Color.Orange, 0.0f, Vector2.Zero, 1, SpriteEffects.None, 0.0f);
                 Batch.End();
             }
 

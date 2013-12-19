@@ -1,8 +1,10 @@
 using System;
 using Animation;
+using Fluid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
+using Traffic.Actions.Base;
 using Traffic.Cars.Weights;
 using Traffic.Drivers;
 
@@ -128,6 +130,8 @@ namespace Traffic.Cars
             // Simulate Camera moving
             Move (Lane.Road.Player.Velocity * elapsed);
 
+//            Lane.Road.Fluid.AddImpulse (new Vector2(0, 50), Position);
+
             DetectCollisions ();
 
             Debug ();
@@ -223,20 +227,20 @@ namespace Traffic.Cars
             // Destroy all cars
             if (Lives == closestCar.Lives)
             {
-                Explose ();
-                closestCar.Explose ();
+                Explose (closestCar);
+                closestCar.Explose (this);
             }
             // Destroy closest Car
             else if (Lives > closestCar.Lives)
             {
                 Lives -= closestCar.Lives;
-                closestCar.Explose ();
+                closestCar.Explose (this);
             }
             // Destroy myself
             else if (Lives < closestCar.Lives)
             {
                 closestCar.Lives -= Lives;
-                Explose ();
+                Explose (closestCar);
             }
         }
 
@@ -251,14 +255,24 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        protected void Explose ()
+        protected void Explose (Car killer)
         {
-            Destroy ();
+            Emitter emitter = Lane.Road.Fluid.Emitter;
+            
+            // Impulse
+            Vector2 impulse = Position - killer.Position;
+            Vector2 scale = new Vector2(1.5f, 0);
 
-            var explosion = new AnimatedTexture (this, Vector2.Zero, 1.5f, 0.0f);
-            explosion.Load (Lane.Road.Images["Explosion"], 24, 12);
-            explosion.Finish += Delete;
-            Add (explosion);
+            System.Action addImpulse = () => emitter.AddImpulse ((impulse), Position + impulse * scale);
+            addImpulse();
+            killer.driver.AddInSequnce (new Repeated (addImpulse, 15));
+
+            // Particle
+            System.Action addParticle = () => emitter.AddParticle (Texture, Position - origin + impulse * scale);
+            addParticle();
+            killer.driver.AddInSequnce (new Repeated (addParticle, 1));
+
+            Destroy ();
         }
 
         //------------------------------------------------------------------
@@ -270,6 +284,8 @@ namespace Traffic.Cars
             Bounds = null;
             
             Components.Clear ();
+
+            Delete ();
         }
 
         //------------------------------------------------------------------
