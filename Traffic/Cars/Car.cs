@@ -270,7 +270,6 @@ namespace Traffic.Cars
             // Particle
             System.Action addParticle = () => emitter.AddParticle (Texture, Position - origin + impulse * scale);
             addParticle();
-            killer.driver.AddInSequnce (new Repeated (addParticle, 1));
 
             Destroy ();
         }

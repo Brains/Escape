@@ -85,7 +85,7 @@ namespace Fluid
             Device.SetRenderTarget (NewVelocities);
             Device.Clear (Color.Black);
 
-//            AddGeneralFlow();
+            AddGeneralFlow();
             AddImpulses();
         }
 
