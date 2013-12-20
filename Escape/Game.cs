@@ -55,9 +55,9 @@ namespace Escape
         {
             float scale = 0.05f;
 
-            if (Traffic.Actions.Input.IsKeyPressed (Keys.D1))
+            if (Keyboard.GetState ().IsKeyDown(Keys.D1))
                 Traffic.Settings.TimeScale -= scale;
-            if (Traffic.Actions.Input.IsKeyPressed (Keys.D2))
+            if (Keyboard.GetState ().IsKeyDown (Keys.D2))
                 Traffic.Settings.TimeScale += scale;
         }
 

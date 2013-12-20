@@ -14,8 +14,8 @@ namespace Traffic.Actions
     public class Input : SequenceInitial
     {
         private Drivers.Player player;
-        private static KeyboardState current;
-        private static KeyboardState previous;
+        private KeyboardState current;
+        private KeyboardState previous;
 
         //------------------------------------------------------------------
         public Input (Drivers.Player player)
@@ -58,13 +58,13 @@ namespace Traffic.Actions
         }
 
         //------------------------------------------------------------------
-        public static bool IsKeyPressed (Keys key)
+        public bool IsKeyPressed (Keys key)
         {
             return (current.IsKeyDown (key) && previous.IsKeyUp (key));
         }
 
         //------------------------------------------------------------------
-        public static bool IsKeyDown (Keys key)
+        public bool IsKeyDown (Keys key)
         {
             return current.IsKeyDown (key);
         }

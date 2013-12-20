@@ -85,6 +85,8 @@ namespace Fluid
 
             Data.Process(Velocity);
 
+            render.DrawGradient (Pressure, Density);
+
             Debug.Update();
         }
 
@@ -208,8 +210,7 @@ namespace Fluid
         public void Render ()
         {
 //            render.DrawInterpolated (Density);
-            render.DrawField (Velocity);
-//            render.DrawGradient (Pressure, Density);
+//            render.DrawField (Velocity);
             render.DrawOnScreen ();
         }
 

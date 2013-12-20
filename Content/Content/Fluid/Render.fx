@@ -90,7 +90,7 @@ float4 PSDisplay(float2 TexCoords : TEXCOORD0) : COLOR0
 	//color = DisplayScalar (Current, TexCoords, 5, 0.5);
 
 	color.w = GetOpacity (color, 2);
-	color.w = GetOpacity (color, 20);
+	//color.w = GetOpacity (color, 20);
 
 	return color;
 }

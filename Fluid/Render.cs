@@ -73,7 +73,7 @@ namespace Fluid
             var scale = new Vector2 ((float) Device.Viewport.Width / Size, (float) Device.Viewport.Height / Size);
 
             Device.SetRenderTarget (null);
-            Device.Clear (Color.White);
+//            Device.Clear (Color.White);
 
             Batch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, null, null);
             Batch.Draw (Output, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, scale , SpriteEffects.None, 1.0f);

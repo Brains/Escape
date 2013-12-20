@@ -63,8 +63,6 @@ namespace Fluid
         {
             Point position = GetTextureCoordinates (screen);
 
-//            Vector4 value = data[GetIndex (position.X, position.Y)].ToVector4();
-
             const int offset = 2;
             Vector4 value1 = data[GetIndex (position.X + offset, position.Y)].ToVector4();
             Vector4 value2 = data[GetIndex (position.X - offset, position.Y)].ToVector4();
@@ -75,9 +73,9 @@ namespace Fluid
             var lerp2 = Vector4.Lerp (value3, value4, 0.5f);
             var interpolated = Vector4.Lerp (lerp1, lerp2, 0.5f);
 
+            const float ratio = (float) 800 / 480;
             float torque1 = value1.Y * 1; // 1 is the moment arm
             float torque2 = value2.Y * 1;
-            float ratio = (float) 800 / 480;
             float torque3 = value3.X * ratio; // Fluid is square but the screen isn't. So moment arm on it is higher
             float torque4 = value4.X * ratio; 
 

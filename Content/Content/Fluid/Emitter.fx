@@ -37,6 +37,7 @@ DoubleOutput PSAddSources(float2 TexCoords : TEXCOORD0)
 	float limit = 1.5f;
 	float4 source = tex2D (NewVelocities, Pos);
 	Output.Vel = max (-limit, min (limit, tex2D (Velocity, Pos) + source));
+	
 	Output.Vel += float4 (0,  0.005f, 0, 0);
 	//Output.Vel = tex2D(Velocity, Pos) + source;
 	
