@@ -138,6 +138,9 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
+#Builded XNA Content
+*.xnb
+
 # =========================
 # Windows detritus
 # =========================
