@@ -61,7 +61,48 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Content\spriteFont1.xnb" />
+    <AndroidAsset Include="Assets\Content\Fonts\Debug.xnb" />
+    <AndroidAsset Include="Assets\Content\Fonts\Segoe %28Markers%29.xnb" />
+    <AndroidAsset Include="Assets\Content\Fonts\Segoe %28UI%29.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Acceleration.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Blinker.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Brain.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Brake.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Car %28Heavy%29.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Car %28Light%29.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Car %28Medium%29.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Explosion.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Flasher.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Player.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Police.xnb" />
+    <AndroidAsset Include="Assets\Content\Images\Road\Road.xnb" />
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Boundaries.xnb">
+      <Link>Assets\Content\Fluid\Boundaries.xnb</Link>
+    </None>
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Brush.xnb">
+      <Link>Assets\Content\Fluid\Brush.xnb</Link>
+    </None>
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Data.xnb">
+      <Link>Assets\Content\Fluid\Data.xnb</Link>
+    </None>
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Emitter.xnb">
+      <Link>Assets\Content\Fluid\Emitter.xnb</Link>
+    </None>
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Gradient.xnb">
+      <Link>Assets\Content\Fluid\Gradient.xnb</Link>
+    </None>
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Obstacles.xnb">
+      <Link>Assets\Content\Fluid\Obstacles.xnb</Link>
+    </None>
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Render.xnb">
+      <Link>Assets\Content\Fluid\Render.xnb</Link>
+    </None>
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Solver.xnb">
+      <Link>Assets\Content\Fluid\Solver.xnb</Link>
+    </None>
+    <None Include="..\Content\Adapter\bin\PSM\Content\Fluid\Test.xnb">
+      <Link>Assets\Content\Fluid\Test.xnb</Link>
+    </None>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
