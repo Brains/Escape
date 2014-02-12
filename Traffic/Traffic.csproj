@@ -59,6 +59,7 @@
     <Compile Include="Actions\Base\SequenceInitial.cs" />
     <Compile Include="Actions\Base\Sleep.cs" />
     <Compile Include="Actions\Block.cs" />
+    <Compile Include="Actions\ChangeFreeLane.cs" />
     <Compile Include="Actions\SpeedControl.cs" />
     <Compile Include="Actions\ChangeLane.cs" />
     <Compile Include="Actions\Input.cs" />
