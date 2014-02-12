@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Emitter.cs" />
+    <Compile Include="Numerical Methods\Simpson.cs" />
     <Compile Include="Obstacles.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

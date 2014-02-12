@@ -37,7 +37,8 @@ namespace Fluid
             Copy (texture);
             input.GetData (data);
 
-            Draw();
+//            Draw();
+//            DrawStreamline();
 //            Debug();
         }
 
@@ -123,31 +124,70 @@ namespace Fluid
         }
 
         //------------------------------------------------------------------
+        private void DrawStreamline()
+        {
+            Vector2 scale = new Vector2 ((float) 480 / Size, (float) 800 / Size);
+            var screen = Vector2.Zero;
+
+//            foreach (var x in Enumerable.Range (0, 32))
+
+            Point position = GetTextureCoordinates (screen);
+            Vector4 value = data[GetIndex (position.X, position.Y)].ToVector4();
+
+            var streamline = new NumericalMethods.Simpson (x => x * value.Y / value.X, 0, 10, 1);
+
+//            foreach (var point in Enumerable.Range (0, 32))
+//            {
+//                Point position = GetTextureCoordinates (screen);
+//                Vector4 value = data[GetIndex (position.X, position.Y)].ToVector4();
+//                Vector2 increment = new Vector2 (value.X, value.Y * value.X) ;
+//                new Line (screen, screen + increment, Color.DarkOrange);
+//
+//                screen += increment;
+//            }
+
+        }
+
+        //------------------------------------------------------------------
         public void Debug()
         {
             List <HalfVector4> list = data.ToList();
             float min = list.Max (vector4 => vector4.ToVector4().X);
 
             Batch.Begin();
-//            Batch.DrawString (font, min.ToString ("F3"), new Vector2 (50), Color.Maroon);
 
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
                 {
-                    var value = data[i * Size + j].ToVector4();
-
-                    if (value.Length() > 0.2f)
-                    {
-                        Vector2 screen = new Vector2 (j * 480.0f / Size, i * 800.0f / Size);
-                        Vector2 velocity = new Vector2 (value.X, value.Y);
-
-                        new Line (screen, screen + velocity * 30, Color.DarkOrange);
-                    }
+                    DrawCell (i, j);
                 }
             }
 
             Batch.End();
+        }
+
+        //------------------------------------------------------------------
+        private void DrawCell (int i, int j)
+        {
+            var value = data[i * Size + j].ToVector4();
+
+            Vector2 scale = new Vector2 ((float) 480 / Size, (float) 800 / Size);
+            Vector2 position = new Vector2(j, i) * scale;
+            Vector2 increment = new Vector2 (value.X, value.Y) * 10;
+
+            if (increment.Length () > 1)
+                new Line (position, position + increment, Color.DarkOrange);
+
+
+
+            //if (value.Length() > 0.2f)
+            //{
+            //    Vector2 screen = new Vector2 (j * 480.0f / Size, i * 800.0f / Size);
+            //    Vector2 velocity = new Vector2 (value.X, value.Y);
+
+            //    new Line (screen, screen + velocity * 30, Color.DarkOrange);
+            //}
         }
     }
 }
