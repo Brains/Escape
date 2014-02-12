@@ -11,19 +11,20 @@ namespace Fluid
     public class Solver : Unit
     {
         public const int Iterations = 20;
-        public const float DT = 1.0f;
         public const float VelocityDiffusion = 1.0f;
         public const float DensityDiffusion = 0.995f;
         public const float VorticityScale = 0.30f;
 
         #region Render Targets
+
         internal RenderTarget2D Velocity;
+        internal RenderTarget2D Advected;
+        internal RenderTarget2D Reversed;
         internal RenderTarget2D Density;
         internal RenderTarget2D Divergence;
         internal RenderTarget2D Pressure;
         internal RenderTarget2D Vorticity;
-        
-        private readonly RenderTarget2D helper;
+
         #endregion
 
         private readonly Obstacles obstacles;
@@ -39,30 +40,28 @@ namespace Fluid
         public Solver (Game game)
             : base (game, "Solver")
         {
-            Shader.Parameters["VelocityDiffusion"].SetValue (VelocityDiffusion);
-            Shader.Parameters["DensityDiffusion"].SetValue (DensityDiffusion);
             Shader.Parameters["VorticityScale"].SetValue (VorticityScale);
-            Shader.Parameters["DT"].SetValue (DT);
             Shader.Parameters["HalfCellSize"].SetValue (0.5f);
 
             Velocity = CreateDefaultRenderTarget();
+            Advected = CreateDefaultRenderTarget ();
+            Reversed = CreateDefaultRenderTarget ();
             Density = CreateDefaultRenderTarget();
             Vorticity = CreateDefaultRenderTarget();
             Pressure = CreateDefaultRenderTarget();
             Divergence = CreateDefaultRenderTarget();
 
-            helper = CreateDefaultRenderTarget();
+            CreateDefaultRenderTarget();
 
-            Emitter = new Emitter(Game);
-            obstacles = new Obstacles(Game);
-            render = new Render(Game);
-            Data = new Data(Game);
+            Emitter = new Emitter (Game);
+//            obstacles = new Obstacles (Game);
+            render = new Render (Game);
+            Data = new Data (Game);
 
             permanentVelocity = Shader.Parameters["PermanentVelocity"];
         }
 
         //------------------------------------------------------------------
-
         public override void Update()
         {
             obstacles.Update();
@@ -70,11 +69,11 @@ namespace Fluid
             obstacles.ComputeVelocity (Velocity);
             obstacles.ComputeDensity (Density);
 
-            ComputePermanentAdvection ();
-            obstacles.ComputeVelocity (Velocity);
-            obstacles.ComputeDensity (Density);
+//            ComputePermanentAdvection ();
+//            obstacles.ComputeVelocity (Velocity);
+//            obstacles.ComputeDensity (Density);
 
-            ComputeAdvect ();
+            ComputeAdvection ();
             obstacles.ComputeVelocity (Velocity);
             obstacles.ComputeDensity (Density);
 
@@ -83,11 +82,12 @@ namespace Fluid
             ComputeSubstract ();
             ComputeVorticity ();
 
-            Data.Process(Velocity);
+            Data.Process (Velocity);
 
-            render.DrawGradient (Pressure, Density);
+            Render();
 
             Debug.Update();
+            DebugKeys();
         }
 
         #region Computations
@@ -113,21 +113,73 @@ namespace Fluid
         }
 
 
-
         //------------------------------------------------------------------
-        private void ComputeAdvect ()
+        private void ComputeAdvection()
         {
-            // Advect the velocity and density
-            // Other quantities can be advected too
+//            ComputeAdvection (Density, DensityDiffusion);
+//            ComputeAdvection (Velocity, VelocityDiffusion);
+//            return;
+
+
+
+
+
+            Shader.Parameters["DT"].SetValue (1.0f);
+
+            // Advect the velocity
             Shader.CurrentTechnique = Shader.Techniques["DoAdvection"];
-            Device.SetRenderTargets (Temporary, helper);
+            Device.SetRenderTarget (Temporary);
             Device.Clear (Color.Black);
             Shader.Parameters["Velocity"].SetValue (Velocity);
-            Shader.Parameters["Density"].SetValue (Density);
-
+            Shader.Parameters["Diffusion"].SetValue (VelocityDiffusion);
             Compute (Velocity);
             Copy (Temporary, Velocity);
-            Copy (helper, Density);
+
+
+            // Advect the density
+            Shader.CurrentTechnique = Shader.Techniques["DoAdvection"];
+            Device.SetRenderTarget (Temporary);
+            Device.Clear (Color.Black);
+            Shader.Parameters["Diffusion"].SetValue (DensityDiffusion);
+            Shader.Parameters["Velocity"].SetValue (Velocity);
+            Compute (Density);
+            Copy (Temporary, Density);
+        }
+
+        //------------------------------------------------------------------
+        private void ComputeAdvection (RenderTarget2D texture, float diffusion)
+        {
+
+            // Advected
+            Shader.CurrentTechnique = Shader.Techniques["DoAdvection"];
+            Device.SetRenderTarget (Advected);
+            Device.Clear (Color.Black);
+            Shader.Parameters["DT"].SetValue (1.0f);
+            Shader.Parameters["Velocity"].SetValue (Velocity);
+            Shader.Parameters["Diffusion"].SetValue (diffusion);
+            Compute (texture);
+
+            // Reversed
+            Shader.CurrentTechnique = Shader.Techniques["DoAdvection"];
+            Device.SetRenderTarget (Reversed);
+            Device.Clear (Color.Black);
+            Shader.Parameters["DT"].SetValue (-1.0f);
+            Shader.Parameters["Velocity"].SetValue (Velocity);
+            Shader.Parameters["Diffusion"].SetValue (diffusion);
+            Compute (Advected);
+
+            // MacCormack
+            Shader.CurrentTechnique = Shader.Techniques["DoAdvectionMacCormack"];
+            Device.SetRenderTarget (Temporary);
+            Device.Clear (Color.Black);
+            Shader.Parameters["DT"].SetValue (1.0f);
+            Shader.Parameters["Velocity"].SetValue (Velocity);
+            Shader.Parameters["Advected"].SetValue (Advected);
+            Shader.Parameters["Reversed"].SetValue (Reversed);
+            Shader.Parameters["Diffusion"].SetValue (diffusion);
+            Compute (texture);
+
+            Copy (Temporary, texture);
         }
 
         //------------------------------------------------------------------
@@ -203,15 +255,20 @@ namespace Fluid
             Copy (Temporary, Velocity);
         }
 
-
         #endregion
 
-        //-----------------------------------------------------------------
-        public void Render ()
+        //------------------------------------------------------------------
+        private void Render()
         {
-//            render.DrawInterpolated (Density);
+            render.DrawInterpolated (Density);
 //            render.DrawField (Velocity);
-            render.DrawOnScreen ();
+//            render.DrawGradient (Velocity, Density);
+        }
+
+        //-----------------------------------------------------------------
+        public void Draw()
+        {
+            render.DrawOnScreen();
         }
 
         //-----------------------------------------------------------------
@@ -224,6 +281,15 @@ namespace Fluid
         public void SetSpeed (float velocity)
         {
             permanentVelocity.SetValue (velocity * 0.005f);
+        }
+
+        private void DebugKeys()
+        {
+//            if (Keyboard.GetState().IsKeyDown (Keys.A))
+//                Variable -= step;
+//                            
+//            if (Keyboard.GetState ().IsKeyDown (Keys.D))
+//                Variable += step;
         }
     }
 }

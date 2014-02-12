@@ -1,7 +1,8 @@
 //----------------------------------------------------------------------------
 sampler2D Current : register(s0);
 sampler2D Velocity;
-sampler2D Density;
+sampler2D Advected;
+sampler2D Reversed;
 sampler2D Divergence;
 sampler2D Pressure;
 sampler2D Vorticity;
@@ -14,18 +15,9 @@ float2 Shift;
 
 float DT;
 float PermanentVelocity;
-float VelocityDiffusion;
-float DensityDiffusion;
+float Diffusion;
 float HalfCellSize;
 float VorticityScale;
-
-//----------------------------------------------------------------------------
-// Struct for when we use two render targets
-struct DoubleOutput
-{
-	float4 Vel : COLOR0;
-	float4 Den : COLOR1;
-};
 
 //----------------------------------------------------------------------------
 // Bilerps between the 4 closest texels
@@ -77,15 +69,54 @@ float4 PSPermanentAdvection (float2 TexCoords : TEXCOORD0) : COLOR0
 
 //----------------------------------------------------------------------------
 // Advects Velocity and Density
-DoubleOutput PSAdvection(float2 TexCoords : TEXCOORD0)
+float4 PSAdvection(float2 TexCoords : TEXCOORD0) : COLOR0
 {
-	DoubleOutput Output;
-	float2 Pos = TexCoords - Shift;	
-    Pos -= tex2D(Velocity, Pos) / Size;	
-	Output.Vel = VelocityDiffusion*QuadLerp(Velocity, Pos);
-	Output.Den = DensityDiffusion*QuadLerp(Density, Pos);  
+	float2 Pos = TexCoords - Shift;
 
-    return Output;
+    Pos -= tex2D (Velocity, Pos) * DT / Size;	
+	float4 color = Diffusion * QuadLerp (Current, Pos);
+
+    return color;
+}
+
+//----------------------------------------------------------------------------
+float4 PSAdvectionMacCormack (float2 TexCoords : TEXCOORD0) : COLOR0
+{
+	//float2 Pos = TexCoords - Shift;	
+	float2 Pos = TexCoords;	
+	// float Offset = 1.0f / Size;
+	
+
+	float4 pn = tex2D(Current, Pos);
+	
+	float4 pnhat = tex2D(Reversed, Pos);
+
+	float4 velocity = tex2D (Velocity, Pos);
+	float2 position =  Pos * Size - velocity.xy * DT;
+	position =  floor  (position + float2 (0.5f , 0.5f ));
+	position /= Size;
+
+	//float4 p1 = tex2D(Current, position);
+	//float4 p2 = tex2D(Current, position + float2(Offset, 0));
+	//float4 p3 = tex2D(Current, position + float2(0, Offset));
+	//float4 p4 = tex2D(Current, position + float2(Offset, Offset));
+
+	float Offset = 0.5f / Size;
+	float4 p1 = tex2D(Current, position + float2(- Offset, - Offset));
+	float4 p2 = tex2D(Current, position + float2(- Offset, + Offset));
+	float4 p3 = tex2D(Current, position + float2(+ Offset, - Offset));
+	float4 p4 = tex2D(Current, position + float2(+ Offset, + Offset));
+
+	float4 pmin = min(min(p1, p2), min(p3, p4));
+	float4 pmax = max(max(p1, p2), max(p3, p4));
+	
+	// In PDF was `nposTC` instead `position`
+	float4 pn1hat = tex2D(Advected, position);
+	
+	float4 pn1 = pn1hat + 0.5 * (pn - pnhat);
+	  //return pn1;
+
+	return max(min(pn1, pmax), pmin);
 }
 
 //----------------------------------------------------------------------------
@@ -121,7 +152,7 @@ float4 PSJacobi(float2 TexCoords : TEXCOORD0) : COLOR0
 // Subtracts the pressure texture from the velocity texture
 float4 PSSubtract(float2 TexCoords : TEXCOORD0) : COLOR0
 {
-	float2 Pos = TexCoords - Shift;	
+	float2 Pos = TexCoords - Shift;
 	float Offset = 1.0f/Size;
 	float left   = tex2D(Pressure, float2(Pos.x - Offset, Pos.y)).x;
 	float right  = tex2D(Pressure, float2(Pos.x + Offset, Pos.y)).x;
@@ -206,6 +237,19 @@ technique DoAdvection
 	pass DoAdvection
 	{
 		PixelShader = compile ps_2_0 PSAdvection();
+	}
+	//pass SetBounds
+	//{
+	//	PixelShader = compile ps_2_0 PSSetBoundsDouble();
+	//}
+}
+
+//----------------------------------------------------------------------------
+technique DoAdvectionMacCormack
+{
+	pass DoAdvectionMacCormack
+	{
+		PixelShader = compile ps_2_0 PSAdvectionMacCormack();
 	}
 	//pass SetBounds
 	//{
