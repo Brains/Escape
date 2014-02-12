@@ -11,9 +11,10 @@ namespace Escape
         public Game()
         {
             GraphicsDeviceManager graphics = new GraphicsDeviceManager (this);
-            //            graphics.IsFullScreen = true;
+            
             graphics.PreferredBackBufferWidth = 480;
             graphics.PreferredBackBufferHeight = 800;
+
             graphics.SupportedOrientations = DisplayOrientation.Portrait;
 
             // Disable fixed framerate
