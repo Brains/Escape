@@ -1,3 +1,5 @@
+using System;
+
 namespace Traffic.Drivers
 {
     public class SafeZone
@@ -35,10 +37,10 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public float Calculate (float fraction)
         {
-            const float normalize = 0.7f;
-            float velocity = driver.Car.Velocity * normalize ;
+            const float normalize = 0.5f;
+            float velocity = (float) ((driver.Car.Velocity) * normalize) ;
 
-            return driver.Car.Lenght + (velocity * fraction * Scale);
+            return driver.Car.Lenght * 1.5f + (velocity * fraction * Scale);
         }
     }
 }

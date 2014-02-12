@@ -26,15 +26,15 @@
         static Settings()
         {
 //            NoCars = true;
-            NoPolice = true;
+//            NoPolice = true;
             NoBlocks = true;
 
 //            NoChangeLaneAnimation = true;
-            NoChangeLaneEvents = true;
+//            NoChangeLaneEvents = true;
 
             NoPlayerAdjustSpeed = true;
 
-            NoMarkersClear = true;
+//            NoMarkersClear = true;
         }
     }
 }

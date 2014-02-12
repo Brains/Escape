@@ -133,5 +133,35 @@ namespace Traffic
 
             Game.GraphicsDevice.SetRenderTarget (null);
         }
+
+        //------------------------------------------------------------------
+        public Car FindCar (Vector2 position)
+        {
+            foreach (var lane in lanes)
+                foreach (var car in lane.Cars)
+                    if (car.Bounds.Contains (position)) return car;
+
+            return null;
+        }
+
+        //------------------------------------------------------------------
+        public Car FindClosestPolice (Car punisher)
+        {
+            List <Car> polices = new List <Car>();
+
+            // Find all Polices
+            foreach (var lane in lanes)
+                foreach (var car in lane.Cars)
+                    if (car is Police) polices.Add (car);
+
+            // Find nearest Police
+            var closestPolice = polices.MinBy (police =>
+            {
+                var distance = police.Position - punisher.Position;
+                return distance.Length();
+            });
+
+            return closestPolice;
+        }
     }
 }

@@ -66,13 +66,14 @@ namespace Traffic.Cars
         {
             LocalPosition = new Vector2 (0, position);
             InitialColor = Color.White;
+            Color = Color.White;
             Lane = lane;
             ID = id;
             
             Velocity = Lane.Velocity;
             Lives = weight.Lives;
-            Acceleration = 0.2f;// * weight.Acceleration;
-            Deceleration = 1.0f;// * weight.Deceleration;
+            Acceleration = 1.0f;// * weight.Acceleration;
+            Deceleration = 1.5f;// * weight.Deceleration;
 
             LoadTexture (textureName);
             CreateBoundingBox ();
@@ -140,7 +141,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         private void Reset ()
         {
-            Color = InitialColor;
+//            Color = InitialColor;
             brakes.Disable();
             boost.Disable();
         }
@@ -199,6 +200,12 @@ namespace Traffic.Cars
         public void EnableBoost ()
         {
             boost.Enable();
+        }
+
+        //------------------------------------------------------------------
+        public void Turn ()
+        {
+            Color = Color == Color.White ? Color.Orange : Color.White;
         }
 
 
@@ -317,6 +324,17 @@ namespace Traffic.Cars
 
             // SafeZone
 //            new Line (Position, Position - new Vector2 (0, Driver.SafeZone), Color.IndianRed);
+        }
+
+        protected void InteractOnFluid()
+        {
+            Vector3 data = Lane.Road.Fluid.Data.GetData (Position);
+
+            var velocity = new Vector2 (data.X, data.Y);
+            var torque = data.Z;
+
+            LocalPosition += velocity * 2;
+            Angle += torque / 50;
         }
     }
 }

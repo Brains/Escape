@@ -50,7 +50,7 @@ namespace Traffic.Actions
             var scaleBackup = driver.SafeZone.Scale;
 
             // Reduce Safe Zone to more agressive behaviour
-            driver.SafeZone.Scale = 0.2f;
+            driver.SafeZone.Scale = 0.3f;
 
             // Try to Block Target
             int currentID = driver.Car.Lane.ID;

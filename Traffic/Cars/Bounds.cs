@@ -41,5 +41,11 @@ namespace Traffic.Cars
 
             return Rectangle.Intersects (bounds.Rectangle);
         }
+
+        //-----------------------------------------------------------------
+        public bool Contains (Vector2 position)
+        {
+            return rectangle.Contains (position);
+        }
     }
 }
