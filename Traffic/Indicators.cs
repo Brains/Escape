@@ -1,5 +1,4 @@
-﻿using Java.Lang;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Traffic
@@ -8,6 +7,7 @@ namespace Traffic
     {
         private Road road;
         private SpriteFont font;
+        private Texture2D brains;
 
         //------------------------------------------------------------------
         public Indicators (Road road) : base (road)
@@ -23,6 +23,7 @@ namespace Traffic
             base.Setup ();
 
             font = road.Game.Content.Load <SpriteFont> ("Fonts/Segoe (UI)");
+            brains = road.Game.Content.Load <Texture2D> ("Images/Road/Brain");
         }
 
         //------------------------------------------------------------------
@@ -32,6 +33,7 @@ namespace Traffic
 
             spriteBatch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), Position, Color.CadetBlue);
             spriteBatch.DrawString (font, road.Player.Lives.ToString (), Position + offset * 1, Color.DarkRed);
+            spriteBatch.Draw (brains, new Vector2(380, 10), Color.White);
         }
     }
 }

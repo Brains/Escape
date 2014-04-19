@@ -6,7 +6,7 @@
         public static bool NoCars;
         public static bool NoPolice;
         public static bool NoBlocks;
-        public const int MaximumCarsOnLane = 6;
+        public const int MaximumCarsOnLane = 4;
         public const int PoliceStartPosition = -300;
 
         // Player
@@ -18,6 +18,10 @@
         public static bool NoChangeLaneAnimation;
         public static bool NoChangeLaneEvents;
 
+        // Debug
+        public static bool NoMarkersClear;
+
+
         //------------------------------------------------------------------
         static Settings()
         {
@@ -26,9 +30,11 @@
             NoBlocks = true;
 
 //            NoChangeLaneAnimation = true;
-            NoChangeLaneEvents = true;
+//            NoChangeLaneEvents = true;
 
             NoPlayerAdjustSpeed = true;
+
+//            NoMarkersClear = true;
         }
     }
 }

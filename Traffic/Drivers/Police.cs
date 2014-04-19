@@ -29,9 +29,9 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         private void Debug()
         {
-            DrawSafeZone ();
-            DrawCheckLane (Car.Lane.Left);
-            DrawCheckLane (Car.Lane.Right);
+//            DrawSafeZone ();
+//            DrawCheckLane (Car.Lane.Left);
+//            DrawCheckLane (Car.Lane.Right);
 
 //            DrawActions ();
 

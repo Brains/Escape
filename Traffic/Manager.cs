@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Fluid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
@@ -15,12 +16,15 @@ namespace Traffic
 
         //------------------------------------------------------------------
         public Road Road { get; private set; }
+        public Solver Fluid { get; private set; }
 
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
         {
             Road = new Road (Game);
             director = new Director (this);
+            Fluid = new Solver (Game);
+            Road.Fluid = Fluid;
         }
 
         //------------------------------------------------------------------
@@ -41,18 +45,23 @@ namespace Traffic
 
             Road.Update (elapsed);
             director.Update (elapsed);
+
+            Tools.Markers.Manager.Clear = !Settings.NoMarkersClear;
         }
 
         //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
-            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            Road.GenerateFluidObstacles (spriteBatch);
+            Fluid.SetScene (Road.Obstacles);
+            Fluid.SetSpeed (Road.Player.Velocity); // * elapsed
 
+            Fluid.Update();
+
+            Road.DrawRoad (spriteBatch);
+//            Fluid.Draw();
             Road.Draw (spriteBatch);
 
-            spriteBatch.End ();
-
         }
-
     }
 }

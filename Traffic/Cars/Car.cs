@@ -1,8 +1,10 @@
 using System;
 using Animation;
+using Fluid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
+using Traffic.Actions.Base;
 using Traffic.Cars.Weights;
 using Traffic.Drivers;
 
@@ -13,13 +15,12 @@ namespace Traffic.Cars
         //-----------------------------------------------------------------
         private Lane lane;
         private Driver driver;
-        private Vector2 origin;
+        public Vector2 origin;
         private Lights brakes;
         private Blinker blinker;
         private Lights boost;
 
         //------------------------------------------------------------------
-        protected Texture2D Texture;
         protected Color InitialColor;
         protected internal Bounds Bounds;
 
@@ -33,6 +34,7 @@ namespace Traffic.Cars
         public float Deceleration { get; set; }
         public float Rotation { get; set; }
         public SpriteEffects SpriteEffects { get; set; }
+        public Texture2D Texture { get; set; }
 
         //------------------------------------------------------------------
         public Lane Lane
@@ -64,13 +66,14 @@ namespace Traffic.Cars
         {
             LocalPosition = new Vector2 (0, position);
             InitialColor = Color.White;
+            Color = Color.White;
             Lane = lane;
             ID = id;
             
             Velocity = Lane.Velocity;
-            Lives = GeLives();
-            Acceleration = 0.2f;
-            Deceleration = 1.0f;
+            Lives = weight.Lives;
+            Acceleration = 1.0f;// * weight.Acceleration;
+            Deceleration = 1.5f;// * weight.Deceleration;
 
             LoadTexture ("Car");
             CreateBoundingBox ();
@@ -157,6 +160,8 @@ namespace Traffic.Cars
             // Simulate Camera moving
             Move (Lane.Road.Player.Velocity * elapsed);
 
+//            Lane.Road.Fluid.AddImpulse (new Vector2(0, 50), Position);
+
             DetectCollisions ();
 
             Debug ();
@@ -165,7 +170,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         private void Reset ()
         {
-            Color = InitialColor;
+//            Color = InitialColor;
             brakes.Disable();
             boost.Disable();
         }
@@ -226,6 +231,12 @@ namespace Traffic.Cars
             boost.Enable();
         }
 
+        //------------------------------------------------------------------
+        public void Turn ()
+        {
+            Color = Color == Color.White ? Color.Orange : Color.White;
+        }
+
 
         #endregion
 
@@ -252,20 +263,20 @@ namespace Traffic.Cars
             // Destroy all cars
             if (Lives == closestCar.Lives)
             {
-                Explose ();
-                closestCar.Explose ();
+                Explose (closestCar);
+                closestCar.Explose (this);
             }
             // Destroy closest Car
             else if (Lives > closestCar.Lives)
             {
                 Lives -= closestCar.Lives;
-                closestCar.Explose ();
+                closestCar.Explose (this);
             }
             // Destroy myself
             else if (Lives < closestCar.Lives)
             {
                 closestCar.Lives -= Lives;
-                Explose ();
+                Explose (closestCar);
             }
         }
 
@@ -280,14 +291,23 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        protected void Explose ()
+        protected void Explose (Car killer)
         {
-            Destroy ();
+            Emitter emitter = Lane.Road.Fluid.Emitter;
+            
+            // Impulse
+            Vector2 impulse = Position - killer.Position;
+            Vector2 scale = new Vector2(1.5f, 0);
 
-            var explosion = new AnimatedTexture (this, Vector2.Zero, 1.5f, 0.0f);
-            explosion.Load (Lane.Road.Images["Explosion"], 24, 12);
-            explosion.Finish += Delete;
-            Add (explosion);
+            System.Action addImpulse = () => emitter.AddImpulse ((impulse), Position + impulse * scale);
+            addImpulse();
+            killer.driver.AddInSequnce (new Repeated (addImpulse, 10));
+
+            // Particle
+            System.Action addParticle = () => emitter.AddParticle (Texture, Position - origin + impulse * scale);
+            addParticle();
+
+            Destroy ();
         }
 
         //------------------------------------------------------------------
@@ -299,6 +319,8 @@ namespace Traffic.Cars
             Bounds = null;
             
             Components.Clear ();
+
+            Delete ();
         }
 
         //------------------------------------------------------------------
@@ -336,6 +358,17 @@ namespace Traffic.Cars
         public void DockToLane()
         {
             LocalPosition = new Vector2 (0, Position.Y);
+        }
+
+        protected void InteractOnFluid()
+        {
+            Vector3 data = Lane.Road.Fluid.Data.GetData (Position);
+
+            var velocity = new Vector2 (data.X, data.Y);
+            var torque = data.Z;
+
+            LocalPosition += velocity * 2;
+            Angle += torque / 50;
         }
     }
 }

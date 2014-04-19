@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Android.OS;
 using Microsoft.Xna.Framework;
 using Tools.Markers;
 using Traffic.Actions.Base;
 using Traffic.Cars;
 using Traffic.Drivers;
+using Player = Traffic.Cars.Player;
+using Police = Traffic.Cars.Police;
 
 namespace Traffic.Actions
 {
@@ -35,6 +36,7 @@ namespace Traffic.Actions
         private void Start()
         {
             SetSafeZone();
+//            FreeLane();
 
             Catch();
 
@@ -44,6 +46,21 @@ namespace Traffic.Actions
 
             if (visible && overtake)
                 MatchLane();
+        }
+
+        //------------------------------------------------------------------
+        private void FreeLane()
+        {
+            Car closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsCarAhead));
+            if (closest == null) return;
+            if (closest is Player) return;
+            if (!(driver.Car is Police)) return;
+
+            float distance = driver.Distance (closest);
+
+            if (distance > 400) return;
+
+            closest.Driver.AddInSequnce (new ChangeFreeLane (closest.Driver));
         }
 
         //------------------------------------------------------------------
@@ -58,10 +75,10 @@ namespace Traffic.Actions
 
             driver.SafeZone.Scale = approachSpeed / 100;// * distance / 100;
 
-            if (driver.SafeZone.Scale > 1.0f)
-                driver.SafeZone.Scale = 1.0f;
-            else if (driver.SafeZone.Scale < 0.1f)
-                driver.SafeZone.Scale = 0.1f;
+            if (driver.SafeZone.Scale > 0.8f)
+                driver.SafeZone.Scale = 0.8f;
+            else if (driver.SafeZone.Scale < 0.2f)
+                driver.SafeZone.Scale = 0.2f;
         }
 
         //------------------------------------------------------------------
@@ -78,7 +95,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private bool IsCarAhead(Car target)
         {
-            return driver.Car.Position.Y + 200 > target.Position.Y;
+            return driver.Car.Position.Y + 0 > target.Position.Y;
         }
 
         //------------------------------------------------------------------

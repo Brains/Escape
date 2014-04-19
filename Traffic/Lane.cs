@@ -100,6 +100,17 @@ namespace Traffic
             return car;
         }
 
+        //-----------------------------------------------------------------
+//        private void CreateCar (int position)
+//        {
+//            var car = new Car (this, carsCounter, position, new Heavy (), "Car (Heavy)");
+//            car.Setup ();
+//
+//            Cars.Add (car);
+//            OwnCar (car);
+//                 
+//        }
+
         //------------------------------------------------------------------
         public Weight GetWeight ()
         {
@@ -123,6 +134,10 @@ namespace Traffic
             OwnCar (player);
 
             carsCounter++;
+
+//            Left.CreateCar (300);
+//            Left.CreateCar (420);
+//            Left.Left.Left.CreateCar (400);
 
             return player;
         }

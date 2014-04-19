@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9E4FF996-10DA-47C7-8008-1A4392F32EA5}</ProjectGuid>
+    <ProjectGuid>{2E5E3B33-8073-4A96-8FDB-21BCAC71D756}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tools</RootNamespace>
-    <AssemblyName>Tools</AssemblyName>
+    <RootNamespace>Fluid</RootNamespace>
+    <AssemblyName>Fluid</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -48,23 +48,22 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-   <ItemGroup>
-    <Compile Include="Extensions\ContentLoaderExtension.cs" />
-    <Compile Include="Extensions\ListExtensions.cs" />
-    <Compile Include="Markers\Line.cs" />
-    <Compile Include="Markers\Manager.cs" />
-    <Compile Include="Markers\Marker.cs" />
-    <Compile Include="Markers\Point.cs" />
-    <Compile Include="Markers\Primitives.cs" />
-    <Compile Include="Markers\Rectangle.cs" />
-    <Compile Include="Markers\Text.cs" />
-    <Compile Include="Perfomance.cs" />
-    <Compile Include="Timers\Loop.cs" />
-    <Compile Include="Timers\Timer.cs" />
-    <Compile Include="Timers\Manager.cs" />
+  <ItemGroup>
+    <Compile Include="Emitter.cs" />
+    <Compile Include="Numerical Methods\Simpson.cs" />
+    <Compile Include="Obstacles.cs" />
+    <Compile Include="Data.cs" />
+    <Compile Include="Render.cs" />
+    <Compile Include="Solver.cs" />
+    <Compile Include="Debug.cs" />
+    <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>
-   </ItemGroup>
+    <ProjectReference Include="..\Tools\Tools.csproj">
+      <Project>{9e4ff996-10da-47c7-8008-1a4392f32ea5}</Project>
+      <Name>Tools</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

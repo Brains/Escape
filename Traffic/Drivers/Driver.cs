@@ -44,6 +44,7 @@ namespace Traffic.Drivers
 
             Car = car;
 
+            Velocity = Car.Lane.Velocity;
             ChangeLaneSpeed = 1;
             SafeZone = new SafeZone (this, 1);
             Primary = Direction.Left;
@@ -135,7 +136,7 @@ namespace Traffic.Drivers
             if (distance < SafeZone.HighDanger)
                 return false;
             // If Car is far enough it's Ok
-            if (distance > SafeZone.LowDanger) //Calculate (1.5f)
+            if (distance > SafeZone.LowDanger)
                 return true;
 
             // Analyze Velocity
@@ -171,7 +172,7 @@ namespace Traffic.Drivers
         //------------------------------------------------------------------
         public void Accelerate (Composite action, int times = 1)
         {
-            if (Car.Velocity < Car.Lane.Velocity)
+            if (Car.Velocity < Car.Driver.Velocity)
                 action.Add (new Repeated (Car.Accelerate, times) {Name = "Accelerate"});
         }
 
@@ -253,13 +254,22 @@ namespace Traffic.Drivers
         public void DrawSafeZone()
         {
             var pos = Car.Position;
-            float lenght = SafeZone.Calculate (1);// - Car.Lenght / 2;
 
-            new Line (pos, pos - new Vector2 (0, SafeZone.LowDanger), Color.Maroon);
-            new Line (pos, pos + new Vector2 (0, SafeZone.LowDanger), Color.Maroon);
-            new Line (pos, pos - new Vector2 (0, SafeZone.HighDanger), Color.Orange);
-            new Line (pos, pos + new Vector2 (0, SafeZone.HighDanger), Color.Orange);
+            float body = 50;
+            float red = SafeZone.HighDanger - body;
+            float orange = SafeZone.LowDanger - body;
+
+            new Line (pos, pos - new Vector2 (0, orange), Color.Orange);
+            new Line (pos, pos + new Vector2 (0, orange), Color.Orange);
+            new Line (pos, pos - new Vector2 (0, red), Color.Maroon);
+            new Line (pos, pos + new Vector2 (0, red), Color.Maroon);
+
 //            new Text (SafeZone.Scale.ToString(), Position, Color.SteelBlue, 20);
+
+            return;
+            float lenght = orange - body;
+            new Line (pos, pos - new Vector2 (0, lenght), Color.SlateBlue);
+            new Line (pos, pos + new Vector2 (0, lenght), Color.SlateBlue);
         }
 
         //-----------------------------------------------------------------
