@@ -59,7 +59,7 @@ namespace Traffic
             Fluid.Update();
             
             Road.DrawRoad (spriteBatch);
-            Fluid.Draw();
+//            Fluid.Draw();
             Road.Draw (spriteBatch);
 
         }

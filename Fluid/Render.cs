@@ -11,7 +11,7 @@ namespace Fluid
         public Render (Game game) : base (game, "Render")
         {
             Gradient = game.Content.Load <Texture2D> ("Fluid/Gradient");
-            Shader.Parameters["Map"].SetValue (Gradient);
+//            Shader.Parameters["Map"].SetValue (Gradient);
 
             Viewport viewport = Device.Viewport;
             Output = CreateDefaultRenderTarget();
