@@ -51,7 +51,7 @@ namespace Traffic
         {
             ID = id;
             Road = road;
-            Anchored = true;
+            Fixed = true;
 
             CalculatePosition ();
             CalculateVelocity ();

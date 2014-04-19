@@ -14,7 +14,7 @@ namespace Traffic
         {
             this.road = road;
             LocalPosition = new Vector2 (10);
-            Anchored = true;
+            Fixed = true;
         }
 
         //------------------------------------------------------------------

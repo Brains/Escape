@@ -15,8 +15,8 @@ namespace Traffic
         public Vector2 LocalPosition { get; set; }
 
         public bool Active { get; set; }
-        // ToDo: Can replace Anchored?
-        public bool Anchored { get; set; }
+        // ToDo: Can replace Fixed?
+        public bool Fixed { get; set; }
         // ToDo: Delete Deleted?
         public bool Deleted { get; set; }
 
@@ -25,7 +25,7 @@ namespace Traffic
         {
             get
             {
-                if (Anchored) return LocalPosition;
+                if (Fixed) return LocalPosition;
                 if (Root == null) return LocalPosition;
                     
                 return LocalPosition + Root.Position;
