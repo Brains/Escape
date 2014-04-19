@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Android.Content;
 using Microsoft.Xna.Framework.Content;
 
 namespace Tools.Extensions

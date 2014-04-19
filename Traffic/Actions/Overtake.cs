@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Android.OS;
 using Microsoft.Xna.Framework;
 using Tools.Markers;
 using Traffic.Actions.Base;
