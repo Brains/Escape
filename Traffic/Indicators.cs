@@ -18,9 +18,9 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public override void Setup ()
+        public override void Setup (Game game)
         {
-            base.Setup ();
+            base.Setup (game);
 
             font = road.Game.Content.Load <SpriteFont> ("Fonts/Segoe (UI)");
             brains = road.Game.Content.Load <Texture2D> ("Images/Road/Brain");

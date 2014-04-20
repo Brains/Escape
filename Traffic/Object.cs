@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +9,7 @@ namespace Traffic
     public class Object
     {
         // Nodes
-        public Object Root { get; set; }
+        public Object Root { get; /*private*/ set; }
         public List<Object> Components { get; private set; }
 
         // Drawing
@@ -17,10 +18,10 @@ namespace Traffic
         // Properties
         public Vector2 LocalPosition { get; set; }
 
+        // Properties
+        public Vector2 LocalPosition { get; /*private*/ set; }
         public bool Active { get; set; }
-        // ToDo: Can replace Fixed?
         public bool Fixed { get; set; }
-        // ToDo: Delete Deleted?
         public bool Deleted { get; set; }
 
         //------------------------------------------------------------------
@@ -39,8 +40,14 @@ namespace Traffic
         public Object (Object root)
         {
             Root = root;
-
             Components = new List <Object> ();
+        }
+
+        //------------------------------------------------------------------
+        public virtual void Setup (Game game)
+        {
+            foreach (var component in Components)
+                component.Setup (game);
 
             Active = true;
         }
@@ -84,18 +91,38 @@ namespace Traffic
         }
 
         //-----------------------------------------------------------------
-        protected void Delete ()
-        {
-            Deleted = true;
-        }
-
-        //------------------------------------------------------------------
         protected void Remove (Object item)
         {
             Components.Remove (item);
         }
 
         //------------------------------------------------------------------
+        protected void Delete ()
+        {
+            Deleted = true;
+        }
+
+        //-----------------------------------------------------------------
+        private void EreseDeleted ( )
+        {
+            throw new NotImplementedException();
+
+            foreach (var component in Components)
+            {
+//                if (component.Deleted) 
+
+            }
+                 
+        }
+
+        //------------------------------------------------------------------
+        public void Move (Vector2 shift)
+        {
+            LocalPosition += shift;
+        }
+
+        //------------------------------------------------------------------
+        // ToDo: Remove. Use above version instead
         public void Move (float shift)
         {
             LocalPosition += new Vector2 (0, shift);

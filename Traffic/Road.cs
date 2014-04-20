@@ -38,14 +38,14 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public override void Setup()
+        public override void Setup(Game game)
         {
             Images = Game.Content.LoadContentFolder <Texture2D> ("Images/Road");
             texture = Images["Road"];
 
             Player = ((Lane) Components[6]).CreatePlayer (Game);
 
-            base.Setup();
+            base.Setup(game);
         }
 
         //------------------------------------------------------------------
