@@ -16,9 +16,6 @@ namespace Traffic
         public Drawable Drawable { get; private set; }
 
         // Properties
-        public Vector2 LocalPosition { get; set; }
-
-        // Properties
         public Vector2 LocalPosition { get; /*private*/ set; }
         public bool Active { get; set; }
         public bool Fixed { get; set; }
@@ -53,13 +50,6 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        // ToDo: Delete? Lane.Setup?
-        public virtual void SetupDelete()
-        {
-            Components.ForEach (item => item.Setup());
-        }
-
-        //------------------------------------------------------------------
         public void CreateDrawable (Game game, string name)
         {
             Drawable = new Drawable (this, game, name);
@@ -85,6 +75,7 @@ namespace Traffic
                 Drawable.Draw (batch);
         }
 
+        //------------------------------------------------------------------
         protected virtual void Add (Object item)
         {
             Components.Add (item);
@@ -112,7 +103,6 @@ namespace Traffic
 //                if (component.Deleted) 
 
             }
-                 
         }
 
         //------------------------------------------------------------------
