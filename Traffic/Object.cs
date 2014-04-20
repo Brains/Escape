@@ -67,13 +67,13 @@ namespace Traffic
         //-----------------------------------------------------------------
         public virtual void Draw (SpriteBatch batch)
         {
-            // Draw each Component
-            foreach (var component in Components)
-                component.Draw (batch);
-
             // Draw itself
             if (Drawable != null)
                 Drawable.Draw (batch);
+
+            // Draw each Component
+            foreach (var component in Components)
+                component.Draw (batch);
         }
 
         //------------------------------------------------------------------
@@ -100,6 +100,10 @@ namespace Traffic
             // Remove from Current root
             // Add to New root
             // this.Root change to New root
+
+            // Must works in Update loop
+
+            throw new NotImplementedException();
         }
 
         //-----------------------------------------------------------------
