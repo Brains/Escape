@@ -295,19 +295,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         protected void Explose (Car killer)
         {
-            Emitter emitter = Lane.Road.Fluid.Emitter;
-            
-            // Impulse
-            Vector2 impulse = Position - killer.Position;
-            Vector2 scale = new Vector2(1.5f, 0);
-
-            System.Action addImpulse = () => emitter.AddImpulse ((impulse), Position + impulse * scale);
-            addImpulse();
-            killer.driver.AddInSequnce (new Repeated (addImpulse, 10));
-
-            // Particle
-            System.Action addParticle = () => emitter.AddParticle (Texture, Position - origin + impulse * scale);
-            addParticle();
+            // Drawable.Explose ();
 
             Destroy ();
         }
@@ -360,17 +348,6 @@ namespace Traffic.Cars
         public void DockToLane()
         {
             LocalPosition = new Vector2 (0, Position.Y);
-        }
-
-        protected void InteractOnFluid()
-        {
-            Vector3 data = Lane.Road.Fluid.Data.GetData (Position);
-
-            var velocity = new Vector2 (data.X, data.Y);
-            var torque = data.Z;
-
-            LocalPosition += velocity * 2;
-//            Drawable.Rotation += torque / 50;
         }
     }
 }
