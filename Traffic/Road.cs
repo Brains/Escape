@@ -15,7 +15,6 @@ namespace Traffic
 
         //------------------------------------------------------------------
         private List <Lane> lanes;
-        private Texture2D texture;
 
         //------------------------------------------------------------------
         public Game Game { get; set; }
@@ -26,6 +25,7 @@ namespace Traffic
         public Road (Game game) : base (null)
         {
             Game = game;
+
             CreateLanes();
             Add (new Indicators (this));
         }
@@ -33,10 +33,13 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Setup (Game game)
         {
-            Images = Game.Content.LoadFolder <Texture2D> ("Images/Road");
-            texture = Images["Road"];
+            CreateDrawable (game, "Road");
+            
+            // To draw Road under Cars
+            Drawable.Depth = 1;
 
-            Player = ((Lane) Components[6]).CreatePlayer (Game);
+            Images = game.Content.LoadFolder<Texture2D> ("Images/Road");
+            Player = ((Lane) Components[6]).CreatePlayer (game);
 
             base.Setup (game);
         }
@@ -87,25 +90,24 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch batch)
         {
-            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            Vector2 origin = new Vector2 (Drawable.Width, Drawable.Height) / 2.0f;
+            Vector2 shift = new Vector2 (0, -Drawable.Height);
 
-            base.Draw (spriteBatch);
+            // Move Road to the Point[0, 0] instead of the Point[origin]
+            Move (origin);
 
-            spriteBatch.End();
-        }
+            // Draw Road and all her Components
+            base.Draw (batch);
 
-        //------------------------------------------------------------------
-        public void DrawRoad (SpriteBatch spriteBatch)
-        {
-            spriteBatch.Begin();
-
-            Vector2 shift = new Vector2 (0, texture.Height);
-            spriteBatch.Draw (texture, Position, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-            spriteBatch.Draw (texture, Position - shift, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-
-            spriteBatch.End();
+            // Shift up the Road and draw it again to implement continuously Road
+            Move (shift);
+            Drawable.Draw (batch);
+            
+            // Restore Position
+            Move (-shift);
+            Move (-origin);
         }
 
         //------------------------------------------------------------------
