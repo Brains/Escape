@@ -11,6 +11,9 @@ namespace Traffic
         public Object Root { get; set; }
         public List<Object> Components { get; private set; }
 
+        // Drawing
+        private Drawable drawable;
+
         // Properties
         public Vector2 LocalPosition { get; set; }
 
@@ -47,6 +50,10 @@ namespace Traffic
         public virtual void SetupDelete ()
         {
             Components.ForEach (item => item.Setup ());
+        //------------------------------------------------------------------
+        private void CreateDrawable (Game game, string name)
+        {
+            drawable = new Drawable(game, name);
         }
 
         //------------------------------------------------------------------
@@ -58,6 +65,17 @@ namespace Traffic
         }
 
         //-----------------------------------------------------------------
+        public virtual void Draw (SpriteBatch batch)
+        {
+            // Draw each Component
+            foreach (var component in Components)
+                component.Draw (batch);
+
+            // Draw itself
+            if (drawable != null)
+                drawable.Draw (batch);
+        }
+
         protected virtual void Add (Object item)
         {
             Components.Add (item);

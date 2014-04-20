@@ -79,7 +79,7 @@
     <Compile Include="Cars\Weights\Weight.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Director.cs" />
-    <Compile Include="DrawableObject.cs" />
+    <Compile Include="Drawable.cs" />
     <Compile Include="Drivers\Common.cs" />
     <Compile Include="Drivers\Driver.cs" />
     <Compile Include="Drivers\Player.cs" />
