@@ -31,27 +31,27 @@ namespace Traffic
         public Road (Game game) : base (null)
         {
             Game = game;
-            CreateLanes ();
+            CreateLanes();
             Add (new Indicators (this));
 
             Obstacles = new RenderTarget2D (Game.GraphicsDevice, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height);
         }
 
         //------------------------------------------------------------------
-        public override void Setup(Game game)
+        public override void Setup (Game game)
         {
-            Images = Game.Content.LoadContentFolder <Texture2D> ("Images/Road");
+            Images = Game.Content.LoadFolder <Texture2D> ("Images/Road");
             texture = Images["Road"];
 
             Player = ((Lane) Components[6]).CreatePlayer (Game);
 
-            base.Setup(game);
+            base.Setup (game);
         }
 
         //------------------------------------------------------------------
         private void CreateLanes()
         {
-            lanes = new List<Lane> ();
+            lanes = new List <Lane>();
             Lane left = null;
 
             foreach (var index in Enumerable.Range (0, LanesQuantity))
@@ -86,7 +86,7 @@ namespace Traffic
         private void MoveCamera (float shift)
         {
             // Simulate of Camera movement by moving Road
-            Move (shift);
+            Move (new Vector2 (0, shift));
 
             // Infinite loop for Road Texture
             if (LocalPosition.Y > Game.GraphicsDevice.Viewport.Height)
@@ -106,18 +106,18 @@ namespace Traffic
         //------------------------------------------------------------------
         public void DrawRoad (SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin ();
+            spriteBatch.Begin();
 
             Vector2 shift = new Vector2 (0, texture.Height);
             spriteBatch.Draw (texture, Position, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
             spriteBatch.Draw (texture, Position - shift, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
 
-            spriteBatch.End ();
+            spriteBatch.End();
         }
 
         //------------------------------------------------------------------
         //Render only Cars Textures for Fluid obstacles
-        public void GenerateFluidObstacles(SpriteBatch spriteBatch)
+        public void GenerateFluidObstacles (SpriteBatch spriteBatch)
         {
             Game.GraphicsDevice.SetRenderTarget (Obstacles);
             Game.GraphicsDevice.Clear (Color.Transparent);
@@ -129,7 +129,7 @@ namespace Traffic
                     // ToDo: Rotation = car.Drawable.Rotation
                     spriteBatch.Draw (car.Texture, car.Position, null, Color.White, 0, car.origin, 1.0f, SpriteEffects.None, 1.0f);
 
-            spriteBatch.End ();
+            spriteBatch.End();
 
             Game.GraphicsDevice.SetRenderTarget (null);
         }

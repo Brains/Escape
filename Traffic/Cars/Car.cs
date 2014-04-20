@@ -155,10 +155,12 @@ namespace Traffic.Cars
             
             base.Update (elapsed);
 
-            Move (-Velocity * elapsed);
+            float shift = -Velocity * elapsed;
+            Move (new Vector2 (0, shift));
 
             // Simulate Camera moving
-            Move (Lane.Road.Player.Velocity * elapsed);
+            shift = Lane.Road.Player.Velocity * elapsed;
+            Move (new Vector2 (0, shift));
 
 //            Lane.Road.Fluid.AddImpulse (new Vector2(0, 50), Position);
 

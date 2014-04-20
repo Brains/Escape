@@ -16,12 +16,6 @@ namespace Traffic
         public Drawable Drawable { get; private set; }
 
         // Properties
-        public Vector2 LocalPosition { get; /*private*/ set; }
-        public bool Active { get; set; }
-        public bool Fixed { get; set; }
-        public bool Deleted { get; set; }
-
-        //------------------------------------------------------------------
         public Vector2 Position
         {
             get
@@ -32,6 +26,11 @@ namespace Traffic
                 return LocalPosition + Root.Position;
             }
         }
+
+        public Vector2 LocalPosition { get; set; }
+        public bool Active { get; set; }
+        public bool Fixed { get; set; }
+        public bool Deleted { get; set; }
 
         //------------------------------------------------------------------
         public Object (Object root)
@@ -61,6 +60,8 @@ namespace Traffic
             foreach (var component in Components)
                 if (component.Active)
                     component.Update (elapsed);
+
+            EraseDeleted();
         }
 
         //-----------------------------------------------------------------
@@ -94,15 +95,17 @@ namespace Traffic
         }
 
         //-----------------------------------------------------------------
-        private void EreseDeleted ( )
+        private void SetRoot (Object root)
         {
-            throw new NotImplementedException();
+            // Remove from Current root
+            // Add to New root
+            // this.Root change to New root
+        }
 
-            foreach (var component in Components)
-            {
-//                if (component.Deleted) 
-
-            }
+        //-----------------------------------------------------------------
+        private void EraseDeleted ( )
+        {
+            Components.RemoveAll (component => component.Deleted);
         }
 
         //------------------------------------------------------------------
@@ -110,13 +113,5 @@ namespace Traffic
         {
             LocalPosition += shift;
         }
-
-        //------------------------------------------------------------------
-        // ToDo: Remove. Use above version instead
-        public void Move (float shift)
-        {
-            LocalPosition += new Vector2 (0, shift);
-        }
-
     }
 }
