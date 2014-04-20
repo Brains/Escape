@@ -8,7 +8,7 @@ namespace Traffic
     public class Drawable
     {
         //------------------------------------------------------------------
-        private Object root;
+        private readonly Object root;
 
         // Properties
         public bool Visible { get; set; }
@@ -19,8 +19,8 @@ namespace Traffic
         public float Depth { get; set; }
 
         // Fields
-        private readonly Texture2D texture;
-        private readonly Vector2 origin;
+        private Texture2D texture;
+        private Vector2 origin;
 
         //------------------------------------------------------------------
         public Drawable (Object root, Game game, string name)
@@ -30,11 +30,17 @@ namespace Traffic
             Scale = Vector2.One;
             Visible = true;
 
+            LoadTexture(game, name);
+        }
 
-            // Load Texture
+        //------------------------------------------------------------------
+        private void LoadTexture (Game game, string name)
+        {
             // ToDo: Load from Resources instead of Content
             name = "Images/Road/" + name;
-            texture = game.Content.Load<Texture2D> (name);
+
+            texture = game.Content.Load <Texture2D> (name);
+            
             origin = new Vector2 (texture.Width / 2.0f, texture.Height / 2.0f);
             Color = Color.White; // ToDo: Otherwise will be Transparent?
         }
