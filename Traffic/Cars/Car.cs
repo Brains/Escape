@@ -71,7 +71,7 @@ namespace Traffic.Cars
             ID = id;
             
             Velocity = Lane.Velocity;
-            Lives = weight.Lives;
+            Lives = GeLives();
             Acceleration = 1.0f;// * weight.Acceleration;
             Deceleration = 1.5f;// * weight.Deceleration;
 
@@ -100,7 +100,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         private void LoadTexture(string name)
         {
-            Texture = Lane.Road.Images[name + GetTextureNameSuffix()];
+            Texture = Lane.Road.Images[name + " " + GetTextureNameSuffix()];
             origin = new Vector2 (Texture.Width / 2.0f, Texture.Height / 2.0f);
             Lenght = Texture.Height;
         }
@@ -222,7 +222,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public bool	 IsBlinkerEnable ()
         {
-            return blinker.Visible;
+            return blinker.Drawable.Visible;
         }
 
         //------------------------------------------------------------------
@@ -368,7 +368,7 @@ namespace Traffic.Cars
             var torque = data.Z;
 
             LocalPosition += velocity * 2;
-            Angle += torque / 50;
+//            Drawable.Rotation += torque / 50;
         }
     }
 }
