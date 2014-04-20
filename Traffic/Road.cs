@@ -126,7 +126,8 @@ namespace Traffic
 
             foreach (var lane in lanes)
                 foreach (var car in lane.Cars)
-                    spriteBatch.Draw (car.Texture, car.Position, null, Color.White, car.Angle, car.origin, 1.0f, SpriteEffects.None, 1.0f);
+                    // ToDo: Rotation = car.Drawable.Rotation
+                    spriteBatch.Draw (car.Texture, car.Position, null, Color.White, 0, car.origin, 1.0f, SpriteEffects.None, 1.0f);
 
             spriteBatch.End ();
 

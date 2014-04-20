@@ -13,6 +13,7 @@ namespace Traffic
 
         // Drawing
         private Drawable drawable;
+        public Drawable Drawable { get; private set; }
 
         // Properties
         public Vector2 LocalPosition { get; set; }
@@ -51,9 +52,9 @@ namespace Traffic
         {
             Components.ForEach (item => item.Setup ());
         //------------------------------------------------------------------
-        private void CreateDrawable (Game game, string name)
+        public void CreateDrawable (Game game, string name)
         {
-            drawable = new Drawable(game, name);
+            Drawable = new Drawable (this, game, name);
         }
 
         //------------------------------------------------------------------
@@ -74,6 +75,8 @@ namespace Traffic
             // Draw itself
             if (drawable != null)
                 drawable.Draw (batch);
+            if (Drawable != null)
+                Drawable.Draw (batch);
         }
 
         protected virtual void Add (Object item)

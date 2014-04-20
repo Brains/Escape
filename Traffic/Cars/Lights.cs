@@ -14,15 +14,26 @@ namespace Traffic.Cars
         private SpriteEffects flip;
 
         protected Color Color = Color.White;
+        private string textureName;
 
         public float Rotation { get; set; }
 
         //------------------------------------------------------------------
         public Lights (Car car, string textureName) : base (car)
         {
+            this.textureName = textureName;
             this.car = car;
 
             LoadTexture (textureName);
+        }
+
+        //------------------------------------------------------------------
+        public override void Setup (Game game)
+        {
+            base.Setup (game);
+
+//            CreateDrawable (game, textureName);
+
         }
 
         //------------------------------------------------------------------
@@ -35,19 +46,19 @@ namespace Traffic.Cars
         //-----------------------------------------------------------------
         public virtual void Turn ( )
         {
-            Visible = !Visible;
+//            Drawable.Visible = !Drawable.Visible;
         }
 
         //-----------------------------------------------------------------
         public virtual void Enable ()
         {
-            Visible = true;
+//            Drawable.Visible = true;
         }
 
         //-----------------------------------------------------------------
         public virtual void Disable ()
         {
-            Visible = false;
+//            Drawable.Visible = false;
         }
 
         //-----------------------------------------------------------------
@@ -61,9 +72,9 @@ namespace Traffic.Cars
         {
             base.Draw (spriteBatch);
 
-            if (!Visible) return;
+//            if (!Drawable.Visible) return;
 
-            spriteBatch.Draw (texture, Position, null, Color, Rotation, origin, 1.0f, flip, 0.6f);
+//            spriteBatch.Draw (texture, Position, null, Color, Rotation, origin, 1.0f, flip, 0.6f);
         }
 
 
