@@ -27,13 +27,13 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch batch)
         {
             var offset = new Vector2 (0, 30);
 
-            spriteBatch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), Position, Color.CadetBlue);
-            spriteBatch.DrawString (font, road.Player.Lives.ToString (), Position + offset * 1, Color.DarkRed);
-            spriteBatch.Draw (brains, new Vector2(380, 10), Color.White);
+            batch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), Position, Color.CadetBlue);
+            batch.DrawString (font, road.Player.Lives.ToString (), Position + offset * 1, Color.DarkRed);
+            batch.Draw (brains, new Vector2(380, 10), Color.White);
         }
     }
 }

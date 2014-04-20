@@ -68,13 +68,13 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch batch)
         {
-            base.Draw (spriteBatch);
+            base.Draw (batch);
 
 //            if (!Drawable.Visible) return;
 
-//            spriteBatch.Draw (texture, Position, null, Color, Rotation, origin, 1.0f, flip, 0.6f);
+//            batch.Draw (texture, Position, null, Color, Rotation, origin, 1.0f, flip, 0.6f);
         }
 
 

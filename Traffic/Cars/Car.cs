@@ -322,11 +322,11 @@ namespace Traffic.Cars
         #endregion
 
         //------------------------------------------------------------------
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch batch)
         {
-            base.Draw (spriteBatch);
+            base.Draw (batch);
 
-            spriteBatch.Draw (Texture, Position, null, Color, Rotation, origin, 1.0f, SpriteEffects, 0.5f);
+            batch.Draw (Texture, Position, null, Color, Rotation, origin, 1.0f, SpriteEffects, 0.5f);
         }
 
         //------------------------------------------------------------------
