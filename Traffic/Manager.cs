@@ -37,19 +37,28 @@ namespace Traffic
         public override void Update (GameTime gameTime)
         {
             float elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
-
             elapsed *= Settings.TimeScale;
 
-            Road.Update (elapsed);
-            director.Update (elapsed);
+            UpdateComponents(elapsed);
 
             Tools.Markers.Manager.Clear = !Settings.NoMarkersClear;
         }
 
         //------------------------------------------------------------------
+        private void UpdateComponents (float elapsed)
+        {
+            Road.Update (elapsed);
+            director.Update (elapsed);
+        }
+
+        //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
+            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            
             Road.Draw (spriteBatch);
+
+            spriteBatch.End ();
         }
     }
 }

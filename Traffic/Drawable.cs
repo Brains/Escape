@@ -18,6 +18,9 @@ namespace Traffic
         public SpriteEffects Flip { get; set; }
         public float Depth { get; set; }
 
+        public int Width { get { return texture.Width; } }
+        public int Height { get { return texture.Height; } }
+
         // Fields
         private Texture2D texture;
         private Vector2 origin;
@@ -30,7 +33,7 @@ namespace Traffic
             Scale = Vector2.One;
             Visible = true;
 
-            LoadTexture(game, name);
+            LoadTexture (game, name);
         }
 
         //------------------------------------------------------------------
@@ -40,7 +43,7 @@ namespace Traffic
             name = "Images/Road/" + name;
 
             texture = game.Content.Load <Texture2D> (name);
-            
+
             origin = new Vector2 (texture.Width / 2.0f, texture.Height / 2.0f);
             Color = Color.White; // ToDo: Otherwise will be Transparent?
         }
