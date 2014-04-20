@@ -12,7 +12,6 @@ namespace Traffic
         public List<Object> Components { get; private set; }
 
         // Drawing
-        private Drawable drawable;
         public Drawable Drawable { get; private set; }
 
         // Properties
@@ -48,9 +47,11 @@ namespace Traffic
 
         //------------------------------------------------------------------
         // ToDo: Delete? Lane.Setup?
-        public virtual void SetupDelete ()
+        public virtual void SetupDelete()
         {
-            Components.ForEach (item => item.Setup ());
+            Components.ForEach (item => item.Setup());
+        }
+
         //------------------------------------------------------------------
         public void CreateDrawable (Game game, string name)
         {
@@ -73,8 +74,6 @@ namespace Traffic
                 component.Draw (batch);
 
             // Draw itself
-            if (drawable != null)
-                drawable.Draw (batch);
             if (Drawable != null)
                 Drawable.Draw (batch);
         }
