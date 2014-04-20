@@ -32,7 +32,7 @@ namespace Traffic
         {
             spriteBatch = new SpriteBatch (Game.GraphicsDevice);
             
-            Road.Setup ();
+            Road.Setup (Game);
             director.Setup ();
         }
 

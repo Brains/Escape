@@ -78,19 +78,19 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public override void Setup ()
+        public override void Setup (Game game)
         {
             height = Road.Game.GraphicsDevice.Viewport.Height;
             border = height;
 
-            base.Setup ();
+            base.Setup (game);
         }
 
         //------------------------------------------------------------------
         protected virtual Car CreateCar ()
         {
             var car = new Car (this, carsCounter, GetInsertionPosition ());
-            car.Setup ();
+            car.Setup (Road.Game);
 
             Cars.Add (car);
             OwnCar (car);
@@ -128,7 +128,7 @@ namespace Traffic
         public Player CreatePlayer (Game game)
         {
             var player = new Player (this, carsCounter, 400);
-            player.Setup ();
+            player.Setup (game);
 
             Cars.Add (player);
             OwnCar (player);
@@ -146,7 +146,7 @@ namespace Traffic
         public Police CreatePolice (Game game)
         {
             var police = new Police (this, carsCounter, Settings.PoliceStartPosition);
-            police.Setup ();
+            police.Setup (game);
 
             // ToDo: Merge this methods into Add
             Cars.Add (police);
