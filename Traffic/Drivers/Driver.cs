@@ -219,7 +219,7 @@ namespace Traffic.Drivers
             #endregion
 
             // Rotate
-            Action <float> rotate = share => Car.Rotation += share;
+            Action <float> rotate = share => Car.Drawable.Rotation += share;
             float finalAngle = MathHelper.ToRadians ((lane.Position.X < Car.Position.X) ? -10 : 10);
             action.Add (new Controller (rotate, finalAngle, duration * 0.3f));
 

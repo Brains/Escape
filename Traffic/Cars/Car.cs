@@ -2,7 +2,6 @@ using System;
 using Animation;
 using Fluid;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
 using Traffic.Actions.Base;
 using Traffic.Cars.Weights;
@@ -12,29 +11,23 @@ namespace Traffic.Cars
 {
     public class Car : Object
     {
-        //-----------------------------------------------------------------
+        // Components
         private Lane lane;
         private Driver driver;
-        public Vector2 origin;
+        protected internal Bounds Bounds;
+        
+        // Lights
         private Lights brakes;
         private Blinker blinker;
         private Lights boost;
 
-        //------------------------------------------------------------------
-        protected Color InitialColor;
-        protected internal Bounds Bounds;
-
-        //------------------------------------------------------------------
+        // Properties
         public readonly int ID;
         public float Velocity { get; set; }
-        public Color Color { get; set; }
         public int Lenght { get; set; }
         public int Lives { get; set; }
         public float Acceleration { get; set; }
         public float Deceleration { get; set; }
-        public float Rotation { get; set; }
-        public SpriteEffects SpriteEffects { get; set; }
-        public Texture2D Texture { get; set; }
 
         //------------------------------------------------------------------
         public Lane Lane
@@ -65,8 +58,6 @@ namespace Traffic.Cars
         public Car (Lane lane, int id, int position) : base(lane)
         {
             LocalPosition = new Vector2 (0, position);
-            InitialColor = Color.White;
-            Color = Color.White;
             Lane = lane;
             ID = id;
             
@@ -75,11 +66,20 @@ namespace Traffic.Cars
             Acceleration = 1.0f;// * weight.Acceleration;
             Deceleration = 1.5f;// * weight.Deceleration;
 
-            LoadTexture ("Car");
-            CreateBoundingBox ();
             CreateLights ();
 
             Driver = new Common (this);
+        }
+
+        //------------------------------------------------------------------
+        public override void Setup (Game game)
+        {
+            CreateDrawable (game, "Car " + GetTextureNameSuffix());
+            Lenght = Drawable.Height;
+
+            CreateBoundingBox ();
+
+            base.Setup (game);
         }
 
         //------------------------------------------------------------------
@@ -98,12 +98,6 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
-        private void LoadTexture(string name)
-        {
-            Texture = Lane.Road.Images[name + " " + GetTextureNameSuffix()];
-            origin = new Vector2 (Texture.Width / 2.0f, Texture.Height / 2.0f);
-            Lenght = Texture.Height;
-        }
 
         private string GetTextureNameSuffix()
         {
@@ -122,8 +116,9 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         private void CreateBoundingBox ()
         {
-            Bounds = new Bounds (this, Position, origin);
+            Bounds = new Bounds (this, Position, Drawable.Origin);
             Bounds.Inflate (-5, -5);
+
             Add (Bounds);
         }
 
@@ -131,11 +126,11 @@ namespace Traffic.Cars
         private void CreateLights ()
         {
             brakes = new Lights (this, "Brake");
-            brakes.LocalPosition = new Vector2 (0, Texture.Height / 2 + 10);
+            brakes.LocalPosition = new Vector2 (0, Lenght / 2 + 10);
             Add (brakes);
 
             boost = new Lights (this, "Acceleration");
-            boost.LocalPosition = new Vector2 (0, -Texture.Height / 2 - 10);
+            boost.LocalPosition = new Vector2 (0, -Lenght / 2 - 10);
             Add (boost);
 
             blinker = new Blinker (this, "Blinker");
@@ -151,18 +146,12 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            Reset ();
-            
             base.Update (elapsed);
+            
+            Reset ();
 
-            float shift = -Velocity * elapsed;
-            Move (new Vector2 (0, shift));
-
-            // Simulate Camera moving
-            shift = Lane.Road.Player.Velocity * elapsed;
-            Move (new Vector2 (0, shift));
-
-//            Lane.Road.Fluid.AddImpulse (new Vector2(0, 50), Position);
+            MoveByVelocity(elapsed);
+            SimulateCameraMoving(elapsed);
 
             DetectCollisions ();
 
@@ -170,9 +159,24 @@ namespace Traffic.Cars
         }
 
         //------------------------------------------------------------------
+        private void MoveByVelocity (float elapsed)
+        {
+            float shift = -Velocity * elapsed;
+
+            Move (new Vector2 (0, shift));
+        }
+
+        //------------------------------------------------------------------
+        private void SimulateCameraMoving (float elapsed)
+        {
+            float shift = Lane.Road.Player.Velocity * elapsed;
+
+            Move (new Vector2 (0, shift));
+        }
+
+        //------------------------------------------------------------------
         private void Reset ()
         {
-//            Color = InitialColor;
             brakes.Disable();
             boost.Disable();
         }
@@ -236,11 +240,12 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public void Turn ()
         {
-            Color = Color == Color.White ? Color.Orange : Color.White;
+//            Color = Color == Color.White ? Color.Orange : Color.White;
         }
 
 
         #endregion
+
 
         #region Collisions Detection
 
@@ -305,7 +310,6 @@ namespace Traffic.Cars
         {
             Velocity = 0;
             Lives = 0;
-            InitialColor = Color.Transparent;
             Bounds = null;
             
             Components.Clear ();
@@ -320,14 +324,6 @@ namespace Traffic.Cars
         }
 
         #endregion
-
-        //------------------------------------------------------------------
-        public override void Draw (SpriteBatch batch)
-        {
-            base.Draw (batch);
-
-            batch.Draw (Texture, Position, null, Color, Rotation, origin, 1.0f, SpriteEffects, 0.5f);
-        }
 
         //------------------------------------------------------------------
         public override string ToString ()
