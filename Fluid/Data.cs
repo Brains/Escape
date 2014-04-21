@@ -62,27 +62,41 @@ namespace Fluid
         //------------------------------------------------------------------
         public Vector3 GetData (Vector2 screen)
         {
-            Point position = GetTextureCoordinates (screen);
+            Vector4 value1, value2, value3, value4;
 
+            Point position = GetTextureCoordinates (screen);
+            var interpolated = GetInterpolatedData (position, out value1, out value2, out value3, out value4);
+            var torque = CalculateTorque (value1, value2, value3, value4);
+
+            return new Vector3 (interpolated.X, interpolated.Y, torque);
+        }
+
+        //------------------------------------------------------------------
+        private Vector4 GetInterpolatedData (Point position, out Vector4 value1, out Vector4 value2, out Vector4 value3, out Vector4 value4)
+        {
             const int offset = 2;
-            Vector4 value1 = data[GetIndex (position.X + offset, position.Y)].ToVector4();
-            Vector4 value2 = data[GetIndex (position.X - offset, position.Y)].ToVector4();
-            Vector4 value3 = data[GetIndex (position.X, position.Y + offset)].ToVector4();
-            Vector4 value4 = data[GetIndex (position.X, position.Y - offset)].ToVector4();
+            value1 = data[GetIndex (position.X + offset, position.Y)].ToVector4();
+            value2 = data[GetIndex (position.X - offset, position.Y)].ToVector4();
+            value3 = data[GetIndex (position.X, position.Y + offset)].ToVector4();
+            value4 = data[GetIndex (position.X, position.Y - offset)].ToVector4();
 
             var lerp1 = Vector4.Lerp (value1, value2, 0.5f);
             var lerp2 = Vector4.Lerp (value3, value4, 0.5f);
             var interpolated = Vector4.Lerp (lerp1, lerp2, 0.5f);
+            return interpolated;
+        }
 
+        //------------------------------------------------------------------
+        private float CalculateTorque (Vector4 value1, Vector4 value2, Vector4 value3, Vector4 value4)
+        {
             const float ratio = (float) 800 / 480;
             float torque1 = value1.Y * 1; // 1 is the moment arm
             float torque2 = value2.Y * 1;
-            float torque3 = value3.X * ratio; // Fluid is square but the screen isn't. So moment arm on it is higher
-            float torque4 = value4.X * ratio; 
+            float torque3 = value3.X * ratio; // Fluid is square but the screen isn't. So moment arm on its horizont is higher
+            float torque4 = value4.X * ratio;
 
             float torque = torque1 + torque2 + torque3 + torque4;
-
-            return new Vector3 (interpolated.X, interpolated.Y, torque);
+            return torque;
         }
 
         //------------------------------------------------------------------
@@ -111,7 +125,7 @@ namespace Fluid
         private void Draw()
         {
             Device.SetRenderTarget (null);
-            //            Device.Clear (Color.Orange);
+//            Device.Clear (Color.Orange);
             Batch.Begin (SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, null, null);
 
             Vector2 scale = new Vector2 ((float) 480 / Size, (float) 800 / Size);
@@ -123,33 +137,12 @@ namespace Fluid
             Batch.End();
         }
 
-        //------------------------------------------------------------------
-        private void DrawStreamline()
-        {
-            Vector2 scale = new Vector2 ((float) 480 / Size, (float) 800 / Size);
-            var screen = Vector2.Zero;
 
-//            foreach (var x in Enumerable.Range (0, 32))
 
-            Point position = GetTextureCoordinates (screen);
-            Vector4 value = data[GetIndex (position.X, position.Y)].ToVector4();
-
-            var streamline = new NumericalMethods.Simpson (x => x * value.Y / value.X, 0, 10, 1);
-
-//            foreach (var point in Enumerable.Range (0, 32))
-//            {
-//                Point position = GetTextureCoordinates (screen);
-//                Vector4 value = data[GetIndex (position.X, position.Y)].ToVector4();
-//                Vector2 increment = new Vector2 (value.X, value.Y * value.X) ;
-//                new Line (screen, screen + increment, Color.DarkOrange);
-//
-//                screen += increment;
-//            }
-
-        }
+        #region Debug
 
         //------------------------------------------------------------------
-        public void Debug()
+        public void Debug ()
         {
             List <HalfVector4> list = data.ToList();
             float min = list.Max (vector4 => vector4.ToVector4().X);
@@ -173,12 +166,11 @@ namespace Fluid
             var value = data[i * Size + j].ToVector4();
 
             Vector2 scale = new Vector2 ((float) 480 / Size, (float) 800 / Size);
-            Vector2 position = new Vector2(j, i) * scale;
+            Vector2 position = new Vector2 (j, i) * scale;
             Vector2 increment = new Vector2 (value.X, value.Y) * 10;
 
-            if (increment.Length () > 1)
+            if (increment.Length() > 1)
                 new Line (position, position + increment, Color.DarkOrange);
-
 
 
             //if (value.Length() > 0.2f)
@@ -189,5 +181,31 @@ namespace Fluid
             //    new Line (screen, screen + velocity * 30, Color.DarkOrange);
             //}
         }
+
+        //------------------------------------------------------------------
+        private void DrawStreamline ()
+        {
+            Vector2 scale = new Vector2 ((float) 480 / Size, (float) 800 / Size);
+            var screen = Vector2.Zero;
+
+            //            foreach (var x in Enumerable.Range (0, 32))
+
+            Point position = GetTextureCoordinates (screen);
+            Vector4 value = data[GetIndex (position.X, position.Y)].ToVector4 ();
+
+            var streamline = new NumericalMethods.Simpson (x => x * value.Y / value.X, 0, 10, 1);
+
+            //            foreach (var point in Enumerable.Range (0, 32))
+            //            {
+            //                Point position = GetTextureCoordinates (screen);
+            //                Vector4 value = data[GetIndex (position.X, position.Y)].ToVector4();
+            //                Vector2 increment = new Vector2 (value.X, value.Y * value.X) ;
+            //                new Line (screen, screen + increment, Color.DarkOrange);
+            //
+            //                screen += increment;
+            //            }
+        }
+
+        #endregion
     }
 }
