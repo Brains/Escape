@@ -201,23 +201,10 @@ namespace Traffic.Drivers
             // No Lane changing when car doesn't move
             if (Car.Velocity < 10) return;
 
-            // Debug
-            if (this is Police) 
-            {
-//                duration *= 5;
-//                Debugger.Break();
-            }
-
-            // Add to new Lane
+            // Add to the new Lane
             action.Add (new Generic (() => lane.Add (Car)));
 
-            #region Debug
-            if (Settings.NoChangeLaneAnimation)
-            {
-                action.Add (new Generic (() => Car.DockToLane()));
-                return;
-            }
-            #endregion
+            if (IsAnimationDisabled (action)) return;
 
             // Rotate
             Action <float> rotate = share => Car.Drawable.Rotation += share;
@@ -235,6 +222,17 @@ namespace Traffic.Drivers
 
             // Fix accuracy error in Car's Position
             action.Add (new Generic (() => Car.DockToLane()));
+        }
+
+        //------------------------------------------------------------------
+        private bool IsAnimationDisabled (Sequence action)
+        {
+            if (!Settings.NoChangeLaneAnimation) return false;
+            
+            // Move Car instead of the Animation
+            action.Add (new Generic (() => Car.DockToLane()));
+
+            return true;
         }
 
         #endregion
