@@ -10,13 +10,20 @@ namespace Fluid
 {
     public class Solver : Unit
     {
+        // Components
+        private readonly Obstacles obstacles;
+        private readonly Render render;
+
+        // Parameters
         public const int Iterations = 20;
         public const float DT = 1.0f;
         public const float VelocityDiffusion = 1.0f;
         public const float DensityDiffusion = 0.995f;
         public const float VorticityScale = 0.30f;
 
-        #region Render Targets
+        private readonly EffectParameter permanentVelocity;
+
+        // Render Targets
         internal RenderTarget2D Velocity;
         internal RenderTarget2D Density;
         internal RenderTarget2D Divergence;
@@ -24,12 +31,6 @@ namespace Fluid
         internal RenderTarget2D Vorticity;
         
         private readonly RenderTarget2D helper;
-        #endregion
-
-        private readonly Obstacles obstacles;
-        private readonly Render render;
-
-        private readonly EffectParameter permanentVelocity;
 
         //------------------------------------------------------------------
         public Data Data { get; private set; }
@@ -95,7 +96,8 @@ namespace Fluid
         //------------------------------------------------------------------
         // Using to simulate Camera moving
         // Actually this Advection just parallely move all particles in a field to the bottom
-        private void ComputePermanentAdvection()
+        //------------------------------------------------------------------
+        private void ComputePermanentAdvection ()
         {
             Shader.CurrentTechnique = Shader.Techniques["PermanentAdvection"];
 
@@ -111,8 +113,6 @@ namespace Fluid
             Compute (Density);
             Copy (Temporary, Density);
         }
-
-
 
         //------------------------------------------------------------------
         private void ComputeAdvect ()
@@ -223,7 +223,9 @@ namespace Fluid
         //------------------------------------------------------------------
         public void SetSpeed (float velocity)
         {
-            permanentVelocity.SetValue (velocity * 0.005f);
+            const float factor = 0.005f;
+
+            permanentVelocity.SetValue (velocity * factor);
         }
     }
 }
