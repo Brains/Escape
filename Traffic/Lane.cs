@@ -94,7 +94,7 @@ namespace Traffic
             car.Setup (Road.Game);
 
             Cars.Add (car);
-            OwnCar (car);
+            AcceptCar (car);
 
             carsCounter++;
 
@@ -108,7 +108,7 @@ namespace Traffic
 //            car.Setup ();
 //
 //            Cars.Add (car);
-//            OwnCar (car);
+//            AcceptCar (car);
 //                 
 //        }
 
@@ -132,7 +132,7 @@ namespace Traffic
             player.Setup (game);
 
             Cars.Add (player);
-            OwnCar (player);
+            AcceptCar (player);
 
             carsCounter++;
 
@@ -151,7 +151,7 @@ namespace Traffic
 
             // ToDo: Merge this methods into Add
             Cars.Add (police);
-            OwnCar (police);
+            AcceptCar (police);
             carsCounter++; // Merge it too
 
             return police;
@@ -236,7 +236,7 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AddNewCars ()
         {
-            newCars.ForEach (OwnCar);
+            newCars.ForEach (AcceptCar);
             newCars.Clear ();
         }
 
@@ -247,7 +247,7 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private void OwnCar (Car car)
+        private void AcceptCar (Car car)
         {
             if (car.Lane == this) return;
 
@@ -269,7 +269,7 @@ namespace Traffic
         public override string ToString ()
         {
             return ID.ToString();
-            return string.Format ("{0}", ID);
+//            return string.Format ("{0}", ID);
         }
 
         //------------------------------------------------------------------
