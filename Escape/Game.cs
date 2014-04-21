@@ -11,21 +11,25 @@ namespace Escape
         public Game()
         {
             GraphicsDeviceManager graphics = new GraphicsDeviceManager (this);
-            
+
             graphics.PreferredBackBufferWidth = 480;
             graphics.PreferredBackBufferHeight = 800;
 
             graphics.SupportedOrientations = DisplayOrientation.Portrait;
 
-            // Disable fixed framerate
-//            graphics.SynchronizeWithVerticalRetrace = false;
-//            IsFixedTimeStep = false;
 
             Content.RootDirectory = "Content";
 
+//            DisableFixedFramerate (graphics);
             IsMouseVisible = true;
-
             Window.SetPosition (new Point (600, 125));
+        }
+
+        //------------------------------------------------------------------
+        private void DisableFixedFramerate (GraphicsDeviceManager graphics)
+        {
+            graphics.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = false;
         }
 
         //------------------------------------------------------------------
@@ -56,9 +60,9 @@ namespace Escape
         {
             float scale = 0.05f;
 
-            if (Keyboard.GetState ().IsKeyDown(Keys.D1))
+            if (Keyboard.GetState().IsKeyDown (Keys.D1))
                 Traffic.Settings.TimeScale -= scale;
-            if (Keyboard.GetState ().IsKeyDown (Keys.D2))
+            if (Keyboard.GetState().IsKeyDown (Keys.D2))
                 Traffic.Settings.TimeScale += scale;
         }
 

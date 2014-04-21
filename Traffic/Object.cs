@@ -9,7 +9,7 @@ namespace Traffic
     public class Object
     {
         // Nodes
-        public Object Root { get; /*private*/ set; }
+        public Object Root { get; set; } // ToDo: Private Set
         public List<Object> Components { get; private set; }
 
         // Drawing
