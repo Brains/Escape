@@ -92,11 +92,10 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Draw (SpriteBatch batch)
         {
-            Vector2 origin = new Vector2 (Drawable.Width, Drawable.Height) / 2.0f;
             Vector2 shift = new Vector2 (0, -Drawable.Height);
 
             // Move Road to the Point[0, 0] instead of the Point[origin]
-            Move (origin);
+            Move (Drawable.Origin);
 
             // Draw Road and all her Components
             base.Draw (batch);
@@ -107,7 +106,7 @@ namespace Traffic
             
             // Restore Position
             Move (-shift);
-            Move (-origin);
+            Move (-Drawable.Origin);
         }
 
         //------------------------------------------------------------------

@@ -13,6 +13,7 @@ namespace Traffic
         // Properties
         public bool Visible { get; set; }
         public Vector2 Scale { get; set; }
+        public Vector2 Origin { get; private set; }
         public float Rotation { get; set; }
         public Color Color { get; set; }
         public SpriteEffects Flip { get; set; }
@@ -23,7 +24,6 @@ namespace Traffic
 
         // Fields
         private Texture2D texture;
-        private Vector2 origin;
 
         //------------------------------------------------------------------
         public Drawable (Object root, Game game, string name)
@@ -44,7 +44,7 @@ namespace Traffic
 
             texture = game.Content.Load <Texture2D> (name);
 
-            origin = new Vector2 (texture.Width / 2.0f, texture.Height / 2.0f);
+            Origin = new Vector2 (texture.Width / 2.0f, texture.Height / 2.0f);
             Color = Color.White; // ToDo: Otherwise will be Transparent?
         }
 
@@ -54,7 +54,7 @@ namespace Traffic
             if (texture == null) return;
             if (!Visible) return;
 
-            spriteBatch.Draw (texture, root.Position, null, Color, Rotation, origin, Scale, Flip, Depth);
+            spriteBatch.Draw (texture, root.Position, null, Color, Rotation, Origin, Scale, Flip, Depth);
         }
     }
 }
