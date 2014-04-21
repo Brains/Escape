@@ -66,6 +66,7 @@ namespace Traffic
         {
             const int maximumVelocity = 240;
             const int step = 20;
+
             Velocity = maximumVelocity - ID * step;
         }
 
@@ -88,16 +89,39 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        protected virtual Car CreateCar ()
+        protected Car CreateCar ()
         {
             var car = new Car (this, carsCounter, GetInsertionPosition ());
-            car.Setup (Road.Game);
-
-            Cars.Add (car);
-            AcceptCar (car);
-            carsCounter++;
+            SetupCar (car);
 
             return car;
+        }
+
+        //------------------------------------------------------------------
+        public Player CreatePlayer (Game game)
+        {
+            var player = new Player (this, carsCounter, 400);
+            SetupCar (player);
+
+            return player;
+        }
+
+        //------------------------------------------------------------------
+        public Police CreatePolice (Game game)
+        {
+            var police = new Police (this, carsCounter, Settings.PoliceStartPosition);
+            SetupCar (police);
+
+            return police;
+        }
+
+        //-----------------------------------------------------------------
+        private void SetupCar (Car car)
+        {
+            car.Setup (Road.Game);
+            AcceptCar (car);
+
+            carsCounter++;
         }
 
         //------------------------------------------------------------------
@@ -114,46 +138,17 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        public Player CreatePlayer (Game game)
-        {
-            var player = new Player (this, carsCounter, 400);
-            player.Setup (game);
-
-            Cars.Add (player);
-            AcceptCar (player);
-            carsCounter++;
-
-            return player;
-        }
-
-        //------------------------------------------------------------------
-        public Police CreatePolice (Game game)
-        {
-            var police = new Police (this, carsCounter, Settings.PoliceStartPosition);
-            police.Setup (game);
-
-            // ToDo: Merge this methods into Add
-            Cars.Add (police);
-            AcceptCar (police);
-            carsCounter++; // Merge it too
-
-            return police;
-        }
-
-        //------------------------------------------------------------------
-        // Return point outside the screen
         private int GetInsertionPosition ()
         {
             // Determine where place car: above Player or bottom
             float playerVelocity = (Road.Player != null) ? Road.Player.Velocity : 0;
-
             int sign = (Velocity > playerVelocity) ? 1 : -1;
 
-            return GetFreePosition (sign);
+            return GetFreePositionOutsideScreen (sign);
         }
 
         //------------------------------------------------------------------
-        private int GetFreePosition (int sign)
+        private int GetFreePositionOutsideScreen (int sign)
         {
             int position = 0;
             int lower = 0 + sign * border;
@@ -232,15 +227,14 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AcceptCar (Car car)
         {
-            if (car.Lane == this) return;
-
             // Remove Car from the previous Lane
-            car.Lane.Cars.Remove (car);
+            if (car.Lane != this)
+                car.Lane.Cars.Remove (car);
 
             // Add Car to the current Lane
             Cars.Add (car);
 
-            // Implement smooth crossing from previous Lane to current
+            // Implement smooth crossing from the previous Lane to the current one
             car.LocalPosition = new Vector2 (car.Position.X - Position.X, car.Position.Y);
 
             car.SetLane (this);
