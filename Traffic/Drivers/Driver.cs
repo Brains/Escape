@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Engine;
+using Engine.Actions;
+using Engine.Tools.Extensions;
+using Engine.Tools.Markers;
 using Microsoft.Xna.Framework;
-using Tools.Extensions;
-using Tools.Markers;
 using Traffic.Actions;
-using Traffic.Actions.Base;
 using Traffic.Cars;
-using Action = Traffic.Actions.Base.Action;
+using Action = Engine.Actions.Action;
 
 namespace Traffic.Drivers
 {
-    public abstract class Driver : Object
+    public abstract class Driver : Engine.Object
     {
         public enum Direction
         {
@@ -200,26 +201,13 @@ namespace Traffic.Drivers
             // No Lane changing when car doesn't move
             if (Car.Velocity < 10) return;
 
-            // Debug
-            if (this is Police) 
-            {
-//                duration *= 5;
-//                Debugger.Break();
-            }
-
-            // Add to new Lane
+            // Add to the new Lane
             action.Add (new Generic (() => lane.Add (Car)));
 
-            #region Debug
-            if (Settings.NoChangeLaneAnimation)
-            {
-                action.Add (new Generic (DockToLane));
-                return;
-            }
-            #endregion
+            if (IsAnimationDisabled (action)) return;
 
             // Rotate
-            Action <float> rotate = share => Car.Angle += share;
+            Action <float> rotate = share => Car.Drawable.Rotation += share;
             float finalAngle = MathHelper.ToRadians ((lane.Position.X < Car.Position.X) ? -10 : 10);
             action.Add (new Controller (rotate, finalAngle, duration * 0.3f));
 
@@ -233,13 +221,18 @@ namespace Traffic.Drivers
             action.Add (inverseRotating);
 
             // Fix accuracy error in Car's Position
-            action.Add (new Generic (DockToLane));
+            action.Add (new Generic (() => Car.DockToLane()));
         }
 
         //------------------------------------------------------------------
-        private void DockToLane()
+        private bool IsAnimationDisabled (Sequence action)
         {
-            Car.LocalPosition = new Vector2 (0, Car.Position.Y);
+            if (!Settings.NoChangeLaneAnimation) return false;
+            
+            // Move Car instead of the Animation
+            action.Add (new Generic (() => Car.DockToLane()));
+
+            return true;
         }
 
         #endregion

@@ -47,18 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\Base\Action.cs" />
-    <Compile Include="Actions\Base\Composite.cs" />
-    <Compile Include="Actions\Base\Conditional.cs" />
-    <Compile Include="Actions\Base\Controller.cs" />
-    <Compile Include="Actions\Base\Generic.cs" />
-    <Compile Include="Actions\Base\Loop.cs" />
-    <Compile Include="Actions\Base\Manager.cs" />
-    <Compile Include="Actions\Base\Parallel.cs" />
-    <Compile Include="Actions\Base\Repeated.cs" />
-    <Compile Include="Actions\Base\Sequence.cs" />
-    <Compile Include="Actions\Base\SequenceInitial.cs" />
-    <Compile Include="Actions\Base\Sleep.cs" />
     <Compile Include="Actions\Block.cs" />
     <Compile Include="Actions\ChangeFreeLane.cs" />
     <Compile Include="Actions\SpeedControl.cs" />
@@ -66,7 +54,6 @@
     <Compile Include="Actions\Input.cs" />
     <Compile Include="Actions\Overtake.cs" />
     <Compile Include="Actions\Shrink.cs" />
-    <Compile Include="AnimatedTexture.cs" />
     <Compile Include="Cars\Blinker.cs" />
     <Compile Include="Cars\Bounds.cs" />
     <Compile Include="Cars\Car.cs" />
@@ -87,18 +74,17 @@
     <Compile Include="Indicators.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="Manager.cs" />
-    <Compile Include="Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Road.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{83dac1bd-581b-4081-ba1c-8abb0192b57b}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Fluid\Fluid.csproj">
       <Project>{2e5e3b33-8073-4a96-8fdb-21bcac71d756}</Project>
       <Name>Fluid</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tools\Tools.csproj">
-      <Project>{9e4ff996-10da-47c7-8008-1a4392f32ea5}</Project>
-      <Name>Tools</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

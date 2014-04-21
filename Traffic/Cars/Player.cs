@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Tools.Markers;
 using Traffic.Cars.Weights;
 
 namespace Traffic.Cars
@@ -8,8 +7,7 @@ namespace Traffic.Cars
     public class Player : Car
     {
         //------------------------------------------------------------------
-        public Player (Lane lane, int id, int position, Weight weight, string textureName)
-            : base (lane, id, position, weight, textureName)
+        public Player (Lane lane, int id, int position) : base (lane, id, position)
         {
             Lives = 80;
             Velocity = 300;
@@ -18,14 +16,15 @@ namespace Traffic.Cars
 //            Deceleration = 2; 
             Deceleration = 1.0f;
 
-            Driver = new Drivers.Player (this);
+            SetDriver (new Drivers.Player (this));
         }
 
-        public override void Update (float elapsed)
+        //------------------------------------------------------------------
+        public override void Setup (Game game)
         {
-            base.Update (elapsed);
+            CreateDrawable (game, "Player");
 
-//            InteractOnFluid();
+            base.Setup (game);
         }
     }
 }

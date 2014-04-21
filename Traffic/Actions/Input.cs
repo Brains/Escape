@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Engine.Actions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
-using Traffic.Actions.Base;
 using Traffic.Cars;
 using Traffic.Drivers;
-using Action = Traffic.Actions.Base.Action;
+using Action = Engine.Actions.Action;
 
 namespace Traffic.Actions
 {

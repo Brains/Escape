@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Engine.Tools.Timers;
 using Microsoft.Xna.Framework;
-using Tools.Markers;
 using Traffic.Actions;
 using Traffic.Cars;
 using Traffic.Drivers;
@@ -27,10 +27,10 @@ namespace Traffic
         //-----------------------------------------------------------------
         public void Setup()
         {
-            Tools.Timers.Loop.Create (10, 0, ChangeMaximumCarsOnLaneEvent);
-            Tools.Timers.Loop.Create (1, 0, ChangeLaneForCarEvent);
-            Tools.Timers.Loop.Create (0, 0, CreatePolice);
-            Tools.Timers.Loop.Create (0, 0, CreateBlock);
+            Loop.Create (10, 0, ChangeMaximumCarsOnLaneEvent);
+            Loop.Create (1, 0, ChangeLaneForCarEvent);
+            Loop.Create (0, 0, CreatePolice);
+            Loop.Create (0, 0, CreateBlock);
         }
 
         //-----------------------------------------------------------------

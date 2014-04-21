@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Engine;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Traffic
@@ -14,26 +15,26 @@ namespace Traffic
         {
             this.road = road;
             LocalPosition = new Vector2 (10);
-            Anchored = true;
+            Fixed = true;
         }
 
         //------------------------------------------------------------------
-        public override void Setup ()
+        public override void Setup (Game game)
         {
-            base.Setup ();
+            base.Setup (game);
 
             font = road.Game.Content.Load <SpriteFont> ("Fonts/Segoe (UI)");
             brains = road.Game.Content.Load <Texture2D> ("Images/Road/Brain");
         }
 
         //------------------------------------------------------------------
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch batch)
         {
             var offset = new Vector2 (0, 30);
 
-            spriteBatch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), Position, Color.CadetBlue);
-            spriteBatch.DrawString (font, road.Player.Lives.ToString (), Position + offset * 1, Color.DarkRed);
-            spriteBatch.Draw (brains, new Vector2(380, 10), Color.White);
+            batch.DrawString (font, System.Math.Floor (road.Player.Velocity).ToString (), Position, Color.CadetBlue);
+            batch.DrawString (font, road.Player.Lives.ToString (), Position + offset * 1, Color.DarkRed);
+            batch.Draw (brains, new Vector2(380, 10), Color.White);
         }
     }
 }

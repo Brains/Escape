@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using Engine.Tools.Timers;
 using Microsoft.Xna.Framework;
-using Tools.Timers;
 
 namespace Traffic.Cars
 {
@@ -33,7 +33,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public override void Turn()
         {
-            Color = Color == Color.White ? Color.Transparent : Color.White;
+            Drawable.Color = Drawable.Color == Color.White ? Color.Transparent : Color.White;
         }
 
         //------------------------------------------------------------------

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Engine.Actions;
+using Engine.Tools.Markers;
 using Microsoft.Xna.Framework;
-using Tools.Markers;
-using Traffic.Actions.Base;
 using Traffic.Cars;
 using Traffic.Drivers;
 using Player = Traffic.Cars.Player;
@@ -41,8 +41,11 @@ namespace Traffic.Actions
             Catch();
 
             // Match Lane
-            bool visible = driver.Distance (target) < 200;
-            bool overtake = Math.Abs (driver.Car.Velocity - target.Velocity) < 100;
+            const int visibility = 200;
+            const int holdDistance = 100;
+
+            bool visible = driver.Distance (target) < visibility;
+            bool overtake = Math.Abs (driver.Car.Velocity - target.Velocity) < holdDistance;
 
             if (visible && overtake)
                 MatchLane();
@@ -51,6 +54,8 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private void FreeLane()
         {
+            const int visibility = 400;
+
             Car closest = driver.FindClosestCar (driver.Car.Lane.Cars.Where (driver.IsCarAhead));
             if (closest == null) return;
             if (closest is Player) return;
@@ -58,7 +63,7 @@ namespace Traffic.Actions
 
             float distance = driver.Distance (closest);
 
-            if (distance > 400) return;
+            if (distance > visibility) return;
 
             closest.Driver.AddInSequnce (new ChangeFreeLane (closest.Driver));
         }
@@ -95,7 +100,7 @@ namespace Traffic.Actions
         //------------------------------------------------------------------
         private bool IsCarAhead(Car target)
         {
-            return driver.Car.Position.Y + 0 > target.Position.Y;
+            return driver.Car.Position.Y > target.Position.Y;
         }
 
         //------------------------------------------------------------------

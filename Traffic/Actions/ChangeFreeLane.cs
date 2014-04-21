@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Traffic.Actions.Base;
+﻿using Engine.Actions;
+using Microsoft.Xna.Framework;
 using Traffic.Drivers;
 
 namespace Traffic.Actions

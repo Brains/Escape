@@ -1,18 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Engine;
+using Engine.Tools.Markers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Tools.Markers;
 using Traffic.Cars;
 using Traffic.Cars.Weights;
 
 namespace Traffic
 {
-    public class Lane : Object
+    public class Lane : Engine.Object
     {
+        public enum Weight
+        {
+            Light,
+            Medium,
+            Heavy
+        }
+
+        //------------------------------------------------------------------
         private int height;
-        private readonly List <Car> carsToAdd;
+        private readonly List <Car> newCars;
         private static int carsCounter;
 
         //------------------------------------------------------------------
@@ -43,96 +52,56 @@ namespace Traffic
         {
             ID = id;
             Road = road;
-            Anchored = true;
+            Fixed = true;
 
-            CalculatePosition (ID);
-            CalculateVelocity (ID);
+            CalculatePosition ();
+            CalculateVelocity ();
 
             Cars = new List <Car> ();
-            carsToAdd = new List <Car> ();
+            newCars = new List <Car> ();
         }
 
         //------------------------------------------------------------------
-        private void CalculateVelocity (int id)
+        private void CalculateVelocity ()
         {
             const int maximumVelocity = 240;
             const int step = 20;
-            Velocity = maximumVelocity - id * step;
+
+            Velocity = maximumVelocity - ID * step;
         }
 
         //------------------------------------------------------------------
-        private void CalculatePosition (int id)
+        private void CalculatePosition ()
         {
             const int laneWidth = 40;
-            int position = id * laneWidth + laneWidth / 2;
+            int position = ID * laneWidth + laneWidth / 2;
 
             LocalPosition = new Vector2 (position, 0);
         }
 
         //------------------------------------------------------------------
-        public override void Setup ()
+        public override void Setup (Game game)
         {
             height = Road.Game.GraphicsDevice.Viewport.Height;
-            border = 800;
+            border = height;
 
-            base.Setup ();
+            base.Setup (game);
         }
 
         //------------------------------------------------------------------
-        protected virtual Car CreateCar ()
+        protected Car CreateCar ()
         {
-            var weight = GetWeight ();
-            var textureName = "Car " + weight.TextureSuffix;
-
-            var car = new Car (this, carsCounter, GetInsertionPosition (), weight, textureName);
-            car.Setup ();
-
-            Cars.Add (car);
-            OwnCar (car);
-
-            carsCounter++;
+            var car = new Car (this, carsCounter, GetInsertionPosition ());
+            SetupCar (car);
 
             return car;
-        }
-
-        //-----------------------------------------------------------------
-//        private void CreateCar (int position)
-//        {
-//            var car = new Car (this, carsCounter, position, new Heavy (), "Car (Heavy)");
-//            car.Setup ();
-//
-//            Cars.Add (car);
-//            OwnCar (car);
-//                 
-//        }
-
-        //------------------------------------------------------------------
-        private Weight GetWeight ()
-        {
-            if (ID >= 0 && ID < 4)
-                return new Light ();
-            if (ID >= 4 && ID < 8)
-                return new Medium ();
-            if (ID >= 8 && ID < 12)
-                return new Heavy ();
-
-            return null;
         }
 
         //------------------------------------------------------------------
         public Player CreatePlayer (Game game)
         {
-            var player = new Player (this, carsCounter, 400, GetWeight (), "Player");
-            player.Setup ();
-
-            Cars.Add (player);
-            OwnCar (player);
-
-            carsCounter++;
-
-//            Left.CreateCar (300);
-//            Left.CreateCar (420);
-//            Left.Left.Left.CreateCar (400);
+            var player = new Player (this, carsCounter, 400);
+            SetupCar (player);
 
             return player;
         }
@@ -140,31 +109,46 @@ namespace Traffic
         //------------------------------------------------------------------
         public Police CreatePolice (Game game)
         {
-            var police = new Police (this, carsCounter, Settings.PoliceStartPosition, GetWeight (), "Police");
-            police.Setup ();
-
-            Cars.Add (police);
-            OwnCar (police);
-
-            carsCounter++;
+            var police = new Police (this, carsCounter, Settings.PoliceStartPosition);
+            SetupCar (police);
 
             return police;
         }
 
+        //-----------------------------------------------------------------
+        private void SetupCar (Car car)
+        {
+            car.Setup (Road.Game);
+            AcceptCar (car);
+
+            carsCounter++;
+        }
+
         //------------------------------------------------------------------
-        // Return point outside the screen
+        public Weight GetWeight ()
+        {
+            if (ID < Road.LanesQuantity / 3) 
+                return Weight.Light;
+            if (ID < Road.LanesQuantity * 2 / 3)
+                return Weight.Medium;
+            if (ID < Road.LanesQuantity)
+                return Weight.Heavy;
+
+            throw new NotSupportedException();
+        }
+
+        //------------------------------------------------------------------
         private int GetInsertionPosition ()
         {
             // Determine where place car: above Player or bottom
             float playerVelocity = (Road.Player != null) ? Road.Player.Velocity : 0;
-
             int sign = (Velocity > playerVelocity) ? 1 : -1;
 
-            return GetFreePosition (sign);
+            return GetFreePositionOutsideScreen (sign);
         }
 
         //------------------------------------------------------------------
-        private int GetFreePosition (int sign)
+        private int GetFreePositionOutsideScreen (int sign)
         {
             int position = 0;
             int lower = 0 + sign * border;
@@ -194,18 +178,15 @@ namespace Traffic
         {
             base.Update (elapsed);
 
-            AddQueuedCars ();
+            AcceptNewCars ();
 
             CleanUp ();
             AppendCars ();
 
-            Components.Clear ();
-            Components.AddRange (Cars);
-
             Debug ();
         }
 
-        #region Cars Management
+        #region Cars
 
         //------------------------------------------------------------------
         private void AppendCars ()
@@ -231,33 +212,32 @@ namespace Traffic
         }
 
         //------------------------------------------------------------------
-        private void AddQueuedCars ()
+        private void AcceptNewCars ()
         {
-            Cars.AddRange (carsToAdd);
-            carsToAdd.ForEach (OwnCar);
-            carsToAdd.Clear ();
+            newCars.ForEach (AcceptCar);
+            newCars.Clear ();
         }
 
         //------------------------------------------------------------------
         public void Add (Car car)
         {
-            carsToAdd.Add (car);
+            newCars.Add (car);
         }
 
         //------------------------------------------------------------------
-        private void OwnCar (Car car)
+        private void AcceptCar (Car car)
         {
+            // Remove Car from the previous Lane
             if (car.Lane != this)
                 car.Lane.Cars.Remove (car);
 
-            car.LocalPosition = new Vector2 (car.Position.X - Position.X, car.Position.Y);
-            car.Lane = this;
-        }
+            // Add Car to the current Lane
+            Cars.Add (car);
 
-        //------------------------------------------------------------------
-        private void FreeCar (Car car)
-        {
-//            car.Lane = null;
+            // Implement smooth crossing from the previous Lane to the current one
+            car.LocalPosition = new Vector2 (car.Position.X - Position.X, car.Position.Y);
+
+            car.SetLane (this);
         }
 
         #endregion
@@ -265,7 +245,8 @@ namespace Traffic
         //------------------------------------------------------------------
         public override string ToString ()
         {
-            return string.Format ("{0}", ID);
+            return ID.ToString();
+//            return string.Format ("{0}", ID);
         }
 
         //------------------------------------------------------------------

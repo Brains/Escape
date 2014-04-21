@@ -1,0 +1,25 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace Engine.Tools.Markers
+{
+    public class Point : Marker
+    {
+        public Point (Vector2 position)
+        {
+            this.Position = position;
+        }
+
+        //------------------------------------------------------------------
+        public Point (Vector2 position, Color color) : this (position)
+        {
+            this.Color = color;
+        }
+
+        //------------------------------------------------------------------
+        public override void Draw (SpriteBatch spriteBatch)
+        {
+            Primitives.DrawCircle (spriteBatch, Position, 5, 10, Color, 5);
+        }
+    }
+}

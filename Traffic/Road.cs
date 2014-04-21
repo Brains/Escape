@@ -1,23 +1,18 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Fluid;
+using Engine.Tools.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Tools;
-using Tools.Extensions;
 using Traffic.Cars;
 
 namespace Traffic
 {
-    public class Road : Object
+    public class Road : Engine.Object
     {
         public const int LanesQuantity = 12;
 
         //------------------------------------------------------------------
         private List <Lane> lanes;
-        private Texture2D texture;
-        public RenderTarget2D Obstacles { get; private set; }
 
         //------------------------------------------------------------------
         public Game Game { get; set; }
@@ -25,33 +20,32 @@ namespace Traffic
         public Dictionary <string, Texture2D> Images { get; set; }
 
         //------------------------------------------------------------------
-        public Solver Fluid { get; set; }
-
-        //------------------------------------------------------------------
         public Road (Game game) : base (null)
         {
             Game = game;
-            CreateLanes ();
-            Add (new Indicators (this));
 
-            Obstacles = new RenderTarget2D (Game.GraphicsDevice, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height);
+            CreateLanes();
+            Add (new Indicators (this));
         }
 
         //------------------------------------------------------------------
-        public override void Setup()
+        public override void Setup (Game game)
         {
-            Images = Game.Content.LoadContentFolder <Texture2D> ("Images/Road");
-            texture = Images["Road"];
+            CreateDrawable (game, "Road");
+            
+            // To draw Road under Cars
+            Drawable.Depth = 1;
 
-            Player = ((Lane) Components[6]).CreatePlayer (Game);
+            Images = game.Content.LoadFolder<Texture2D> ("Images/Road");
+            Player = ((Lane) Components[6]).CreatePlayer (game);
 
-            base.Setup();
+            base.Setup (game);
         }
 
         //------------------------------------------------------------------
         private void CreateLanes()
         {
-            lanes = new List<Lane> ();
+            lanes = new List <Lane>();
             Lane left = null;
 
             foreach (var index in Enumerable.Range (0, LanesQuantity))
@@ -79,64 +73,44 @@ namespace Traffic
             base.Update (elapsed);
 
             // Camera movement simulation
-            MoveCamera (Player.Velocity * elapsed * 2);
-
+            MoveCamera (Player.Velocity * elapsed * 2); // 2 - ratio for simulate very high speed
         }
 
         //------------------------------------------------------------------
         private void MoveCamera (float shift)
         {
             // Simulate of Camera movement by moving Road
-            Move (shift);
+            Move (new Vector2 (0, shift));
 
             // Infinite loop for Road Texture
-            if (LocalPosition.Y > 800)
-                LocalPosition = new Vector2 (LocalPosition.X, 0);
+            if (LocalPosition.Y > Game.GraphicsDevice.Viewport.Height)
+                LocalPosition = Vector2.Zero; //new Vector2 (LocalPosition.X, 0);
         }
 
         //------------------------------------------------------------------
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch batch)
         {
-            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            Vector2 shift = new Vector2 (0, -Drawable.Height);
 
-            base.Draw (spriteBatch);
+            // Move Road to the Point[0, 0] instead of the Point[origin]
+            Move (Drawable.Origin);
 
-            spriteBatch.End();
-        }
+            // Draw Road and all her Components
+            base.Draw (batch);
 
-        //------------------------------------------------------------------
-        public void DrawRoad (SpriteBatch spriteBatch)
-        {
-            spriteBatch.Begin ();
-
-            Vector2 shift = new Vector2 (0, texture.Height);
-            spriteBatch.Draw (texture, Position, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-            spriteBatch.Draw (texture, Position - shift, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-
-            spriteBatch.End ();
-        }
-
-        //------------------------------------------------------------------
-        //Render only Cars Textures for Fluid obstacles
-        public void GenerateFluidObstacles(SpriteBatch spriteBatch)
-        {
-            Game.GraphicsDevice.SetRenderTarget (Obstacles);
-            Game.GraphicsDevice.Clear (Color.Transparent);
-
-            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-
-            foreach (var lane in lanes)
-                foreach (var car in lane.Cars)
-                    spriteBatch.Draw (car.Texture, car.Position, null, Color.White, car.Angle, car.origin, 1.0f, SpriteEffects.None, 1.0f);
-
-            spriteBatch.End ();
-
-            Game.GraphicsDevice.SetRenderTarget (null);
+            // Shift up the Road and draw it again to implement continuously Road
+            Move (shift);
+            Drawable.Draw (batch);
+            
+            // Restore Position
+            Move (-shift);
+            Move (-Drawable.Origin);
         }
 
         //------------------------------------------------------------------
         public Car FindCar (Vector2 position)
         {
+            // ToDo: Convert to LINQ manually
             foreach (var lane in lanes)
                 foreach (var car in lane.Cars)
                     if (car.Bounds.Contains (position)) return car;
@@ -149,6 +123,7 @@ namespace Traffic
         {
             List <Car> polices = new List <Car>();
 
+            // ToDo: Convert to LINQ manually
             // Find all Polices
             foreach (var lane in lanes)
                 foreach (var car in lane.Cars)

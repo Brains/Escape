@@ -69,9 +69,9 @@
       <Project>{0779ec8e-46be-4e24-8db1-8ddd25f06bcf}</Project>
       <Name>Adapter</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tools\Tools.csproj">
-      <Project>{9e4ff996-10da-47c7-8008-1a4392f32ea5}</Project>
-      <Name>Tools</Name>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{83dac1bd-581b-4081-ba1c-8abb0192b57b}</Project>
+      <Name>Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\Traffic\Traffic.csproj">
       <Project>{8b8e54d3-8816-48c7-82d2-b093dcac1da6}</Project>

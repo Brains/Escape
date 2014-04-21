@@ -3,11 +3,9 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Traffic.Actions;
-using Traffic.Actions.Base;
 using Traffic.Cars;
-using Tools.Markers;
-using Loop = Tools.Timers.Loop;
-using Point = Tools.Markers.Point;
+using Loop = Engine.Tools.Timers.Loop;
+using Point = Engine.Tools.Markers.Point;
 
 namespace Traffic.Drivers
 {
@@ -90,7 +88,7 @@ namespace Traffic.Drivers
             car.Deceleration = car.Deceleration * 2;
             car.Driver.Velocity = car.Driver.Velocity * 2;
 
-            Tools.Timers.Loop.Create (1, 0, car.Turn);
+            Engine.Tools.Timers.Loop.Create (1, 0, car.Turn);
         }
 
         //------------------------------------------------------------------

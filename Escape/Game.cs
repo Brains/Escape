@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Engine.Tools;
+using Engine.Tools.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,31 +13,35 @@ namespace Escape
         public Game()
         {
             GraphicsDeviceManager graphics = new GraphicsDeviceManager (this);
-            
+
             graphics.PreferredBackBufferWidth = 480;
             graphics.PreferredBackBufferHeight = 800;
 
             graphics.SupportedOrientations = DisplayOrientation.Portrait;
 
-            // Disable fixed framerate
-//            graphics.SynchronizeWithVerticalRetrace = false;
-//            IsFixedTimeStep = false;
 
             Content.RootDirectory = "Content";
 
+//            DisableFixedFramerate (graphics);
             IsMouseVisible = true;
-
             Window.SetPosition (new Point (600, 125));
+        }
+
+        //------------------------------------------------------------------
+        private void DisableFixedFramerate (GraphicsDeviceManager graphics)
+        {
+            graphics.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = false;
         }
 
         //------------------------------------------------------------------
         protected override void Initialize()
         {
-            Components.Add (new Traffic.Actions.Base.Manager (this));
-            Components.Add (new Tools.Timers.Manager (this));
+            Components.Add (new Engine.Actions.Manager (this));
+            Components.Add (new Manager (this));
             Components.Add (new Traffic.Manager (this));
-            Components.Add (new Tools.Markers.Manager (this));
-            Components.Add (new Tools.Perfomance (this));
+            Components.Add (new Engine.Tools.Markers.Manager (this));
+            Components.Add (new Perfomance (this));
 
             base.Initialize();
         }
@@ -56,9 +62,9 @@ namespace Escape
         {
             float scale = 0.05f;
 
-            if (Keyboard.GetState ().IsKeyDown(Keys.D1))
+            if (Keyboard.GetState().IsKeyDown (Keys.D1))
                 Traffic.Settings.TimeScale -= scale;
-            if (Keyboard.GetState ().IsKeyDown (Keys.D2))
+            if (Keyboard.GetState().IsKeyDown (Keys.D2))
                 Traffic.Settings.TimeScale += scale;
         }
 

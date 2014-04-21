@@ -3,7 +3,6 @@ using System.Reflection;
 using Fluid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Tools.Markers;
 using Traffic.Actions;
 using Traffic.Cars;
 
@@ -16,15 +15,12 @@ namespace Traffic
 
         //------------------------------------------------------------------
         public Road Road { get; private set; }
-        public Solver Fluid { get; private set; }
 
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
         {
             Road = new Road (Game);
             director = new Director (this);
-            Fluid = new Solver (Game);
-            Road.Fluid = Fluid;
         }
 
         //------------------------------------------------------------------
@@ -32,7 +28,7 @@ namespace Traffic
         {
             spriteBatch = new SpriteBatch (Game.GraphicsDevice);
             
-            Road.Setup ();
+            Road.Setup (Game);
             director.Setup ();
         }
 
@@ -40,28 +36,28 @@ namespace Traffic
         public override void Update (GameTime gameTime)
         {
             float elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
-
             elapsed *= Settings.TimeScale;
 
+            UpdateComponents(elapsed);
+
+            Engine.Tools.Markers.Manager.Clear = !Settings.NoMarkersClear;
+        }
+
+        //------------------------------------------------------------------
+        private void UpdateComponents (float elapsed)
+        {
             Road.Update (elapsed);
             director.Update (elapsed);
-
-            Tools.Markers.Manager.Clear = !Settings.NoMarkersClear;
         }
 
         //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
-            Road.GenerateFluidObstacles (spriteBatch);
-            Fluid.SetScene (Road.Obstacles);
-            Fluid.SetSpeed (Road.Player.Velocity); // * elapsed
-
-            Fluid.Update();
+            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
             
-            Road.DrawRoad (spriteBatch);
-//            Fluid.Draw();
             Road.Draw (spriteBatch);
 
+            spriteBatch.End ();
         }
     }
 }
