@@ -33,7 +33,7 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public override void Turn()
         {
-            Color = Color == Color.White ? Color.Transparent : Color.White;
+            Drawable.Color = Drawable.Color == Color.White ? Color.Transparent : Color.White;
         }
 
         //------------------------------------------------------------------
