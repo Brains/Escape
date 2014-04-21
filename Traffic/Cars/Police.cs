@@ -16,7 +16,7 @@ namespace Traffic.Cars
             Acceleration = 1.0f;
             Deceleration = 4.0f;
 
-            Driver = new Drivers.Police (this);
+            SetDriver (new Drivers.Police (this));
 
             CreateFlasher();
         }

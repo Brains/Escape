@@ -10,8 +10,6 @@ namespace Traffic.Cars
     public class Car : Engine.Object
     {
         // Components
-        private Lane lane;
-        private Driver driver;
         protected internal Bounds Bounds;
         
         // Lights
@@ -21,34 +19,13 @@ namespace Traffic.Cars
 
         // Properties
         public readonly int ID;
+        public Lane Lane { get; private set; }
+        public Driver Driver { get; private set; }
         public float Velocity { get; set; }
         public int Lenght { get; set; }
         public int Lives { get; set; }
         public float Acceleration { get; set; }
         public float Deceleration { get; set; }
-
-        //------------------------------------------------------------------
-        public Lane Lane
-        {
-            get { return lane; }
-            set
-            {
-                lane = value;
-                Root = value;
-            }
-        }
-
-        //------------------------------------------------------------------
-        public Driver Driver
-        {
-            get { return driver; }
-            set
-            {
-                Remove (driver);
-                driver = value;
-                Add (driver);
-            }
-        }
 
         #region Creation
 
@@ -56,7 +33,7 @@ namespace Traffic.Cars
         public Car (Lane lane, int id, int position) : base(lane)
         {
             LocalPosition = new Vector2 (0, position);
-            Lane = lane;
+            SetLane (lane);
             ID = id;
 
             Velocity = Lane.Velocity;
@@ -64,7 +41,7 @@ namespace Traffic.Cars
             Acceleration = 1.0f;// * weight.Acceleration;
             Deceleration = 1.5f;// * weight.Deceleration;
 
-            Driver = new Common (this);
+            SetDriver (new Common (this));
         }
 
         //------------------------------------------------------------------
@@ -239,9 +216,8 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public void Turn ()
         {
-//            Color = Color == Color.White ? Color.Orange : Color.White;
+            Drawable.Color = Drawable.Color == Color.White ? Color.Orange : Color.White;
         }
-
 
         #endregion
 
@@ -324,6 +300,32 @@ namespace Traffic.Cars
 
         #endregion
 
+
+        #region Lanes
+
+        //------------------------------------------------------------------
+        public void DockToLane()
+        {
+            LocalPosition = new Vector2 (0, Position.Y);
+        }
+
+        //-----------------------------------------------------------------
+        public void SetLane (Lane lane)
+        {
+            Lane = lane;
+            Root = lane;
+        }
+
+        #endregion
+
+        //-----------------------------------------------------------------
+        protected void SetDriver (Driver driver)
+        {
+            Remove (driver);
+            Driver = driver;
+            Add (driver);
+        }
+
         //------------------------------------------------------------------
         public override string ToString ()
         {
@@ -338,11 +340,6 @@ namespace Traffic.Cars
 
             // SafeZone
 //            new Line (Position, Position - new Vector2 (0, Driver.SafeZone), Color.IndianRed);
-        }
-
-        public void DockToLane()
-        {
-            LocalPosition = new Vector2 (0, Position.Y);
         }
     }
 }

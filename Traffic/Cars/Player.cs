@@ -16,7 +16,7 @@ namespace Traffic.Cars
 //            Deceleration = 2; 
             Deceleration = 1.0f;
 
-            Driver = new Drivers.Player (this);
+            SetDriver (new Drivers.Player (this));
         }
 
         //------------------------------------------------------------------
