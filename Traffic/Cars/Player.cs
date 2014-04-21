@@ -8,8 +8,7 @@ namespace Traffic.Cars
     public class Player : Car
     {
         //------------------------------------------------------------------
-        public Player (Lane lane, int id, int position)
-            : base (lane, id, position)
+        public Player (Lane lane, int id, int position) : base (lane, id, position)
         {
             Lives = 80;
             Velocity = 300;
@@ -21,11 +20,12 @@ namespace Traffic.Cars
             Driver = new Drivers.Player (this);
         }
 
-        public override void Update (float elapsed)
+        //------------------------------------------------------------------
+        public override void Setup (Game game)
         {
-            base.Update (elapsed);
+            CreateDrawable (game, "Player");
 
-//            InteractOnFluid();
+            base.Setup (game);
         }
     }
 }

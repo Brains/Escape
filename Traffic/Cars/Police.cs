@@ -24,16 +24,25 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public void CreateFlasher ()
         {
-            // Flasher
             flasher = new Lights(this, "Flasher");
-            flasher.Enable();
+
             Add (flasher);
+        }
+
+        //------------------------------------------------------------------
+        public override void Setup (Game game)
+        {
+            CreateDrawable (game, "Police");
+
+            base.Setup (game);
+
+            flasher.Enable ();
         }
 
         //------------------------------------------------------------------
         public override void Update (float elapsed)
         {
-            flasher.Rotation += elapsed * 10;
+            flasher.Drawable.Rotation += elapsed * 10;
 
             base.Update (elapsed);
         }

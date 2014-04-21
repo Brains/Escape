@@ -60,13 +60,11 @@ namespace Traffic.Cars
             LocalPosition = new Vector2 (0, position);
             Lane = lane;
             ID = id;
-            
+
             Velocity = Lane.Velocity;
             Lives = GeLives();
             Acceleration = 1.0f;// * weight.Acceleration;
             Deceleration = 1.5f;// * weight.Deceleration;
-
-            CreateLights ();
 
             Driver = new Common (this);
         }
@@ -74,10 +72,13 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         public override void Setup (Game game)
         {
-            CreateDrawable (game, "Car " + GetTextureNameSuffix());
+            // If Drawable wasn't created into derived classes
+            if (Drawable == null)
+                CreateDrawable (game, "Car " + GetTextureNameSuffix());
+            
             Lenght = Drawable.Height;
-
             CreateBoundingBox ();
+            CreateLights ();
 
             base.Setup (game);
         }
