@@ -3,7 +3,6 @@ using System.Reflection;
 using Fluid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Tools.Markers;
 using Traffic.Actions;
 using Traffic.Cars;
 
@@ -41,7 +40,7 @@ namespace Traffic
 
             UpdateComponents(elapsed);
 
-            Tools.Markers.Manager.Clear = !Settings.NoMarkersClear;
+            Engine.Tools.Markers.Manager.Clear = !Settings.NoMarkersClear;
         }
 
         //------------------------------------------------------------------

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Tools.Markers
+namespace Engine.Tools.Markers
 {
     public class Manager : DrawableGameComponent
     {

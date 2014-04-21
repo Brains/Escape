@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Tools.Timers
+namespace Engine.Tools.Timers
 {
     public class Manager : GameComponent
     {

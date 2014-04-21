@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework.Content;
 
-namespace Tools.Extensions
+namespace Engine.Tools.Extensions
 {
     public static class ContentLoaderExtension
     {

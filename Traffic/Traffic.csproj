@@ -86,10 +86,6 @@
       <Project>{2e5e3b33-8073-4a96-8fdb-21bcac71d756}</Project>
       <Name>Fluid</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tools\Tools.csproj">
-      <Project>{9e4ff996-10da-47c7-8008-1a4392f32ea5}</Project>
-      <Name>Tools</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

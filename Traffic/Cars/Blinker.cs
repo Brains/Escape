@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using Engine.Tools.Timers;
 using Microsoft.Xna.Framework;
-using Tools.Timers;
 
 namespace Traffic.Cars
 {

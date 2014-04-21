@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Tools.Markers
+namespace Engine.Tools.Markers
 {
     public class Text : Marker
     {

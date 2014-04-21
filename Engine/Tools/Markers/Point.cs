@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Tools.Markers
+namespace Engine.Tools.Markers
 {
     public class Point : Marker
     {
@@ -19,7 +19,7 @@ namespace Tools.Markers
         //------------------------------------------------------------------
         public override void Draw (SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawCircle (Position, 5, 10, Color, 5);
+            Primitives.DrawCircle (spriteBatch, Position, 5, 10, Color, 5);
         }
     }
 }

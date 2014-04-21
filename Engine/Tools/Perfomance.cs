@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Tools
+namespace Engine.Tools
 {
     public class Perfomance : DrawableGameComponent
     {

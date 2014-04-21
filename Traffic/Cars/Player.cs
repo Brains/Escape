@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Tools.Markers;
 using Traffic.Cars.Weights;
 
 namespace Traffic.Cars

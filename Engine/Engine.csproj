@@ -55,6 +55,19 @@
     <Compile Include="Drawable.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\Extensions\ContentLoaderExtension.cs" />
+    <Compile Include="Tools\Extensions\ListExtensions.cs" />
+    <Compile Include="Tools\Markers\Line.cs" />
+    <Compile Include="Tools\Markers\Manager.cs" />
+    <Compile Include="Tools\Markers\Marker.cs" />
+    <Compile Include="Tools\Markers\Point.cs" />
+    <Compile Include="Tools\Markers\Primitives.cs" />
+    <Compile Include="Tools\Markers\Rectangle.cs" />
+    <Compile Include="Tools\Markers\Text.cs" />
+    <Compile Include="Tools\Perfomance.cs" />
+    <Compile Include="Tools\Timers\Loop.cs" />
+    <Compile Include="Tools\Timers\Manager.cs" />
+    <Compile Include="Tools\Timers\Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

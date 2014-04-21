@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Engine.Tools;
+using Engine.Tools.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -36,10 +38,10 @@ namespace Escape
         protected override void Initialize()
         {
             Components.Add (new Engine.Actions.Manager (this));
-            Components.Add (new Tools.Timers.Manager (this));
+            Components.Add (new Manager (this));
             Components.Add (new Traffic.Manager (this));
-            Components.Add (new Tools.Markers.Manager (this));
-            Components.Add (new Tools.Perfomance (this));
+            Components.Add (new Engine.Tools.Markers.Manager (this));
+            Components.Add (new Perfomance (this));
 
             base.Initialize();
         }

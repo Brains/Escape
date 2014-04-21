@@ -1,22 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Tools.Markers
+namespace Engine.Tools.Markers
 {
-    public class Rectangle : Marker
+    public class Line : Marker
     {
         public Vector2 From { get; set; }
         public Vector2 To { get; set; }
 
         //------------------------------------------------------------------
-        public Rectangle (Vector2 @from, Vector2 to)
+        public Line (Vector2 from, Vector2 to)
         {
             From = @from;
             To = to;
         }
 
         //------------------------------------------------------------------
-        public Rectangle (Vector2 @from, Vector2 to, Color color) : this (@from, to)
+        public Line (Vector2 from, Vector2 to, Color color) : this (from, to)
         {
             Color = color;
         }
@@ -24,9 +24,8 @@ namespace Tools.Markers
         //------------------------------------------------------------------
         public override void Draw (SpriteBatch spriteBatch)
         {
-            Vector2 size = To - From;
-
-            spriteBatch.DrawRectangle (From, size, Color);
+            Primitives.DrawLine (spriteBatch, From, To, Color);
+            Primitives.DrawCircle (spriteBatch, To, 2, 10, Color, 5);
         }
     }
 }

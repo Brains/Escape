@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tools.Timers
+namespace Engine.Tools.Timers
 {
     public class Timer
     {

@@ -59,9 +59,9 @@
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Tools\Tools.csproj">
-      <Project>{9e4ff996-10da-47c7-8008-1a4392f32ea5}</Project>
-      <Name>Tools</Name>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{83DAC1BD-581B-4081-BA1C-8ABB0192B57B}</Project>
+      <Name>Engine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
