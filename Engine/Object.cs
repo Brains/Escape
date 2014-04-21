@@ -94,15 +94,15 @@ namespace Engine
         }
 
         //-----------------------------------------------------------------
-        private void SetRoot (Object root)
+        protected void SetRoot (Object root)
         {
             // Remove from Current root
+            Root.Remove (this);
+
             // Add to New root
-            // this.Root change to New root
+            root.Add (this);
 
-            // Must works in Update loop
-
-            throw new NotImplementedException();
+            Root = root;
         }
 
         //-----------------------------------------------------------------
