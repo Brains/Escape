@@ -1,6 +1,7 @@
 using System;
 using Animation;
 using Fluid;
+using Engine;
 using Microsoft.Xna.Framework;
 using Tools.Markers;
 using Traffic.Actions.Base;
@@ -9,7 +10,7 @@ using Traffic.Drivers;
 
 namespace Traffic.Cars
 {
-    public class Car : Object
+    public class Car : Engine.Object
     {
         // Components
         private Lane lane;

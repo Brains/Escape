@@ -79,7 +79,6 @@
     <Compile Include="Cars\Weights\Weight.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Director.cs" />
-    <Compile Include="Drawable.cs" />
     <Compile Include="Drivers\Common.cs" />
     <Compile Include="Drivers\Driver.cs" />
     <Compile Include="Drivers\Player.cs" />
@@ -88,11 +87,14 @@
     <Compile Include="Indicators.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="Manager.cs" />
-    <Compile Include="Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Road.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{83dac1bd-581b-4081-ba1c-8abb0192b57b}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Fluid\Fluid.csproj">
       <Project>{2e5e3b33-8073-4a96-8fdb-21bcac71d756}</Project>
       <Name>Fluid</Name>

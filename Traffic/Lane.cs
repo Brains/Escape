@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Tools.Markers;
@@ -9,7 +10,7 @@ using Traffic.Cars.Weights;
 
 namespace Traffic
 {
-    public class Lane : Object
+    public class Lane : Engine.Object
     {
         public enum Weight
         {

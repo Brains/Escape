@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Engine;
 using Microsoft.Xna.Framework;
 using Tools.Extensions;
 using Tools.Markers;
@@ -12,7 +13,7 @@ using Action = Traffic.Actions.Base.Action;
 
 namespace Traffic.Drivers
 {
-    public abstract class Driver : Object
+    public abstract class Driver : Engine.Object
     {
         public enum Direction
         {

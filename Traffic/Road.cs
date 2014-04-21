@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -9,7 +8,7 @@ using Traffic.Cars;
 
 namespace Traffic
 {
-    public class Road : Object
+    public class Road : Engine.Object
     {
         public const int LanesQuantity = 12;
 
