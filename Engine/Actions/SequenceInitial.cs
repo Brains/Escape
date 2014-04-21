@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Traffic.Actions.Base
+﻿namespace Engine.Actions
 {
     public class SequenceInitial : Sequence
     {

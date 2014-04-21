@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Traffic.Actions.Base
+namespace Engine.Actions
 {
     public abstract class Composite : Action
     {

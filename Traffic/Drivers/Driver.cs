@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Engine;
+using Engine.Actions;
 using Microsoft.Xna.Framework;
 using Tools.Extensions;
 using Tools.Markers;
 using Traffic.Actions;
-using Traffic.Actions.Base;
 using Traffic.Cars;
-using Action = Traffic.Actions.Base.Action;
+using Action = Engine.Actions.Action;
 
 namespace Traffic.Drivers
 {

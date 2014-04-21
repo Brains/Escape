@@ -1,4 +1,4 @@
-﻿namespace Traffic.Actions.Base
+﻿namespace Engine.Actions
 {
     public abstract class Action
     {

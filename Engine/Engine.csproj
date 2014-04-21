@@ -39,11 +39,25 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AnimatedTexture.cs" />
+    <Compile Include="Actions\Action.cs" />
+    <Compile Include="Actions\Composite.cs" />
+    <Compile Include="Actions\Conditional.cs" />
+    <Compile Include="Actions\Controller.cs" />
+    <Compile Include="Actions\Generic.cs" />
+    <Compile Include="Actions\Loop.cs" />
+    <Compile Include="Actions\Manager.cs" />
+    <Compile Include="Actions\Parallel.cs" />
+    <Compile Include="Actions\Repeated.cs" />
+    <Compile Include="Actions\Sequence.cs" />
+    <Compile Include="Actions\SequenceInitial.cs" />
+    <Compile Include="Actions\Sleep.cs" />
     <Compile Include="Drawable.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="OpenTK">
       <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\WindowsGL\OpenTK.dll</HintPath>
     </Reference>

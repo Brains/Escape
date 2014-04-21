@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
-namespace Traffic.Actions.Base
+namespace Engine.Actions
 {
     public class Loop : Sequence
     {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Traffic.Actions.Base
+﻿namespace Engine.Actions
 {
     public class Parallel : Composite
     {

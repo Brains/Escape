@@ -35,7 +35,7 @@ namespace Escape
         //------------------------------------------------------------------
         protected override void Initialize()
         {
-            Components.Add (new Traffic.Actions.Base.Manager (this));
+            Components.Add (new Engine.Actions.Manager (this));
             Components.Add (new Tools.Timers.Manager (this));
             Components.Add (new Traffic.Manager (this));
             Components.Add (new Tools.Markers.Manager (this));

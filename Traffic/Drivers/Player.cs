@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Traffic.Actions;
-using Traffic.Actions.Base;
 using Traffic.Cars;
 using Tools.Markers;
 using Loop = Tools.Timers.Loop;
