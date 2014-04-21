@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Engine;
+using Engine.Tools.Markers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Traffic.Cars;
@@ -204,14 +205,10 @@ namespace Traffic
             CleanUp ();
             AppendCars ();
 
-            // ToDo: Replace to Add and Remove in corresponds methods
-            Components.Clear ();
-            Components.AddRange (Cars);
-
             Debug ();
         }
 
-        #region Cars Management
+        #region Cars
 
         //------------------------------------------------------------------
         private void AppendCars ()
@@ -239,7 +236,6 @@ namespace Traffic
         //------------------------------------------------------------------
         private void AddNewCars ()
         {
-            Cars.AddRange (newCars);
             newCars.ForEach (OwnCar);
             newCars.Clear ();
         }
@@ -253,17 +249,18 @@ namespace Traffic
         //------------------------------------------------------------------
         private void OwnCar (Car car)
         {
-            if (car.Lane != this)
-                car.Lane.Cars.Remove (car);
+            if (car.Lane == this) return;
 
+            // Remove Car from the previous Lane
+            car.Lane.Cars.Remove (car);
+
+            // Add Car to the current Lane
+            Cars.Add (car);
+
+            // Implement smooth crossing from previous Lane to current
             car.LocalPosition = new Vector2 (car.Position.X - Position.X, car.Position.Y);
-            car.Lane = this;
-        }
 
-        //------------------------------------------------------------------
-        private void FreeCar (Car car)
-        {
-//            car.Lane = null;
+            car.SetLane (this);
         }
 
         #endregion

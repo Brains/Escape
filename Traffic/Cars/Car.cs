@@ -313,7 +313,7 @@ namespace Traffic.Cars
         public void SetLane (Lane lane)
         {
             Lane = lane;
-            Root = lane;
+            SetRoot (lane);
         }
 
         #endregion
