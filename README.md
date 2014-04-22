@@ -18,5 +18,13 @@ On the diagram below is shown Fluid integration into gameplay mechanics performe
 
 ###Game Objects model
 It is based on the Composition design pattern. It provides uniform interface to handle whether single `Object` or entire `Objects` hierarchy:
-![image](https://cloud.githubusercontent.com/assets/5301844/2763449/e7cc7604-ca03-11e3-94bf-bebff0aa94da.png)
-![image](https://cloud.githubusercontent.com/assets/5301844/2763461/08b8e122-ca04-11e3-97c2-daff2d9e2d74.png)
+![image](https://cloud.githubusercontent.com/assets/5301844/2763449/e7cc7604-ca03-11e3-94bf-bebff0aa94da.png)  
+![image](https://cloud.githubusercontent.com/assets/5301844/2763461/08b8e122-ca04-11e3-97c2-daff2d9e2d74.png)  
+
+
+###Drawing
+Drawing of game objects is performed by the `Drawable` class. It is included into `Object` through composition.
+![image](https://cloud.githubusercontent.com/assets/5301844/2763524/ba0587b4-ca04-11e3-9f5a-da9fed113f81.png)
+
+###Modules
+![image](https://cloud.githubusercontent.com/assets/5301844/2763539/fa59014c-ca04-11e3-88ad-bd98603547b7.png)
