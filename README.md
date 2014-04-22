@@ -15,3 +15,8 @@ In 3D realization, the Fluid is rendered by *Ray-Casting* technique.
 
 On the diagram below is shown Fluid integration into gameplay mechanics performed on CPU:
 ![image](https://cloud.githubusercontent.com/assets/5301844/2763364/ab0f65a6-ca02-11e3-86f4-f85336b6b9ab.png)
+
+###Game Objects model
+It is based on the Composition design pattern. It provides uniform interface to handle whether single `Object` or entire `Objects` hierarchy:
+![image](https://cloud.githubusercontent.com/assets/5301844/2763449/e7cc7604-ca03-11e3-94bf-bebff0aa94da.png)
+![image](https://cloud.githubusercontent.com/assets/5301844/2763461/08b8e122-ca04-11e3-97c2-daff2d9e2d74.png)
