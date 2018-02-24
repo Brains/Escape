@@ -51,6 +51,6 @@ Technique Interpolation
 {
 	pass Interpolation
 	{
-		PixelShader = compile ps_2_0 PSInterpolation();
+		PixelShader = compile ps_4_0 PSInterpolation();
 	}
 }
