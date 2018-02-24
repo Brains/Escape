@@ -1,13 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content", "Content", "{0F4B4CA8-9045-4104-A76D-70077E425240}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapter", "Content\Adapter\Adapter.csproj", "{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Escape", "Content\Content\Escape.contentproj", "{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}"
+	ProjectSection(SolutionItems) = preProject
+		Content\Content\content.mgcb = Content\Content\content.mgcb
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fluid", "Fluid\Fluid.csproj", "{2E5E3B33-8073-4A96-8FDB-21BCAC71D756}"
 EndProject
@@ -16,6 +15,43 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Traffic", "Traffic\Traffic.csproj", "{8B8E54D3-8816-48C7-82D2-B093DCAC1DA6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{83DAC1BD-581B-4081-BA1C-8ABB0192B57B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fluid", "Fluid", "{70055898-2B94-44E1-841A-9453832A682F}"
+	ProjectSection(SolutionItems) = preProject
+		Content\Content\Fluid\Boundaries.png = Content\Content\Fluid\Boundaries.png
+		Content\Content\Fluid\brush.png = Content\Content\Fluid\brush.png
+		Content\Content\Fluid\Data.fx = Content\Content\Fluid\Data.fx
+		Content\Content\Fluid\Emitter.fx = Content\Content\Fluid\Emitter.fx
+		Content\Content\Fluid\Gradient.png = Content\Content\Fluid\Gradient.png
+		Content\Content\Fluid\Obstacles.fx = Content\Content\Fluid\Obstacles.fx
+		Content\Content\Fluid\Render.fx = Content\Content\Fluid\Render.fx
+		Content\Content\Fluid\Solver.fx = Content\Content\Fluid\Solver.fx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fonts", "Fonts", "{73E7CD3F-5BB1-4669-AE7F-0A657F72DE06}"
+	ProjectSection(SolutionItems) = preProject
+		Content\Content\Fonts\Debug.spritefont = Content\Content\Fonts\Debug.spritefont
+		Content\Content\Fonts\Segoe (Markers).spritefont = Content\Content\Fonts\Segoe (Markers).spritefont
+		Content\Content\Fonts\Segoe (UI).spritefont = Content\Content\Fonts\Segoe (UI).spritefont
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{7FF4009E-ABA2-4552-AB57-BF68F965FC14}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Road", "Road", "{BFD36BAC-94D2-4712-B12B-6F6CB191DA1A}"
+	ProjectSection(SolutionItems) = preProject
+		Content\Content\Images\Road\Acceleration.png = Content\Content\Images\Road\Acceleration.png
+		Content\Content\Images\Road\Blinker.png = Content\Content\Images\Road\Blinker.png
+		Content\Content\Images\Road\Brain.png = Content\Content\Images\Road\Brain.png
+		Content\Content\Images\Road\Brake.png = Content\Content\Images\Road\Brake.png
+		Content\Content\Images\Road\Car (Heavy).png = Content\Content\Images\Road\Car (Heavy).png
+		Content\Content\Images\Road\Car (Light).png = Content\Content\Images\Road\Car (Light).png
+		Content\Content\Images\Road\Car (Medium).png = Content\Content\Images\Road\Car (Medium).png
+		Content\Content\Images\Road\Explosion.png = Content\Content\Images\Road\Explosion.png
+		Content\Content\Images\Road\Flasher.png = Content\Content\Images\Road\Flasher.png
+		Content\Content\Images\Road\Player.png = Content\Content\Images\Road\Player.png
+		Content\Content\Images\Road\Police.png = Content\Content\Images\Road\Police.png
+		Content\Content\Images\Road\Road.png = Content\Content\Images\Road\Road.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,78 +84,6 @@ Global
 		Windows8|x86 = Windows8|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Android|Any CPU.ActiveCfg = Android|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Android|Any CPU.Build.0 = Android|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Android|Mixed Platforms.ActiveCfg = Android|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Android|Mixed Platforms.Build.0 = Android|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Android|x86.ActiveCfg = Android|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Debug|Any CPU.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Debug|Any CPU.Build.0 = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Debug|Mixed Platforms.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Debug|Mixed Platforms.Build.0 = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Debug|x86.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.iOS|Any CPU.ActiveCfg = iOS|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.iOS|Any CPU.Build.0 = iOS|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.iOS|Mixed Platforms.ActiveCfg = iOS|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.iOS|Mixed Platforms.Build.0 = iOS|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.iOS|x86.ActiveCfg = iOS|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Linux|Any CPU.ActiveCfg = Linux|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Linux|Any CPU.Build.0 = Linux|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Linux|Mixed Platforms.ActiveCfg = Linux|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Linux|Mixed Platforms.Build.0 = Linux|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Linux|x86.ActiveCfg = Linux|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.OSX|Any CPU.ActiveCfg = OSX|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.OSX|Any CPU.Build.0 = OSX|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.OSX|Mixed Platforms.ActiveCfg = OSX|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.OSX|Mixed Platforms.Build.0 = OSX|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.OSX|x86.ActiveCfg = OSX|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.PSM|Any CPU.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.PSM|Any CPU.Build.0 = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.PSM|Mixed Platforms.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.PSM|Mixed Platforms.Build.0 = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.PSM|x86.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Release|Any CPU.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Release|Any CPU.Build.0 = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Release|Mixed Platforms.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Release|Mixed Platforms.Build.0 = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Release|x86.ActiveCfg = PSM|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows|Any CPU.ActiveCfg = Windows|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows|Any CPU.Build.0 = Windows|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows|Mixed Platforms.ActiveCfg = Windows|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows|Mixed Platforms.Build.0 = Windows|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows|x86.ActiveCfg = Windows|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows8|Any CPU.ActiveCfg = Windows8|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows8|Any CPU.Build.0 = Windows8|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows8|Mixed Platforms.ActiveCfg = Windows8|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows8|Mixed Platforms.Build.0 = Windows8|Any CPU
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF}.Windows8|x86.ActiveCfg = Windows8|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Android|Any CPU.ActiveCfg = Android|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Android|Mixed Platforms.ActiveCfg = Android|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Android|x86.ActiveCfg = Android|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Debug|Any CPU.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Debug|Mixed Platforms.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Debug|x86.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.iOS|Any CPU.ActiveCfg = iOS|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.iOS|Mixed Platforms.ActiveCfg = iOS|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.iOS|x86.ActiveCfg = iOS|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Linux|Any CPU.ActiveCfg = Linux|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Linux|Mixed Platforms.ActiveCfg = Linux|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Linux|x86.ActiveCfg = Linux|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.OSX|Any CPU.ActiveCfg = OSX|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.OSX|Mixed Platforms.ActiveCfg = OSX|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.OSX|x86.ActiveCfg = OSX|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.PSM|Any CPU.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.PSM|Mixed Platforms.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.PSM|x86.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Release|Any CPU.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Release|Mixed Platforms.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Release|x86.ActiveCfg = PSM|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Windows|Any CPU.ActiveCfg = Windows|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Windows|Mixed Platforms.ActiveCfg = Windows|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Windows|x86.ActiveCfg = Windows|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Windows8|Any CPU.ActiveCfg = Windows8|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Windows8|Mixed Platforms.ActiveCfg = Windows8|Any CPU
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653}.Windows8|x86.ActiveCfg = Windows8|Any CPU
 		{2E5E3B33-8073-4A96-8FDB-21BCAC71D756}.Android|Any CPU.ActiveCfg = Release|x86
 		{2E5E3B33-8073-4A96-8FDB-21BCAC71D756}.Android|Mixed Platforms.ActiveCfg = Release|x86
 		{2E5E3B33-8073-4A96-8FDB-21BCAC71D756}.Android|Mixed Platforms.Build.0 = Release|x86
@@ -305,7 +269,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0779EC8E-46BE-4E24-8DB1-8DDD25F06BCF} = {0F4B4CA8-9045-4104-A76D-70077E425240}
-		{5AC54C91-1D09-4A6D-A03F-5CF4688BE653} = {0F4B4CA8-9045-4104-A76D-70077E425240}
+		{70055898-2B94-44E1-841A-9453832A682F} = {0F4B4CA8-9045-4104-A76D-70077E425240}
+		{73E7CD3F-5BB1-4669-AE7F-0A657F72DE06} = {0F4B4CA8-9045-4104-A76D-70077E425240}
+		{7FF4009E-ABA2-4552-AB57-BF68F965FC14} = {0F4B4CA8-9045-4104-A76D-70077E425240}
+		{BFD36BAC-94D2-4712-B12B-6F6CB191DA1A} = {7FF4009E-ABA2-4552-AB57-BF68F965FC14}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A9FC1B04-AEEB-4798-98BD-897971B587A3}
 	EndGlobalSection
 EndGlobal

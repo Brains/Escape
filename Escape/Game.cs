@@ -24,7 +24,7 @@ namespace Escape
 
 //            DisableFixedFramerate (graphics);
             IsMouseVisible = true;
-            Window.SetPosition (new Point (600, 125));
+         
         }
 
         //------------------------------------------------------------------
@@ -49,9 +49,7 @@ namespace Escape
         //------------------------------------------------------------------
         protected override void Update (GameTime gameTime)
         {
-            if (GamePad.GetState (PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown (Keys.Escape))
-                Exit();
-
+    
             ControlTimeScale();
 
             base.Update (gameTime);
