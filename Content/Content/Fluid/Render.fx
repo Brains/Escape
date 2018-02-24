@@ -103,7 +103,7 @@ Technique Gradient
 {
 	pass Gradient
 	{
-		PixelShader = compile ps_2_0 PSGradient();
+		PixelShader = compile ps_4_0 PSGradient();
 	}
 }
 
@@ -112,7 +112,7 @@ Technique Interpolation
 {
 	pass Interpolation
 	{
-		PixelShader = compile ps_2_0 PSInterpolation();
+		PixelShader = compile ps_4_0 PSInterpolation();
 	}
 }
 
@@ -121,6 +121,6 @@ Technique Display
 {
 	pass Display
 	{
-		PixelShader = compile ps_2_0 PSDisplay();
+		PixelShader = compile ps_4_0 PSDisplay();
 	}
 }

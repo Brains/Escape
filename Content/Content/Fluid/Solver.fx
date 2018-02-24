@@ -196,7 +196,7 @@ technique PermanentAdvection
 {
 	pass PermanentAdvection
 	{
-		PixelShader = compile ps_2_0 PSPermanentAdvection();
+		PixelShader = compile ps_4_0 PSPermanentAdvection();
 	}
 }
 
@@ -205,11 +205,11 @@ technique DoAdvection
 {
 	pass DoAdvection
 	{
-		PixelShader = compile ps_2_0 PSAdvection();
+		PixelShader = compile ps_4_0 PSAdvection();
 	}
 	//pass SetBounds
 	//{
-	//	PixelShader = compile ps_2_0 PSSetBoundsDouble();
+	//	PixelShader = compile ps_4_0 PSSetBoundsDouble();
 	//}
 }
 
@@ -218,7 +218,7 @@ technique DoDivergence
 {
 	pass DoDivergence
 	{
-		PixelShader = compile ps_2_0 PSDivergence();
+		PixelShader = compile ps_4_0 PSDivergence();
 	}
 }
 
@@ -227,11 +227,11 @@ Technique DoJacobi
 {
 	pass DoJacobi
 	{
-		PixelShader = compile ps_2_0 PSJacobi();
+		PixelShader = compile ps_4_0 PSJacobi();
 	}
 	//pass SetBounds
 	//{
-	//	PixelShader = compile ps_2_0 PSArbitraryPressureBoundary();
+	//	PixelShader = compile ps_4_0 PSArbitraryPressureBoundary();
 	//}
 }
 
@@ -240,7 +240,7 @@ Technique Subtract
 {
 	pass Subtract
 	{
-		PixelShader = compile ps_2_0 PSSubtract();
+		PixelShader = compile ps_4_0 PSSubtract();
 	}
 }
 
@@ -249,7 +249,7 @@ Technique DoVorticity
 {
 	pass DoVorticity
 	{
-		PixelShader = compile ps_2_0 PSVorticity();
+		PixelShader = compile ps_4_0 PSVorticity();
 	}
 }
 
@@ -258,6 +258,6 @@ Technique DoVorticityForce
 {
 	pass DoVorticityForce
 	{
-		PixelShader = compile ps_2_0 PSVorticityForce();
+		PixelShader = compile ps_4_0 PSVorticityForce();
 	}
 }

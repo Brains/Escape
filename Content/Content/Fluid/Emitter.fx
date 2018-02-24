@@ -68,7 +68,7 @@ technique VelocityColorize
 {
 	pass VelocityColorize
 	{
-		PixelShader = compile ps_2_0 PSVelocityColorize();
+		PixelShader = compile ps_4_0 PSVelocityColorize();
 	}
 }
 
@@ -77,11 +77,11 @@ technique DoAddSources
 {
 	pass DoAddSources
 	{
-		PixelShader = compile ps_2_0 PSAddSources();
+		PixelShader = compile ps_4_0 PSAddSources();
 	}
 	//pass SetBounds
 	//{
-	//	PixelShader = compile ps_2_0 PSSetBoundsDouble();
+	//	PixelShader = compile ps_4_0 PSSetBoundsDouble();
 	//}
 }
 

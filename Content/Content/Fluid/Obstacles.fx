@@ -108,7 +108,7 @@ Technique ShapeObstacles
 {
 	pass ShapeObstacles
 	{
-		PixelShader = compile ps_2_0 PSShapeObstacles();
+		PixelShader = compile ps_4_0 PSShapeObstacles();
 	}
 }
 
@@ -117,7 +117,7 @@ Technique UpdateOffsets
 {
 	pass UpdateOffsets
 	{
-		PixelShader = compile ps_2_0 PSUpdateOffsets();
+		PixelShader = compile ps_4_0 PSUpdateOffsets();
 	}
 }
 
@@ -126,7 +126,7 @@ Technique Velocity
 {
 	pass Velocity
 	{
-		PixelShader = compile ps_2_0 PSVelocity();
+		PixelShader = compile ps_4_0 PSVelocity();
 	}
 }
 
@@ -135,7 +135,7 @@ Technique Density
 {
 	pass Density
 	{
-		PixelShader = compile ps_2_0 PSDensity();
+		PixelShader = compile ps_4_0 PSDensity();
 	}
 }
 
@@ -144,6 +144,6 @@ Technique Pressure
 {
 	pass Pressure
 	{
-		PixelShader = compile ps_2_0 PSPressure();
+		PixelShader = compile ps_4_0 PSPressure();
 	}
 }
