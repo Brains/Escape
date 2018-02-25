@@ -23,6 +23,10 @@ namespace Engine
         // Fields
         private Texture2D texture;
 
+        public Texture2D Texture { get { return texture; } }
+
+
+
         //------------------------------------------------------------------
         public Drawable (Object root, Game game, string name)
         {
