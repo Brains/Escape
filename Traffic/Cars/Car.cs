@@ -5,6 +5,9 @@ using Microsoft.Xna.Framework;
 using Traffic.Cars.Weights;
 using Traffic.Drivers;
 
+using Engine.Actions;
+using Microsoft.Xna.Framework.Graphics;
+
 namespace Traffic.Cars
 {
     public class Car : Engine.Object
@@ -21,11 +24,16 @@ namespace Traffic.Cars
         public readonly int ID;
         public Lane Lane { get; private set; }
         public Driver Driver { get; private set; }
+
+        public Vector2 origin;
+
         public float Velocity { get; set; }
         public int Lenght { get; set; }
         public int Lives { get; set; }
         public float Acceleration { get; set; }
         public float Deceleration { get; set; }
+        public Texture2D Texture { get; set; }
+
 
         #region Creation
 
@@ -41,6 +49,7 @@ namespace Traffic.Cars
             Acceleration = 1.0f;// * weight.Acceleration;
             Deceleration = 1.5f;// * weight.Deceleration;
 
+
             SetDriver (new Common (this));
         }
 
@@ -50,6 +59,9 @@ namespace Traffic.Cars
             // If Drawable wasn't created into derived classes
             if (Drawable == null)
                 CreateDrawable (game, "Car " + GetTextureNameSuffix());
+
+
+            Texture = Drawable.Texture;
             
             Lenght = Drawable.Height;
             CreateBoundingBox ();
@@ -275,13 +287,42 @@ namespace Traffic.Cars
         //------------------------------------------------------------------
         protected void Explose (Car killer)
         {
+         
+                 Emitter emitter = Lane.Road.Fluid.Emitter;
+             
+            // Impulse
+             Vector2 impulse = Position - killer.Position;
+             Vector2 scale = new Vector2(1.5f, 0);
+ 
+             System.Action addImpulse = () => emitter.AddImpulse ((impulse), Position + impulse * scale);
+            addImpulse();
+           // killer.Add()
+         
+             killer.Driver.AddInSequnce (new  Repeated(addImpulse, 10));
+ 
+             // Particle
+             System.Action addParticle = () => emitter.AddParticle (Texture, Position - origin + impulse * scale);
+             addParticle();  
+            
             // Drawable.Explose ();
+
 
             Destroy ();
         }
 
-        //------------------------------------------------------------------
-        private void Destroy ()
+        protected void InteractOnFluid()
+         {
+             Vector3 data = Lane.Road.Fluid.Data.GetData(Position);
+ 
+             var velocity = new Vector2(data.X, data.Y);
+             var torque = data.Z;
+ 
+             LocalPosition += velocity* 2;
+ //            Drawable.Rotation += torque / 50;
+         }
+
+    //------------------------------------------------------------------
+    private void Destroy ()
         {
             Velocity = 0;
             Lives = 0;
