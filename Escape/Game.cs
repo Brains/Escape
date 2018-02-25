@@ -22,6 +22,8 @@ namespace Escape
 
             Content.RootDirectory = "Content";
 
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
+
 //            DisableFixedFramerate (graphics);
             IsMouseVisible = true;
          
