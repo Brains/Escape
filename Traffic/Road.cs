@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Engine.Tools.Extensions;
+using Fluid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Traffic.Cars;
@@ -13,11 +14,16 @@ namespace Traffic
 
         //------------------------------------------------------------------
         private List <Lane> lanes;
+       private Texture2D texture;
+       public RenderTarget2D Obstacles { get; private set; }
+
 
         //------------------------------------------------------------------
         public Game Game { get; set; }
         public Player Player { get; set; }
         public Dictionary <string, Texture2D> Images { get; set; }
+
+        public Solver Fluid { get; set; }
 
         //------------------------------------------------------------------
         public Road (Game game) : base (null)
@@ -26,10 +32,32 @@ namespace Traffic
 
             CreateLanes();
             Add (new Indicators (this));
+
+            Obstacles = new RenderTarget2D(Game.GraphicsDevice, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height);
+
         }
 
-        //------------------------------------------------------------------
-        public override void Setup (Game game)
+
+             //------------------------------------------------------------------
+         //Render only Cars Textures for Fluid obstacles
+         public void GenerateFluidObstacles(SpriteBatch spriteBatch)
+         {
+             Game.GraphicsDevice.SetRenderTarget(Obstacles);
+             Game.GraphicsDevice.Clear(Color.Transparent);
+ 
+             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+ 
+             foreach (var lane in lanes)
+                 foreach (var car in lane.Cars)
+                     // ToDo: Rotation = car.Drawable.Rotation
+                     spriteBatch.Draw(car.Texture, car.Position, null, Color.White, 0, car.origin, 1.0f, SpriteEffects.None, 1.0f);
+ 
+             spriteBatch.End();
+ 
+            Game.GraphicsDevice.SetRenderTarget(null);
+         }
+    //------------------------------------------------------------------
+    public override void Setup (Game game)
         {
             CreateDrawable (game, "Road");
             
@@ -37,6 +65,9 @@ namespace Traffic
             Drawable.Depth = 1;
 
             Images = game.Content.LoadFolder<Texture2D> ("Images/Road");
+
+            texture = Images["Road"];
+
             Player = ((Lane) Components[6]).CreatePlayer (game);
 
             base.Setup (game);
@@ -87,9 +118,23 @@ namespace Traffic
                 LocalPosition = Vector2.Zero; //new Vector2 (LocalPosition.X, 0);
         }
 
+
+        public void DrawRoad(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin();
+
+            Vector2 shift = new Vector2(0, texture.Height);
+            spriteBatch.Draw(texture, Position, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw(texture, Position - shift, null, Color.White, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+
+            spriteBatch.End();
+        }
         //------------------------------------------------------------------
         public override void Draw (SpriteBatch batch)
         {
+
+            batch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+
             Vector2 shift = new Vector2 (0, -Drawable.Height);
 
             // Move Road to the Point[0, 0] instead of the Point[origin]
@@ -105,6 +150,9 @@ namespace Traffic
             // Restore Position
             Move (-shift);
             Move (-Drawable.Origin);
+
+            batch.End();
+
         }
 
         //------------------------------------------------------------------
