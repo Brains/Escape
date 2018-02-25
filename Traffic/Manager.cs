@@ -16,11 +16,16 @@ namespace Traffic
         //------------------------------------------------------------------
         public Road Road { get; private set; }
 
+        public Solver Fluid { get; private set; }
+
+
         //------------------------------------------------------------------
         public Manager (Game game) : base (game)
         {
             Road = new Road (Game);
             director = new Director (this);
+            Fluid = new Solver(Game);
+            Road.Fluid = Fluid;
         }
 
         //------------------------------------------------------------------
@@ -53,11 +58,25 @@ namespace Traffic
         //------------------------------------------------------------------
         public override void Draw (GameTime gameTime)
         {
-            spriteBatch.Begin (SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-            
-            Road.Draw (spriteBatch);
+          
+            Road.GenerateFluidObstacles(spriteBatch);
 
-            spriteBatch.End ();
+
+            Fluid.SetScene(Road.Obstacles);
+            Fluid.SetSpeed(Road.Player.Velocity); // * elapsed
+            
+            Fluid.Update();
+            
+            Road.DrawRoad(spriteBatch);
+
+            Fluid.Render();
+
+          
+            Road.Draw(spriteBatch);
+     
         }
+
+
+
     }
 }
