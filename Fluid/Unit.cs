@@ -20,7 +20,7 @@ namespace Fluid
         public readonly SamplerState Sampling = new SamplerState();
         internal RenderTarget2D Temporary;
         public const SpriteSortMode Sorting = SpriteSortMode.Immediate;
-        public const SurfaceFormat Surface = SurfaceFormat.HdrBlendable;
+        public const SurfaceFormat Surface = SurfaceFormat.HalfVector4;
         public const DepthFormat ZFormat = DepthFormat.None;
 
         //------------------------------------------------------------------
