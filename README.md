@@ -1,7 +1,10 @@
+### **[Video](https://www.youtube.com/watch?v=qcqqkTYDUX8)**
+
+![image](https://user-images.githubusercontent.com/5301844/43784547-099764e0-9a6d-11e8-8714-c68fef5a1297.png)
+ 
 ### Escape
 `Escape` is the arcade game with `Fluids` simulation and smart `AI`.  
 `MonoGame` Framework is used.  
-**[Video](https://www.youtube.com/watch?v=qcqqkTYDUX8)**  
 
 ### Fluids
 Escape uses `2D Fluid Simulation` on `GPU` with `Vorticity Confinement` and `MacCormak Advection` scheme based on `Navier-Stokes` equations for incompressible flow. To solve them numerical methods are used.
