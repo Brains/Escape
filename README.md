@@ -2,7 +2,7 @@
 `Escape` is the arcade game with `Fluids` simulation and smart `AI`.  
 `MonoGame` Framework is used.  
 
-## **[Video](https://www.youtube.com/watch?v=qcqqkTYDUX8)**
+## **[Video](https://youtu.be/qsJHql4KkC0)**
 
 ![Intro](https://user-images.githubusercontent.com/5301844/43815883-9b56d466-9ada-11e8-9a6e-932fcee0a3cb.gif)
 ![Pressure](https://user-images.githubusercontent.com/5301844/43816055-9ad36742-9adb-11e8-8142-3973ec8a6657.gif)
